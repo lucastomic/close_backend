@@ -3,12 +3,19 @@ CREATE DATABASE close;
 USE close;
         
 CREATE TABLE user(      
-  ducks INT DEFAULT 0,     
   name VARCHAR(255), 
   phone VARCHAR(255), 
   password VARCHAR(255), 
   
   PRIMARY KEY(phone)
+);
+
+CREATE TABLE sendsDuck(
+  sender VARCHAR(255),
+  receiver VARCHAR(255),
+  
+  FOREIGN KEY (sender) REFERENCES user(phone),
+  FOREIGN KEY (receiver) REFERENCES user(phone)
 );
 
 CREATE TABLE photo(
