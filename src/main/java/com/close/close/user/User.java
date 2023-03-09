@@ -59,7 +59,7 @@ public class User{
     private boolean phoneIsVerified;
     /**
      * photos is the list of user's photos. They are in string format to a URL.
-     * This photos are saved in a different table
+     * Photos are saved in a different table
      */
     @ElementCollection
     private Set<String> photos;
