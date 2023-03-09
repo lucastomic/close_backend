@@ -1,5 +1,7 @@
-// user package is in charge of managing the application user's logic.
-// This includes its modeling, API requests handling, DB interactions, etc.
+/**
+ * user package is in charge of managing the application user's logic.
+ * This includes its modeling, API requests handling, DB interactions, etc.
+ */
 package com.close.close.user;
 
 import com.close.close.interest.Interest;
