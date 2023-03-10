@@ -2,9 +2,14 @@ package com.close.close.user;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -51,5 +56,27 @@ public class UserController {
                     users,
                     linkTo(methodOn(UserController.class).getAll()).withSelfRel()
             );
+    }
+
+    /**
+     * saveUser saves a user on the database. The user information is passed in the request's body.
+     * If the user is saved successfully it returns a OK 200 status and a response with the link for
+     * accessing the new User inserted. Also, in the body of the response is the information of the user inserted.
+     * @return ResponseEntity with the link to the new employee inserted and the user's information in the request's body
+     */
+    @PostMapping("/save")
+    ResponseEntity<?> saveUser(@RequestBody User newUser){
+        EntityModel<User> entityModel = assembler.toModel(repository.save(newUser));
+        URI link = this.parseEntityModelToLink(entityModel);
+        return ResponseEntity.created(link).body(entityModel);
+    }
+
+    /**
+     * parseEntityModelToLink parses an entity model into a URI to access to itself inside the API
+     * @param entityModel entity model to parse
+     * @return URI object with the respective direction
+     */
+    private URI parseEntityModelToLink(EntityModel<?> entityModel){
+        return entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri();
     }
 }
