@@ -67,8 +67,8 @@ public class UserController {
     @PostMapping("/save")
     ResponseEntity<?> saveUser(@RequestBody User newUser){
         EntityModel<User> entityModel = assembler.toModel(repository.save(newUser));
-        URI link = this.parseEntityModelToLink(entityModel);
-        return ResponseEntity.created(link).body(entityModel);
+        URI location = this.parseEntityModelToLink(entityModel);
+        return ResponseEntity.created(location).body(entityModel);
     }
 
     /**
