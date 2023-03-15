@@ -76,4 +76,13 @@ public class User{
         inverseJoinColumns = @JoinColumn(name = "interest_id")
     )
     private Set<Interest> interests;
+
+
+    /**
+     * id getter
+     * @return Long with the user's ID
+     */
+    public Long getId() {
+        return id;
+    }
 }
