@@ -1,5 +1,6 @@
 package com.close.close.user;
 
+import com.close.close.apirest.RestSaver;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -77,9 +78,8 @@ public class UserController {
      */
     @PostMapping("/users")
     ResponseEntity<?> saveUser(@RequestBody User newUser){
-        EntityModel<User> entityModel = assembler.toModel(repository.save(newUser));
-        URI location = this.parseEntityModelToLink(entityModel);
-        return ResponseEntity.created(location).body(entityModel);
+        RestSaver<User> saver = new RestSaver<User>(repository, assembler);
+        return saver.saveEntity(newUser);
     }
 
     /**
