@@ -13,12 +13,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @Component
 public class UserModelAssembler  implements RepresentationModelAssembler<User, EntityModel<User>> {
-    //TODO:COMPLETE LINK TO ITSELF
     @Override
     public EntityModel<User> toModel(User user) {
         return EntityModel.of(
                 user,
-                linkTo(methodOn(UserController.class).getAll()).withRel("users")
+                linkTo(methodOn(UserController.class).getAll()).withRel("users"),
+                linkTo(methodOn(UserController.class).getOne(user.getId())).withSelfRel()
         );
     }
 
