@@ -51,6 +51,8 @@ public class User{
      */
     @Column(nullable = false)
     private String phone;
+
+
     /**
      * phoneIsVerified checks whether the user's phone number has been verified or not.
      * This verification is compulsory for the app usage.
@@ -78,11 +80,77 @@ public class User{
     private Set<Interest> interests;
 
 
-    /**
-     * id getter
-     * @return Long with the user's ID
-     */
+    //Getters and setters
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Set<User> getDuckedUsers() {
+        return duckedUsers;
+    }
+
+    public void setDuckedUsers(Set<User> duckedUsers) {
+        this.duckedUsers = duckedUsers;
+    }
+
+    public Set<User> getReceivesDuckFrom() {
+        return receivesDuckFrom;
+    }
+
+    public void setReceivesDuckFrom(Set<User> receivesDuckFrom) {
+        this.receivesDuckFrom = receivesDuckFrom;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public boolean isPhoneIsVerified() {
+        return phoneIsVerified;
+    }
+
+    public void setPhoneIsVerified(boolean phoneIsVerified) {
+        this.phoneIsVerified = phoneIsVerified;
+    }
+
+    public Set<String> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(Set<String> photos) {
+        this.photos = photos;
+    }
+
+    public Set<Interest> getInterests() {
+        return interests;
+    }
+
+    public void setInterests(Set<Interest> interests) {
+        this.interests = interests;
     }
 }
