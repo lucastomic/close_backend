@@ -25,12 +25,12 @@ public class UserController {
     /**
      * repository is the user's repository for DB interaction
     */
-    private UserRepository repository;;
+    private final UserRepository repository;;
     /**
      * assembler is the user's model assembler for converting User models to
      * AIPRest responses
      */
-    private UserModelAssembler assembler;;
+    private final UserModelAssembler assembler;;
 
     /**
      * Class constructor. It implements dependency injection.
