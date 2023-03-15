@@ -75,7 +75,7 @@ public class UserController {
      * accessing the new User inserted. Also, in the body of the response is the information of the user inserted.
      * @return ResponseEntity with the link to the new employee inserted and the user's information in the request's body
      */
-    @PostMapping("/save")
+    @PostMapping("/users")
     ResponseEntity<?> saveUser(@RequestBody User newUser){
         EntityModel<User> entityModel = assembler.toModel(repository.save(newUser));
         URI location = this.parseEntityModelToLink(entityModel);
