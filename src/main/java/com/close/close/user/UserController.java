@@ -4,10 +4,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
@@ -56,6 +53,20 @@ public class UserController {
                     users,
                     linkTo(methodOn(UserController.class).getAll()).withSelfRel()
             );
+    }
+
+    /**
+     * getOne returns a user depending on his ID. The response is modeled with the assembler.
+     * In case of no user with the ID specified, it's throws a UserNotFoundException (which will
+     * be handled by the UserNotFoundAdvice controller advice)
+     * @param id long with the ID of the user to be returned
+     * @return EntityModel of the user with the ID
+     */
+    @GetMapping("/users/{id}")
+    EntityModel<User> getOne(@PathVariable Long id){
+        User user = repository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+        return assembler.toModel(user);
     }
 
     /**
