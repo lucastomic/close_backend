@@ -12,6 +12,7 @@ import java.util.Set;
  */
 @Entity
 public class Interest {
+
     /**
      * Interest's name (for example "futbol", "videogames", etc).
      * It's the entity id
@@ -24,4 +25,22 @@ public class Interest {
      */
     @ManyToMany(mappedBy = "interests")
     private Set<User> usersInterested;
+
+    // getters and setters
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<User> getUsersInterested() {
+        return usersInterested;
+    }
+
+    public void setUsersInterested(Set<User> usersInterested) {
+        this.usersInterested = usersInterested;
+    }
 }
