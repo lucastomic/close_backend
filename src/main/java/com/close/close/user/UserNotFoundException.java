@@ -1,7 +1,7 @@
 package com.close.close.user;
 
 /**
- * Exception thrown every time a user is looked for and n ot found.
+ * Exception thrown every time a user is looked for and not found.
  */
 public class UserNotFoundException extends RuntimeException{
     UserNotFoundException(){
