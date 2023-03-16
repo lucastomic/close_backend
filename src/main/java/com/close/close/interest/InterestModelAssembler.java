@@ -2,6 +2,7 @@ package com.close.close.interest;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -9,6 +10,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 /**
  * InterestModelAssembler is in charge of modeling the User entity for APIRest responses.
  */
+@Component
 public class InterestModelAssembler implements RepresentationModelAssembler<Interest, EntityModel<Interest>> {
 
     /**

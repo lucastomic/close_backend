@@ -61,7 +61,7 @@ public class InterestController {
      * @param name string with the ID of the interest to be returned
      * @return EntityModel of the interest with the name specified
      */
-    @GetMapping("/users/{id}")
+    @GetMapping("/interest/{name}")
     EntityModel<Interest> getOne(@PathVariable String name){
         Interest interest = repository.findById(name)
                 .orElseThrow(InterestNotFoundException::new);
