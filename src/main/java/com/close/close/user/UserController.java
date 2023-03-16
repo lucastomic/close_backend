@@ -126,7 +126,7 @@ public class UserController {
      * @param receiverId id from the receiver
      * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
      */
-    @PutMapping("/sendDuck/{transmitter}/{receiver}")
+    @PutMapping("/sendDuck/{transmitterId}/{receiverId}")
     ResponseEntity sendDuck(@PathVariable Long transmitterId, @PathVariable Long receiverId) {
         User transmitter = this.findOrThrow(transmitterId);
         User receiver = this.findOrThrow(receiverId);
