@@ -1,5 +1,6 @@
 package com.close.close.user;
 
+
 import com.close.close.apirest.RestSaver;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -40,6 +41,29 @@ public class UserController {
         this.assembler = assembler;
     };
 
+
+    /**
+     * modelUsersList takes a user's list, model each one to an EntityModel
+     * and returns a list with all the EntityModelObjects
+     * @param users list of users to parse
+     * @return list of EntityModel objects with the users parsered
+     */
+    private List<EntityModel<User>> modelUsersList(List<User>users){
+       return users.stream().map(assembler::toModel).toList();
+    }
+
+    /**
+     * collectionModelFromList takes a list of users, models each one to a EntityModel
+     * and pareses all the list into a CollectionModel with a link to all users
+     * @param users list of users to parse
+     * @return CollectionModel object with each user modeled
+     */
+    CollectionModel<EntityModel<User>> collectionModelFromList(List<User> users){
+        return CollectionModel.of(
+                this.modelUsersList(users),
+                linkTo(methodOn(UserController.class).getAll()).withSelfRel()
+        );
+    }
     /**
      * getAll retrieves a CollectionModel with all the application's users.
      * The response is linked to different methods of the APIRest.
@@ -47,15 +71,19 @@ public class UserController {
      */
     @GetMapping("/users")
     CollectionModel<EntityModel<User>> getAll(){
-            List<EntityModel<User>> users = repository.findAll().
-            stream().map(assembler::toModel).toList();
-
-            return CollectionModel.of(
-                    users,
-                    linkTo(methodOn(UserController.class).getAll()).withSelfRel()
-            );
+            List<User> allUsers = repository.findAll();
+            return this.collectionModelFromList(allUsers);
     }
 
+    /**
+     * findOrThrow looks a user for his id, and if it doesn't exist it throws a
+     * UserNotFoundException
+     * @param id id which is looked for
+     * @return User with the ID
+     */
+    private User findOrThrow(Long id){
+        return repository.findById(id).orElseThrow(()->new UserNotFoundException(id));
+    }
     /**
      * getOne returns a user depending on his ID. The response is modeled with the assembler.
      * In case of no user with the ID specified, it's throws a UserNotFoundException (which will
@@ -65,8 +93,7 @@ public class UserController {
      */
     @GetMapping("/users/{id}")
     EntityModel<User> getOne(@PathVariable Long id){
-        User user = repository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        User user = this.findOrThrow(id);
         return assembler.toModel(user);
     }
 
@@ -90,4 +117,25 @@ public class UserController {
     private URI parseEntityModelToLink(EntityModel<?> entityModel){
         return entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri();
     }
+
+
+    /**
+     * sendDuck sends a duck from a user to another one and save the transaction on the database.
+     * The id of the transmitter and the receiver are sent by path.
+     * @param transmitterId id from the transmitter
+     * @param receiverId id from the receiver
+     * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
+     */
+    @PutMapping("/sendDuck/{transmitter}/{receiver}")
+    ResponseEntity sendDuck(@PathVariable Long transmitterId, @PathVariable Long receiverId) {
+        User transmitter = this.findOrThrow(transmitterId);
+        User receiver = this.findOrThrow(receiverId);
+        transmitter.sendsDuck(receiver);
+        repository.save(transmitter);
+        repository.save(receiver);
+        List<User> usersList = List.of(receiver, transmitter);
+        CollectionModel<EntityModel<User>> body = this.collectionModelFromList(usersList);
+        return ResponseEntity.ok().body(body);
+    }
+
 }
