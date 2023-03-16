@@ -79,6 +79,15 @@ public class User{
     )
     private Set<Interest> interests;
 
+    /**
+     * sendsDuck sends a duck to another user, updating the duckedUsers from the sender
+     * and the received ducks from the receiver
+     * @param user user to send duck
+     */
+    void sendsDuck(User user){
+        this.duckedUsers.add(user);
+        user.receivesDuckFrom.add(this);
+    }
 
     //Getters and setters
 
