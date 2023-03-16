@@ -1,3 +1,6 @@
+/**
+ * apirest manages all the API Rest logic which is common in the other packages
+ */
 package com.close.close.apirest;
 
 import org.springframework.data.jpa.repository.JpaRepository;

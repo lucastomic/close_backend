@@ -1,3 +1,6 @@
+/**
+ * intersest pacakge includes all the logic to manage the interest's stuff
+ */
 package com.close.close.interest;
 import com.close.close.user.*;
 import jakarta.persistence.Entity;

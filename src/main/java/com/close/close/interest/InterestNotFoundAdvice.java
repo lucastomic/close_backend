@@ -14,7 +14,7 @@ public class InterestNotFoundAdvice {
     /**
      * exceptionHandler is triggered every time a InterestNotFoundException is
      * thrown. It returns the exception message with a 404 (not found) status code.
-     * @param ex exception throwed
+     * @param ex exception thrown
      * @return exception message with 404 status
      */
     @ResponseBody

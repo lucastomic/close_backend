@@ -1,7 +1,5 @@
 package com.close.close.interest;
 
-import com.close.close.user.User;
-import com.close.close.user.UserController;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
@@ -13,11 +11,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 public class InterestModelAssembler implements RepresentationModelAssembler<Interest, EntityModel<Interest>> {
 
+    /**
+     * toModel takes an interest and parses it to a EntityModel, with a link to all the interests and a link
+     * to the interest itself
+     * @param interest interest to parse
+     * @return entity model with the corresponding links
+     */
     @Override
     public EntityModel<Interest> toModel(Interest interest) {
         return EntityModel.of(
                 interest,
-                linkTo(methodOn(InterestController.class).getAll()).withRel("users"),
+                linkTo(methodOn(InterestController.class).getAll()).withRel("interests"),
                 linkTo(methodOn(InterestController.class).getOne(interest.getName())).withSelfRel()
         );
     }
