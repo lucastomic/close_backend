@@ -15,7 +15,6 @@ import java.util.Set;
  *User is the application user model.
  */
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User{
 
     /**
