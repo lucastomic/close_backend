@@ -4,15 +4,20 @@
  */
 package com.close.close.user;
 
+import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
+
 import java.util.Set;
 
 /**
  *User is the application user model.
  */
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User{
+
     /**
      * id is the id of the user. This is a long type number.
      * It's marked as a generated value.
@@ -28,30 +33,23 @@ public class User{
      * age is the user's age
     */
     private int age;
+
     /**
-     * duckedUsers is the list of users who the user has sent ducks.
-     * This is a N-M relation. So, it generates another table called "sendsDuck".
+     * ducksSent is the collection of DuckShipping where the user is the sender.
      */
-    @ManyToMany
-    @JoinTable(
-            name = "sendsDuck",
-            joinColumns = @JoinColumn(name = "sender"),
-            inverseJoinColumns = @JoinColumn(name = "receiver")
-    )
-    private Set<User> duckedUsers;
+    @OneToMany(mappedBy = "sender")
+    private Set<Duck> ducksSent;
     /**
-     * receivesDuckFrom is the list of users who have sent a duck to the user.
-     * This relation is mapped before in the duckedUsers atribute.
+     * ducksSent is the collection of DuckShipping where the user is the receiver.
      */
-    @ManyToMany(mappedBy = "duckedUsers")
-    private Set<User> receivesDuckFrom;
+    @OneToMany(mappedBy = "receiver")
+    private Set<Duck> ducksReceived;
     /**
      * phone is a string with the user's phone number.
      * This column is mandatory
      */
     @Column(nullable = false)
     private String phone;
-
 
     /**
      * phoneIsVerified checks whether the user's phone number has been verified or not.
@@ -79,16 +77,6 @@ public class User{
     )
     private Set<Interest> interests;
 
-    /**
-     * sendsDuck sends a duck to another user, updating the duckedUsers from the sender
-     * and the received ducks from the receiver
-     * @param user user to send duck
-     */
-    void sendsDuck(User user){
-        this.duckedUsers.add(user);
-        user.receivesDuckFrom.add(this);
-    }
-
     //Getters and setters
 
     public Long getId() {
@@ -113,22 +101,6 @@ public class User{
 
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public Set<User> getDuckedUsers() {
-        return duckedUsers;
-    }
-
-    public void setDuckedUsers(Set<User> duckedUsers) {
-        this.duckedUsers = duckedUsers;
-    }
-
-    public Set<User> getReceivesDuckFrom() {
-        return receivesDuckFrom;
-    }
-
-    public void setReceivesDuckFrom(Set<User> receivesDuckFrom) {
-        this.receivesDuckFrom = receivesDuckFrom;
     }
 
     public String getPhone() {

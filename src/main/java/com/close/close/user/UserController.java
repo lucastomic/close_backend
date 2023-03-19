@@ -2,6 +2,8 @@ package com.close.close.user;
 
 
 import com.close.close.apirest.RestSaver;
+import com.close.close.duck.Duck;
+import com.close.close.duck.DuckRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -21,6 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @RestController
 public class UserController {
+
     /**
      * repository is the user's repository for DB interaction
     */
@@ -31,16 +34,18 @@ public class UserController {
      */
     private final UserModelAssembler assembler;;
 
+    private final DuckRepository duckRepo;
+
     /**
      * Class constructor. It implements dependency injection.
      * @param repository user's repository
      * @param assembler user's model assembler
      */
-    UserController(UserRepository repository, UserModelAssembler assembler){
+    UserController(UserRepository repository, UserModelAssembler assembler, DuckRepository duckRepo){
         this.repository = repository;
+        this.duckRepo = duckRepo;
         this.assembler = assembler;
     };
-
 
     /**
      * modelUsersList takes a user's list, model each one to an EntityModel
@@ -81,9 +86,10 @@ public class UserController {
      * @param id id which is looked for
      * @return User with the ID
      */
-    private User findOrThrow(Long id){
+    public User findOrThrow(Long id){
         return repository.findById(id).orElseThrow(()->new UserNotFoundException(id));
     }
+
     /**
      * getOne returns a user depending on his ID. The response is modeled with the assembler.
      * In case of no user with the ID specified, it's throws a UserNotFoundException (which will
@@ -119,6 +125,7 @@ public class UserController {
     }
 
 
+    //TODO: Should we move this endpoint to a DuckController?
     /**
      * sendDuck sends a duck from a user to another one and save the transaction on the database.
      * The id of the transmitter and the receiver are sent by path.
@@ -126,13 +133,12 @@ public class UserController {
      * @param receiverId id from the receiver
      * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
      */
-    @PutMapping("/sendDuck/{transmitterId}/{receiverId}")
-    ResponseEntity sendDuck(@PathVariable Long transmitterId, @PathVariable Long receiverId) {
+    @PostMapping("/sendDuck")
+    ResponseEntity sendDuck(@RequestParam Long transmitterId, @RequestParam Long receiverId) {
         User transmitter = this.findOrThrow(transmitterId);
         User receiver = this.findOrThrow(receiverId);
-        transmitter.sendsDuck(receiver);
-        repository.save(transmitter);
-        repository.save(receiver);
+        Duck duckSent = new Duck(transmitter, receiver);
+        duckRepo.save(duckSent);
         List<User> usersList = List.of(receiver, transmitter);
         CollectionModel<EntityModel<User>> body = this.collectionModelFromList(usersList);
         return ResponseEntity.ok().body(body);
