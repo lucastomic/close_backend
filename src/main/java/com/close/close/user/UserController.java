@@ -2,19 +2,16 @@ package com.close.close.user;
 
 
 import com.close.close.apirest.RestSaver;
-import com.close.close.duck.Duck;
+import com.close.close.apirest.UserUtils;
 import com.close.close.duck.DuckRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 /**
@@ -34,61 +31,30 @@ public class UserController {
      */
     private final UserModelAssembler assembler;;
 
-    private final DuckRepository duckRepo;
 
     /**
      * Class constructor. It implements dependency injection.
      * @param repository user's repository
      * @param assembler user's model assembler
      */
-    UserController(UserRepository repository, UserModelAssembler assembler, DuckRepository duckRepo){
+    UserController(UserRepository repository, UserModelAssembler assembler){
         this.repository = repository;
-        this.duckRepo = duckRepo;
         this.assembler = assembler;
     };
 
-    /**
-     * modelUsersList takes a user's list, model each one to an EntityModel
-     * and returns a list with all the EntityModelObjects
-     * @param users list of users to parse
-     * @return list of EntityModel objects with the users parsered
-     */
-    private List<EntityModel<User>> modelUsersList(List<User>users){
-       return users.stream().map(assembler::toModel).toList();
-    }
 
-    /**
-     * collectionModelFromList takes a list of users, models each one to a EntityModel
-     * and pareses all the list into a CollectionModel with a link to all users
-     * @param users list of users to parse
-     * @return CollectionModel object with each user modeled
-     */
-    CollectionModel<EntityModel<User>> collectionModelFromList(List<User> users){
-        return CollectionModel.of(
-                this.modelUsersList(users),
-                linkTo(methodOn(UserController.class).getAll()).withSelfRel()
-        );
-    }
     /**
      * getAll retrieves a CollectionModel with all the application's users.
      * The response is linked to different methods of the APIRest.
      * @return CollectionModel with different links of the APIRest.
      */
     @GetMapping("/users")
-    CollectionModel<EntityModel<User>> getAll(){
+    public CollectionModel<EntityModel<User>> getAll(){
+            UserUtils utils = new UserUtils(repository,assembler);
             List<User> allUsers = repository.findAll();
-            return this.collectionModelFromList(allUsers);
+            return utils.collectionModelFromList(allUsers);
     }
 
-    /**
-     * findOrThrow looks a user for his id, and if it doesn't exist it throws a
-     * UserNotFoundException
-     * @param id id which is looked for
-     * @return User with the ID
-     */
-    public User findOrThrow(Long id){
-        return repository.findById(id).orElseThrow(()->new UserNotFoundException(id));
-    }
 
     /**
      * getOne returns a user depending on his ID. The response is modeled with the assembler.
@@ -99,7 +65,8 @@ public class UserController {
      */
     @GetMapping("/users/{id}")
     EntityModel<User> getOne(@PathVariable Long id){
-        User user = this.findOrThrow(id);
+        UserUtils userUtils = new UserUtils(repository, assembler);
+        User user = userUtils.findOrThrow(id);
         return assembler.toModel(user);
     }
 
@@ -125,23 +92,5 @@ public class UserController {
     }
 
 
-    //TODO: Should we move this endpoint to a DuckController?
-    /**
-     * sendDuck sends a duck from a user to another one and save the transaction on the database.
-     * The id of the transmitter and the receiver are sent by path.
-     * @param transmitterId id from the transmitter
-     * @param receiverId id from the receiver
-     * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
-     */
-    @PostMapping("/sendDuck")
-    ResponseEntity sendDuck(@RequestParam Long transmitterId, @RequestParam Long receiverId) {
-        User transmitter = this.findOrThrow(transmitterId);
-        User receiver = this.findOrThrow(receiverId);
-        Duck duckSent = new Duck(transmitter, receiver);
-        duckRepo.save(duckSent);
-        List<User> usersList = List.of(receiver, transmitter);
-        CollectionModel<EntityModel<User>> body = this.collectionModelFromList(usersList);
-        return ResponseEntity.ok().body(body);
-    }
 
 }
