@@ -82,15 +82,5 @@ public class UserController {
         return saver.saveEntity(newUser);
     }
 
-    /**
-     * parseEntityModelToLink parses an entity model into a URI to access to itself inside the API
-     * @param entityModel entity model to parse
-     * @return URI object with the respective direction
-     */
-    private URI parseEntityModelToLink(EntityModel<?> entityModel){
-        return entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri();
-    }
-
-
 
 }
