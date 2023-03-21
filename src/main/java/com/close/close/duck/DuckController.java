@@ -5,6 +5,10 @@ import com.close.close.apirest.UserUtils;
 import com.close.close.user.User;
 import com.close.close.user.UserModelAssembler;
 import com.close.close.user.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +22,9 @@ public class DuckController {
     private DuckRepository repository;
     private UserRepository userRepository;
     private UserModelAssembler userModelAssembler;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     DuckController(DuckRepository repository, UserRepository userRepository, UserModelAssembler userModelAssembler){
         this.userModelAssembler = userModelAssembler;
         this.userRepository = userRepository;
@@ -45,8 +52,11 @@ public class DuckController {
 
     @GetMapping("/ducksReceived/{id}")
     CollectionModel<EntityModel<User>> getDucksReceived(@PathVariable Long id){
-
-        //TODO: implement
+       String queryString = "SELECT d.sender FROM Duck d WHERE d.receiver.id = :id";
+       Query query = entityManager.createQuery(queryString).setParameter("id",id);
+       List<User> users = query.getResultList();
+       UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
+       return userUtils.collectionModelFromList(users);
     }
 
 }
