@@ -1,5 +1,6 @@
 package com.close.close.space_partitioning;
 
+import org.jetbrains.annotations.NotNull;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -14,7 +15,7 @@ public class ScatterPlot extends JFrame {
     private final XYPlot plot;
 
 
-    public ScatterPlot(XYDataset dataset, V2 rangeX, V2 rangeY) {
+    public ScatterPlot(XYDataset dataset, @NotNull V2 rangeX, @NotNull V2 rangeY) {
 
         JFreeChart chart = ChartFactory.createScatterPlot(
                 "Locations",

@@ -46,16 +46,13 @@ public class SpacePartitionTest {
             System.out.println("-------------------------------------");
             System.out.println("Query Completed :: Duration: " + (System.currentTimeMillis() - treeQueryStart)/1000f + "s");
 
-
-            QueryResult<DummyLocation> result = quadTree.query(pos, range);
-
             QuadTreeGraphics<DummyLocation> graphics = new QuadTreeGraphics<>();
             graphics.showQueryRangeResult(
                     pos, range,
                     new V2(-box.getX(), box.getX()),
                     new V2(- box.getY(), box.getY()),
                     quadTree,
-                    result
+                    qr
             );
 
             System.out.println("Comparisons: " + qr.COMPARISONS);

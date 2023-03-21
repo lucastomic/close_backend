@@ -1,5 +1,7 @@
 package com.close.close.space_partitioning;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -13,7 +15,7 @@ public class QuadTreeBranch<T extends Location> {
     private final ArrayList<T> locations;
 
 
-    public QuadTreeBranch(QuadTreeBranch<T> parentBranch, V2 position, V2 box) {
+    public QuadTreeBranch(@NotNull QuadTreeBranch<T> parentBranch, V2 position, V2 box) {
         this(parentBranch.tree, position, box);
         this.parentBranch = parentBranch;
         this.level = parentBranch.getLevel() + 1;
@@ -34,7 +36,7 @@ public class QuadTreeBranch<T extends Location> {
         return level;
     }
 
-    public void getLocations(ArrayList<T> result) {
+    public void getLocations(@NotNull ArrayList<T> result) {
         result.addAll(locations);
         for (QuadTreeBranch<T> child : childBranches)
             child.getLocations(result);
@@ -56,21 +58,21 @@ public class QuadTreeBranch<T extends Location> {
         return childBranches.size() > 0;
     }
 
-    public boolean includes(V2 position) {
+    public boolean includes(@NotNull V2 position) {
         return     position.getX() >= this.position.getX() - this.box.getX()
                 && position.getX() <= this.position.getX() + this.box.getX()
                 && position.getY() >= this.position.getY() - this.box.getY()
                 && position.getY() <= this.position.getY() + this.box.getY();
     }
 
-    public boolean isContainedBy(V2 position, V2 box) {
+    public boolean isContainedBy(@NotNull V2 position, @NotNull V2 box) {
         return     position.getX() - box.getX() <= this.position.getX() - this.box.getX()
                 && position.getX() + box.getX() >= this.position.getX() + this.box.getX()
                 && position.getY() - box.getY() <= this.position.getY() - this.box.getY()
                 && position.getY() + box.getY() >= this.position.getY() + this.box.getY();
     }
 
-    public boolean intersectsWith(V2 position, V2 box) {
+    public boolean intersectsWith(@NotNull V2 position, @NotNull V2 box) {
         return     position.getX() - box.getX() <= this.position.getX() + this.box.getX()
                 && position.getX() + box.getX() >= this.position.getX() - this.box.getX()
                 && position.getY() - box.getY() <= this.position.getY() + this.box.getY()
@@ -78,7 +80,7 @@ public class QuadTreeBranch<T extends Location> {
     }
 
 
-    public boolean insert(T location) {
+    public boolean insert(@NotNull T location) {
         if (!includes(location.getPosition())) return false;
 
         if (isBranched()) findAndInsert(location);

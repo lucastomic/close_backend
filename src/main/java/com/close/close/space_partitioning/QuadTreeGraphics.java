@@ -1,5 +1,6 @@
 package com.close.close.space_partitioning;
 
+import org.jetbrains.annotations.NotNull;
 import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
@@ -11,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 
 public class QuadTreeGraphics<T extends Location> {
 
-    public void showQueryRangeResult (V2 origin, double range, V2 rangeX, V2 rangeY, QuadTree<T> quadTree, QueryResult<T> result) {
+    public void showQueryRangeResult (@NotNull V2 origin, double range, V2 rangeX, V2 rangeY, QuadTree<T> quadTree, @NotNull QueryResult<T> result) {
         XYSeries me = new XYSeries("Me");
         XYSeries all = new XYSeries("All");
         XYSeries results = new XYSeries("Results");
@@ -50,7 +51,7 @@ public class QuadTreeGraphics<T extends Location> {
         });
     }
 
-    private void drawBranch(XYPlot plot, QuadTreeBranch<T> branch) {
+    private void drawBranch(@NotNull XYPlot plot, @NotNull QuadTreeBranch<T> branch) {
 
         plot.addAnnotation(
                 new XYShapeAnnotation(
