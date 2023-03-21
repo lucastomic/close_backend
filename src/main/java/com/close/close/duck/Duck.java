@@ -32,12 +32,15 @@ public class Duck {
     private User receiver;
 
     /**
-     * Class constructor. Excpects the sender and receiver and stores them in the proper relations
+     * Class constructor. Expects the sender and receiver and stores them in the proper relations
      * and converts them in a composite key.
      * @param sender user who has sent the duck
      * @param receiver user who has received the duck
      */
     public Duck(User sender, User receiver) {
+        if(sender.equals(receiver)){
+            throw new DuckToItselfException(sender.getId());
+        }
         this.sender = sender;
         this.receiver = receiver;
         this.id = new DuckId(sender.getId(),receiver.getId());

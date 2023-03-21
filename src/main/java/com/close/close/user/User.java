@@ -9,6 +9,7 @@ import com.close.close.interest.Interest;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -75,6 +76,20 @@ public class User{
         inverseJoinColumns = @JoinColumn(name = "interest_id")
     )
     private Set<Interest> interests;
+
+
+    /**
+     * Return if this user is equal to another object
+     * @param o object to compare with this user
+     * @return whether the object is the same or not
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(this.id, user.getId());
+    }
 
     //Getters and setters
 
