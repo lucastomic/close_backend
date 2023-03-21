@@ -1,18 +1,12 @@
 package com.close.close.user;
 
-
 import com.close.close.apirest.RestSaver;
 import com.close.close.apirest.UserUtils;
-import com.close.close.duck.DuckRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.net.URI;
 import java.util.List;
-
-
 
 /**
  * UserController is the controller from the User entity.

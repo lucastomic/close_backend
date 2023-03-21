@@ -52,7 +52,7 @@ public class DuckController {
      * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
      */
     @PostMapping("/sendDuck")
-    ResponseEntity sendDuck(@RequestParam Long transmitterId, @RequestParam Long receiverId) {
+    public ResponseEntity sendDuck(@RequestParam Long transmitterId, @RequestParam Long receiverId) {
         UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
         User transmitter = userUtils.findOrThrow(transmitterId);
         User receiver = userUtils.findOrThrow(receiverId);
