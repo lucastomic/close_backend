@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 
 public class QuadTreeGraphics<T extends Location> {
 
-    public void showQueryRangeResult (@NotNull V2 origin, double range, V2 rangeX, V2 rangeY, QuadTree<T> quadTree, @NotNull QueryResult<T> result) {
+    public void showQueryRangeResult (@NotNull Vector2D origin, double range, Vector2D rangeX, Vector2D rangeY, QuadTree<T> quadTree, @NotNull QueryResult<T> result) {
         XYSeries me = new XYSeries("Me");
         XYSeries all = new XYSeries("All");
         XYSeries results = new XYSeries("Results");
@@ -52,18 +52,19 @@ public class QuadTreeGraphics<T extends Location> {
     }
 
     private void drawBranch(@NotNull XYPlot plot, @NotNull QuadTreeBranch<T> branch) {
-
+        Rectangle area = branch.getArea();
         plot.addAnnotation(
                 new XYShapeAnnotation(
                         new Rectangle2D.Double(
-                                branch.getPosition().getX() - branch.getBox().getX(),
-                                branch.getPosition().getY() - branch.getBox().getY(),
-                                branch.getBox().getX()*2, branch.getBox().getY()*2
+                                area.getPosition().getX() - area.getDimensions().getX(),
+                                area.getPosition().getY() - area.getDimensions().getY(),
+                                area.getDimensions().getX() * 2,
+                                area.getDimensions().getY() * 2
                         )
                 )
         );
 
-        for (QuadTreeBranch<T> child : branch.getChild())
+        for (QuadTreeBranch<T> child : branch.getChildBranches())
             drawBranch(plot, child);
     }
 }

@@ -19,12 +19,12 @@ public class QuadTree<T extends Location> {
      * Constructs a new QuadTree
      * @param maxLevel Maximum branch level of the tree.
      * @param maxCapacity Maximum capacity of Locations in a branch of the tree.
-     * @param box Area that will be handled by this tree
+     * @param area Area that will be handled by this tree
      */
-    public QuadTree(long maxLevel, long maxCapacity, V2 box) {
+    public QuadTree(long maxLevel, long maxCapacity, Rectangle area) {
         MAX_LEVEL = maxLevel;
         MAX_CAPACITY = maxCapacity;
-        ROOT = new QuadTreeBranch<T>(this, new V2(0, 0), box);
+        ROOT = new QuadTreeBranch<T>(this, area);
     }
 
     /**
@@ -46,17 +46,17 @@ public class QuadTree<T extends Location> {
         return ROOT.insert(location);
     }
 
-    public QueryResult<T> query(V2 origin, double rangeRadius) {
+    public QueryResult<T> query(Vector2D origin, double queryRadius) {
         float SQRT_2 = 1.41421356237f;
-        double innerSquareSide = rangeRadius * SQRT_2;
-        V2 innerSquare = new V2(innerSquareSide/2, innerSquareSide/2);
-        return query(origin, innerSquare);
+        double innerSquareRadius = queryRadius * SQRT_2 / 2;
+        Rectangle queryArea = new Rectangle(origin, new Vector2D(innerSquareRadius, innerSquareRadius));
+        return query(queryArea);
     }
 
-    public QueryResult<T> query(V2 origin, V2 box) {
+    public QueryResult<T> query(Rectangle queryArea) {
         ArrayList<T> results = new ArrayList<>();
         ArrayList<T> potentialResults = new ArrayList<>();
-        Long comparisons = ROOT.query(origin, box, results, potentialResults);
+        Long comparisons = ROOT.query(queryArea, results, potentialResults);
         return new QueryResult<T>(results, potentialResults, comparisons);
     }
 
