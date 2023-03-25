@@ -1,12 +1,14 @@
 package com.close.close.apirest;
 
+import com.close.close.duck.DuckToItselfException;
 import com.close.close.interest.InterestNotFoundException;
 import com.close.close.user.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 /**
- * AdviceController handles exceptions which implies a status code (implmenet the StatusException interface).
+ * AdviceController handles exceptions which implies a status code (implement the StatusException interface).
  * It's triggered every time an exception with status code is thrown all over the application.
  */
 @ControllerAdvice
@@ -20,7 +22,8 @@ public class AdviceController {
      */
     @ExceptionHandler({
             InterestNotFoundException.class,
-            UserNotFoundException.class
+            UserNotFoundException.class,
+            DuckToItselfException.class
     })
     ResponseEntity<String> handleFunction(StatusException ex){
         return new ResponseEntity<String>(ex.getMessage(),ex.getStatus());
