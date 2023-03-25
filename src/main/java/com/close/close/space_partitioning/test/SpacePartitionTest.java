@@ -10,18 +10,19 @@ import java.util.Scanner;
  */
 public class SpacePartitionTest {
     private static final long MADRID_POPULATION = 100000;
-    private static final double SIDE_M = 30000;
+    private static final double SIDE_M = 6000;
     private static final Vector2D box = new Vector2D(SIDE_M/2, SIDE_M/2);
 
     public static void main(String[] args) {
-        QuadTree<DummyLocation> quadTree = new QuadTree<>(10, 4, new Rectangle(Vector2D.ZERO, box));
+        long maxLevel = QuadTree.findMaxLevel(SIDE_M, 10);
+        QuadTree<DummyLocation> quadTree = new QuadTree<>(maxLevel, 4, new Rectangle(Vector2D.ZERO, box));
 
         System.out.println("Loading QuadTree...");
         Random random = new Random();
         long treePopulationStart = System.currentTimeMillis();
         for (int i = 0; i < MADRID_POPULATION; i++) {
-            double x = random.nextDouble() * (box.getX() + box.getX()) - box.getX();
-            double y = random.nextDouble() * (box.getY() + box.getY()) - box.getY();
+            double x = random.nextDouble() * Math.cos((float) random.nextDouble()) * (box.getX() + box.getX()) - box.getX();
+            double y = random.nextDouble() * Math.sin((float) random.nextDouble()) * Math.cos((float) random.nextDouble()) * (box.getY() + box.getY()) - box.getY();
             quadTree.insert(new DummyLocation(new Dummy(), new Vector2D(x, y)));
         }
         System.out.println("QuadTree Loaded :: Duration: " + (System.currentTimeMillis() - treePopulationStart)/1000f + "s");

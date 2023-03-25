@@ -8,6 +8,34 @@ import java.util.ArrayList;
  * @param <T> The type of Location this tree will handle
  */
 public class QuadTree<T extends Location> {
+    /**
+    *  W = width of a quadTree
+    *  i = level of the branch
+    *  As we know:
+    *      W[i+1] = W[i]/2   - Recursively
+    *
+    *      Let W[0] = 10:
+    *       W[1] = W[0]/2 = 10/2
+    *       W[2] = W[1]/2 = 10/2/2 = 10/4
+    *       W[3] = W[2]/2 = 10/2/2/2 = 10/8
+    *       W[4] = W[3]/2 = 10/2/2/2/2 = 10/16
+    *
+    *   As we can see, each iteration multiplies the division by 2
+    *   Which translates to:
+    *       n = final i
+    *       W[n] = W[0]/2^n
+    *
+    *   Now if we want to find a specific value for n that makes W[n] given W[0] and W[n]:
+    *   2^n = W[0]/W[n]
+    *       n = log2(W[0]/W[n])
+    *
+    *   And we know that: log2(x) = log(x)/log(2)
+    *   So: n = log(W[0]/W[n]) / log(2)
+     **/
+    public static long findMaxLevel(double areaWidth, double desiredFinalWidth) {
+        return (long) (Math.log(areaWidth/desiredFinalWidth) / Math.log(2));
+    }
+
     /** Maximum branch level. */
     public final long MAX_LEVEL;
     /** Maximum capacity of Locations in a branch. */
