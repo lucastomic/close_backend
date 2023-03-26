@@ -12,7 +12,7 @@ import jakarta.persistence.*;
  * A user only can send 1 duck to another user. So, there can't be duplicated rows.
  */
 @Entity
-public class    Duck {
+public class Duck {
     /**
      * id is a composite key, stored in an embedded DuckId object.
      */
@@ -34,22 +34,23 @@ public class    Duck {
     /**
      * Class constructor. Expects the sender and receiver and stores them in the proper relations
      * and converts them in a composite key.
-     * @param sender user who has sent the duck
+     *
+     * @param sender   user who has sent the duck
      * @param receiver user who has received the duck
      */
     public Duck(User sender, User receiver) {
-        if(sender.equals(receiver)){
+        if (sender.equals(receiver)) {
             throw new DuckToItselfException(sender.getId());
         }
         this.sender = sender;
         this.receiver = receiver;
-        this.id = new DuckId(sender.getId(),receiver.getId());
+        this.id = new DuckId(sender.getId(), receiver.getId());
     }
 
     /**
      * Default constructor needed for JPA operations
      */
-    public Duck(){
+    public Duck() {
 
     }
 
