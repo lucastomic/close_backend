@@ -67,10 +67,13 @@ public class UserController {
         return ASSEMBLER.toModel(user);
     }
 
+
+
     /**
      * saveUser saves a user on the database. The user information is passed in the request's body.
-     * If the user is saved successfully it returns a OK 200 status and a response with the link for
+     * If the user is saved successfully it returns an OK 200 status and a response with the link for
      * accessing the new User inserted. Also, in the body of the response is the information of the user inserted.
+     * Before saving the User data, its password is encrypted using a Password-Based Encryption (PBE)
      * @return ResponseEntity with the link to the new employee inserted and the user's information in the request's body
      */
     @PostMapping("/users")

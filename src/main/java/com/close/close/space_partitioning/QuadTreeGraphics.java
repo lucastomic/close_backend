@@ -42,7 +42,7 @@ public class QuadTreeGraphics<T extends Location> {
                             )
                     )
             );
-            drawBranch(sp.getPlot(), quadTree.ROOT);
+            drawBranch(sp.getPlot(), quadTree.root);
             sp.setSize(1240, 1240);
             sp.setLocationRelativeTo(null);
             sp.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

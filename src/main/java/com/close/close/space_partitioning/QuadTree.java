@@ -14,11 +14,11 @@ public class QuadTree<T extends Location> {
     *  As we know:
     *      W[i+1] = W[i]/2   - Recursively
     *
-    *      Let W[0] = 10:
-    *       W[1] = W[0]/2 = 10/2
-    *       W[2] = W[1]/2 = 10/2/2 = 10/4
-    *       W[3] = W[2]/2 = 10/2/2/2 = 10/8
-    *       W[4] = W[3]/2 = 10/2/2/2/2 = 10/16
+    *  Let W[0] = 10:
+    *      W[1] = W[0]/2 = 10/2
+    *      W[2] = W[1]/2 = 10/2/2 = 10/4
+    *      W[3] = W[2]/2 = 10/2/2/2 = 10/8
+    *      W[4] = W[3]/2 = 10/2/2/2/2 = 10/16
     *
     *   As we can see, each iteration multiplies the division by 2
     *   Which translates to:
@@ -40,8 +40,10 @@ public class QuadTree<T extends Location> {
     public final long MAX_LEVEL;
     /** Maximum capacity of Locations in a branch. */
     public final long MAX_CAPACITY;
+    private final Rectangle AREA;
     /** Root branch of a tree */
-    public final QuadTreeBranch<T> ROOT;
+    public QuadTreeBranch<T> root;
+
 
     /**
      * Constructs a new QuadTree
@@ -52,7 +54,8 @@ public class QuadTree<T extends Location> {
     public QuadTree(long maxLevel, long maxCapacity, Rectangle area) {
         MAX_LEVEL = maxLevel;
         MAX_CAPACITY = maxCapacity;
-        ROOT = new QuadTreeBranch<T>(this, area);
+        AREA = area;
+        root = new QuadTreeBranch<T>(this, area);
     }
 
     /**
@@ -61,7 +64,7 @@ public class QuadTree<T extends Location> {
      */
     public ArrayList<T> getLocations() {
         ArrayList<T> result = new ArrayList<>();
-        ROOT.getLocations(result);
+        root.getLocations(result);
         return result;
     }
 
@@ -71,7 +74,15 @@ public class QuadTree<T extends Location> {
      * @return False if the Location could not be added.
      */
     public boolean insert(T location) {
-        return ROOT.insert(location);
+        return root.insert(location);
+    }
+
+    public boolean remove(T location) {
+        return root.remove(location);
+    }
+
+    public void reset() {
+        root = new QuadTreeBranch<T>(this, AREA);
     }
 
     public QueryResult<T> query(Vector2D origin, double queryRadius) {
@@ -84,13 +95,13 @@ public class QuadTree<T extends Location> {
     public QueryResult<T> query(Rectangle queryArea) {
         ArrayList<T> results = new ArrayList<>();
         ArrayList<T> potentialResults = new ArrayList<>();
-        Long comparisons = ROOT.query(queryArea, results, potentialResults);
+        Long comparisons = root.query(queryArea, results, potentialResults);
         return new QueryResult<T>(results, potentialResults, comparisons);
     }
 
     public void show()
     {
         System.out.println(" --- Quad Tree");
-        ROOT.show();
+        root.show();
     }
 }

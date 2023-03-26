@@ -61,6 +61,28 @@ public class QuadTreeBranch<T extends Location> {
         return true;
     }
 
+    private void findAndInsert(T location) {
+        Iterator<QuadTreeBranch<T>> iterator = childBranches.iterator();
+        while(iterator.hasNext() && !iterator.next().insert(location));
+    }
+
+    public boolean remove(@NotNull T location) {
+        if (!area.includes(location.getPosition())) return false;
+
+        if (isBranched()) findAndRemove(location);
+        else {
+            assert locations.contains(location) : "Location " + location + " in " + this + " is missing";
+            locations.remove(location);
+        }
+
+        return true;
+    }
+
+    private void findAndRemove(T location) {
+        Iterator<QuadTreeBranch<T>> iterator = childBranches.iterator();
+        while(iterator.hasNext() && !iterator.next().remove(location));
+    }
+
     public void show() {
         System.out.print("   ");
         for (int i = 0; i <= level - 1; i++) System.out.print("|  ");
@@ -73,12 +95,6 @@ public class QuadTreeBranch<T extends Location> {
         }
 
         for (QuadTreeBranch<T> children : childBranches) children.show();
-    }
-
-
-    private void findAndInsert(T location) {
-        Iterator<QuadTreeBranch<T>> iterator = childBranches.iterator();
-        while(iterator.hasNext() && !iterator.next().insert(location));
     }
 
     private void branch() {
