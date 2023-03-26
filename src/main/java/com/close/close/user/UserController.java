@@ -2,6 +2,10 @@ package com.close.close.user;
 
 import com.close.close.apirest.RestSaver;
 import com.close.close.apirest.UserUtils;
+import com.close.close.authentication.TokenService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
 import org.jasypt.util.text.AES256TextEncryptor;
@@ -10,6 +14,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * UserController is the controller from the User entity.
@@ -17,6 +22,12 @@ import java.util.List;
  */
 @RestController
 public class UserController {
+
+    /**
+     * entityManager makes the SQL queries
+     */
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * repository is the user's repository for DB interaction
@@ -78,6 +89,33 @@ public class UserController {
      */
     @PostMapping("/users")
     ResponseEntity<?> saveUser(@RequestBody User newUser){
+        RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
+        PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        String encryptedPassword = encryptor.encrypt(newUser.getPassword());
+        newUser.setPassword(encryptedPassword);
+        return saver.saveEntity(newUser);
+    }
+
+    @PostMapping("/login")
+    ResponseEntity<?> login(@RequestBody UserCredentials credentials){
+        String queryString = "SELECT u FROM User u WHERE u.phone = :phone";
+        Query query = entityManager.createQuery(queryString).setParameter("phone",credentials.getPhone());
+        User user = (User) query.getResultList().get(0);
+
+        PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        String encryptedPassword = encryptor.encrypt(credentials.getPassword());
+
+        if(Objects.equals(encryptedPassword, user.getPassword())){
+            TokenService tokenService = new TokenService();
+            return ResponseEntity.ok(tokenService.generateToken(user));
+        }else{
+            return (ResponseEntity<?>) ResponseEntity.badRequest();
+        }
+
+    }
+
+    @PostMapping("/logout")
+    ResponseEntity<?> login(@RequestBody User newUser){
         RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
         PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         String encryptedPassword = encryptor.encrypt(newUser.getPassword());
