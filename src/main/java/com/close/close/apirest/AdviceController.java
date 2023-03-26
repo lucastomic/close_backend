@@ -1,5 +1,6 @@
 package com.close.close.apirest;
 
+import com.close.close.duck.DuckNotFound;
 import com.close.close.duck.DuckToItselfException;
 import com.close.close.interest.InterestNotFoundException;
 import com.close.close.user.UserNotFoundException;
@@ -23,7 +24,8 @@ public class AdviceController {
     @ExceptionHandler({
             InterestNotFoundException.class,
             UserNotFoundException.class,
-            DuckToItselfException.class
+            DuckToItselfException.class,
+            DuckNotFound.class
     })
     ResponseEntity<String> handleFunction(StatusException ex){
         return new ResponseEntity<String>(ex.getMessage(),ex.getStatus());
