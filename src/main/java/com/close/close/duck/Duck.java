@@ -12,7 +12,7 @@ import jakarta.persistence.*;
  * A user only can send 1 duck to another user. So, there can't be duplicated rows.
  */
 @Entity
-public class Duck {
+public class    Duck {
     /**
      * id is a composite key, stored in an embedded DuckId object.
      */

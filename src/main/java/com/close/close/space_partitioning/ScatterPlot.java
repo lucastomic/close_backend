@@ -15,7 +15,7 @@ public class ScatterPlot extends JFrame {
     private final XYPlot plot;
 
 
-    public ScatterPlot(XYDataset dataset, @NotNull V2 rangeX, @NotNull V2 rangeY) {
+    public ScatterPlot(XYDataset dataset, @NotNull Vector2D rangeX, @NotNull Vector2D rangeY) {
 
         JFreeChart chart = ChartFactory.createScatterPlot(
                 "Locations",

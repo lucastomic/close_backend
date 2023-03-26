@@ -3,23 +3,23 @@ package com.close.close.space_partitioning;
 public abstract class Location {
     private static long currentId = 0;
     private final long id;
-    private V2 pos;
+    private Vector2D position;
 
 
-    public Location(V2 position) {
+    public Location (Vector2D position) {
         this.id = currentId + 1;
         currentId++;
-        this.pos = position;
+        this.position = position;
     }
 
 
-    public V2 getPosition() {
-        return pos;
+    public Vector2D getPosition() {
+        return position;
     }
 
 
     @Override
     public String toString() {
-        return String.valueOf(id) + " | Position: " + pos;
+        return String.valueOf(id) + " | Position: " + position;
     }
 }

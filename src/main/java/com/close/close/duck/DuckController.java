@@ -70,7 +70,7 @@ public class DuckController {
      * @return CollectionModel with all the users who have sent a duck to this user
      */
     @GetMapping("/ducksReceived/{id}")
-    CollectionModel<EntityModel<User>> getDucksReceived(@PathVariable Long id){
+    public CollectionModel<EntityModel<User>> getDucksReceived(@PathVariable Long id){
        String queryString = "SELECT d.sender FROM Duck d WHERE d.receiver.id = :id";
        Query query = entityManager.createQuery(queryString).setParameter("id",id);
        List<User> users = query.getResultList();

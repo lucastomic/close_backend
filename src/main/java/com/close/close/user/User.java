@@ -23,27 +23,36 @@ public class User{
      * It's marked as a generated value.
      */
     private @Id @GeneratedValue Long id;
+
     /**
      * name is a string with the user's name.
      * It's not nullable.
      */
     @Column(nullable=false)
     private String name;
+
     /**
      * age is the user's age
     */
     private int age;
 
     /**
+     *
+     */
+    private String password;
+
+    /**
      * ducksSent is the collection of DuckShipping where the user is the sender.
      */
     @OneToMany(mappedBy = "sender")
     private Set<Duck> ducksSent;
+
     /**
      * ducksSent is the collection of DuckShipping where the user is the receiver.
      */
     @OneToMany(mappedBy = "receiver")
     private Set<Duck> ducksReceived;
+
     /**
      * phone is a string with the user's phone number.
      * This column is mandatory
@@ -59,12 +68,14 @@ public class User{
      */
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean phoneIsVerified;
+
     /**
      * photos is the list of user's photos. They are in string format to a URL.
      * Photos are saved in a different table
      */
     @ElementCollection
     private Set<String> photos;
+
     /**
      * interests are the user's interests set.
      * As this is a M-N relation it's saved in a different table.
@@ -91,12 +102,10 @@ public class User{
         return Objects.equals(this.id, user.getId());
     }
 
-    //Getters and setters
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -104,7 +113,6 @@ public class User{
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -112,15 +120,16 @@ public class User{
     public int getAge() {
         return age;
     }
-
     public void setAge(int age) {
         this.age = age;
     }
 
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
     public String getPhone() {
         return phone;
     }
-
     public void setPhone(String phone) {
         this.phone = phone;
     }
@@ -128,7 +137,6 @@ public class User{
     public boolean isPhoneIsVerified() {
         return phoneIsVerified;
     }
-
     public void setPhoneIsVerified(boolean phoneIsVerified) {
         this.phoneIsVerified = phoneIsVerified;
     }
@@ -136,7 +144,6 @@ public class User{
     public Set<String> getPhotos() {
         return photos;
     }
-
     public void setPhotos(Set<String> photos) {
         this.photos = photos;
     }
@@ -144,7 +151,6 @@ public class User{
     public Set<Interest> getInterests() {
         return interests;
     }
-
     public void setInterests(Set<Interest> interests) {
         this.interests = interests;
     }
