@@ -34,6 +34,9 @@ public class DuckController {
      * userModelAssmebler manages the User entity modeling
      */
     private UserModelAssembler userModelAssembler;
+    /**
+     * entityManager is in charge of managing SQL queries.
+     */
     @PersistenceContext
     private EntityManager entityManager;
 
