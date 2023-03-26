@@ -7,8 +7,10 @@ import com.close.close.user.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -47,14 +49,14 @@ public class DuckController {
     /**
      * sendDuck sends a duck from a user to another one and save the transaction on the database.
      * The id of the transmitter and the receiver are sent by path.
-     * @param transmitterId id from the transmitter
+     * @param senderId id from the transmitter
      * @param receiverId id from the receiver
      * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
      */
     @PostMapping("/sendDuck")
-    public ResponseEntity sendDuck(@RequestParam Long transmitterId, @RequestParam Long receiverId) {
+    public ResponseEntity sendDuck(@RequestParam Long senderId, @RequestParam Long receiverId) {
         UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
-        User transmitter = userUtils.findOrThrow(transmitterId);
+        User transmitter = userUtils.findOrThrow(senderId);
         User receiver = userUtils.findOrThrow(receiverId);
         Duck duckSent = new Duck(transmitter, receiver);
         repository.save(duckSent);
@@ -77,5 +79,24 @@ public class DuckController {
        UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
        return userUtils.collectionModelFromList(users);
     }
+    @DeleteMapping("/deleteDuck/{senderId}/{receiverId}")
+    @Transactional
+    public ResponseEntity<?> removeDuck(@PathVariable Long senderId, @PathVariable Long receiverId) {
+        UserUtils userUtils = new UserUtils(userRepository, userModelAssembler);
+        User sender = userUtils.findOrThrow(senderId);
+        User receiver = userUtils.findOrThrow(receiverId);
+        Duck removedDuck = entityManager.find(Duck.class, new DuckId(senderId, receiverId));
+        if (removedDuck == null) {
+            throw new DuckNotFound(senderId,receiverId);
+        }
+        try {
+            entityManager.remove(removedDuck);
+            return ResponseEntity.ok().body("Duck object has been deleted successfully.");
+        } catch (Exception e) {
+            throw new DuckNotFound(senderId,receiverId);
+        }
+    }
+
+
 
 }
