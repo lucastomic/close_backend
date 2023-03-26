@@ -21,7 +21,7 @@ import java.util.function.Function;
 public class TokenService {
     private static final long serialVersionUID = -2550185165626007488L;
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -51,7 +51,6 @@ public class TokenService {
         return expiration.before(new Date());
     }
 
-    //generate token for user
 
     /**
      * generateToken creates an authentication token from a User object.
@@ -72,8 +71,8 @@ public class TokenService {
 
 
     //validate token
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, User user) {
         final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(user.getName()) && !isTokenExpired(token));
     }
 }
