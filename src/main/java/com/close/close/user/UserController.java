@@ -121,14 +121,14 @@ public class UserController {
     }
 
     /**
-     * getUserFromPhone retries a user given his phone number.
+     * getUserFromPhone gets a user given his phone number.
      * @param phone user's phone number
      * @return User object with the phone number indicated
      */
     private User getUserFromPhone(String phone){
         String queryString = "SELECT u FROM User u WHERE u.phone = :phone";
         Query query = entityManager.createQuery(queryString).setParameter("phone",phone);
-        User user = (User) query.getResultList().get(0);
+        return (User) query.getResultList().get(0);
     }
 
     //TODO: make
@@ -152,7 +152,7 @@ public class UserController {
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         try {
             User userToDelete = REPOSITORY.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+                    .orElseThrow(() -> new UserNotFoundException(id));
             PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
             String encryptedPassword = encryptor.encrypt(userToDelete.getPassword());
             userToDelete.setPassword(encryptedPassword);

@@ -12,7 +12,7 @@ public class UserCredentials {
 
 
     /**
-     * Cronstructs a new UserCredential with a phone and password.
+     * Constructs a new UserCredential with a phone and password.
      * @param phone
      * @param password
      */
