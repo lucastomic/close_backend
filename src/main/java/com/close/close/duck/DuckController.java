@@ -77,5 +77,19 @@ public class DuckController {
        UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
        return userUtils.collectionModelFromList(users);
     }
+    @DeleteMapping("/deleteDuck/{receiver}/{sender}")
+    public ResponseEntity RemoveDuck(@PathVariable Long transmitterId, @PathVariable Long receiverId) {
+        UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
+        User transmitter = userUtils.findOrThrow(transmitterId);
+        User receiver = userUtils.findOrThrow(receiverId);
+        Duck removedDuck = entityManager.find(Duck.class,new DuckId(transmitterId,receiverId));
+        List<User> usersList = List.of(receiver, transmitter);
+        CollectionModel<EntityModel<User>> body = userUtils.collectionModelFromList(usersList);
+        entityManager.remove(removedDuck);
+        entityManager.getTransaction().commit();
+        return ResponseEntity.ok().body(body);
+    }
+
+
 
 }
