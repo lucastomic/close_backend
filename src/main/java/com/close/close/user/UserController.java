@@ -11,6 +11,7 @@ import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -96,11 +97,17 @@ public class UserController {
         return saver.saveEntity(newUser);
     }
 
+    /**
+     * login signs in the user.
+     * It expects the user credentials and returns a signed token if
+     * the credentials are valid. If they're not, it returns a
+     * InvalidCredentialsException.
+     * @param credentials credentials to sign in
+     * @return ResponseEntity with 200 status code and token in the body
+     */
     @PostMapping("/login")
     ResponseEntity<?> login(@RequestBody UserCredentials credentials){
-        String queryString = "SELECT u FROM User u WHERE u.phone = :phone";
-        Query query = entityManager.createQuery(queryString).setParameter("phone",credentials.getPhone());
-        User user = (User) query.getResultList().get(0);
+        User user = this.getUserFromPhone(credentials.getPhone());
 
         PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         String encryptedPassword = encryptor.encrypt(credentials.getPassword());
@@ -109,11 +116,22 @@ public class UserController {
             TokenService tokenService = new TokenService();
             return ResponseEntity.ok(tokenService.generateToken(user));
         }else{
-            return (ResponseEntity<?>) ResponseEntity.badRequest();
+            throw new InvalidCredentialsException();
         }
-
     }
 
+    /**
+     * getUserFromPhone retries a user given his phone number.
+     * @param phone user's phone number
+     * @return User object with the phone number indicated
+     */
+    private User getUserFromPhone(String phone){
+        String queryString = "SELECT u FROM User u WHERE u.phone = :phone";
+        Query query = entityManager.createQuery(queryString).setParameter("phone",phone);
+        User user = (User) query.getResultList().get(0);
+    }
+
+    //TODO: make
     @PostMapping("/logout")
     ResponseEntity<?> login(@RequestBody User newUser){
         RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
@@ -122,14 +140,23 @@ public class UserController {
         newUser.setPassword(encryptedPassword);
         return saver.saveEntity(newUser);
     }
+
+
+    /**
+     * deleteUserById deletes the user whose ID is passed by parameter
+      * @param id id of the user to be removed
+     * @return
+     */
+    //TODO: REVIEW
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         try {
-            User userToDelete = userRepository.findById(id)
+            User userToDelete = REPOSITORY.findById(id)
                     .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
-            String encryptedPassword = passwordEncryptor.encrypt(userToDelete.getPassword());
+            PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+            String encryptedPassword = encryptor.encrypt(userToDelete.getPassword());
             userToDelete.setPassword(encryptedPassword);
-            userRepository.delete(userToDelete);
+            REPOSITORY.delete(userToDelete);
             return ResponseEntity.ok().build();
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
