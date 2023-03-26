@@ -2,6 +2,9 @@ package com.close.close.user;
 
 import com.close.close.apirest.RestSaver;
 import com.close.close.apirest.UserUtils;
+import org.jasypt.encryption.pbe.PBEStringEncryptor;
+import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
+import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +21,13 @@ public class UserController {
     /**
      * repository is the user's repository for DB interaction
     */
-    private final UserRepository repository;;
+    private final UserRepository REPOSITORY;
+
     /**
      * assembler is the user's model assembler for converting User models to
      * AIPRest responses
      */
-    private final UserModelAssembler assembler;;
+    private final UserModelAssembler ASSEMBLER;
 
 
     /**
@@ -32,8 +36,8 @@ public class UserController {
      * @param assembler user's model assembler
      */
     UserController(UserRepository repository, UserModelAssembler assembler){
-        this.repository = repository;
-        this.assembler = assembler;
+        this.REPOSITORY = repository;
+        this.ASSEMBLER = assembler;
     };
 
 
@@ -44,11 +48,10 @@ public class UserController {
      */
     @GetMapping("/users")
     public CollectionModel<EntityModel<User>> getAll(){
-            UserUtils utils = new UserUtils(repository,assembler);
-            List<User> allUsers = repository.findAll();
+            UserUtils utils = new UserUtils(REPOSITORY, ASSEMBLER);
+            List<User> allUsers = REPOSITORY.findAll();
             return utils.collectionModelFromList(allUsers);
     }
-
 
     /**
      * getOne returns a user depending on his ID. The response is modeled with the assembler.
@@ -59,9 +62,9 @@ public class UserController {
      */
     @GetMapping("/users/{id}")
     EntityModel<User> getOne(@PathVariable Long id){
-        UserUtils userUtils = new UserUtils(repository, assembler);
+        UserUtils userUtils = new UserUtils(REPOSITORY, ASSEMBLER);
         User user = userUtils.findOrThrow(id);
-        return assembler.toModel(user);
+        return ASSEMBLER.toModel(user);
     }
 
     /**
@@ -72,9 +75,10 @@ public class UserController {
      */
     @PostMapping("/users")
     ResponseEntity<?> saveUser(@RequestBody User newUser){
-        RestSaver<User> saver = new RestSaver<User>(repository, assembler);
+        RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
+        PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        String encryptedPassword = encryptor.encrypt(newUser.getPassword());
+        newUser.setPassword(encryptedPassword);
         return saver.saveEntity(newUser);
     }
-
-
 }
