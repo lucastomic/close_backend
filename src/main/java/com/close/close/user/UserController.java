@@ -122,4 +122,19 @@ public class UserController {
         newUser.setPassword(encryptedPassword);
         return saver.saveEntity(newUser);
     }
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
+        try {
+            User userToDelete = userRepository.findById(id)
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+            String encryptedPassword = passwordEncryptor.encrypt(userToDelete.getPassword());
+            userToDelete.setPassword(encryptedPassword);
+            userRepository.delete(userToDelete);
+            return ResponseEntity.ok().build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
