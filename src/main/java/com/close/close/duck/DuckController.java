@@ -79,6 +79,13 @@ public class DuckController {
        UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
        return userUtils.collectionModelFromList(users);
     }
+
+    /**
+     * Deletes a Duck object with the given senderId and receiverId.
+     * @param senderId the ID of the sender User
+     * @param receiverId the ID of the receiver User
+     * @return a ResponseEntity with a message indicating the success of the operation
+     */
     @DeleteMapping("/deleteDuck/{senderId}/{receiverId}")
     @Transactional
     public ResponseEntity<?> removeDuck(@PathVariable Long senderId, @PathVariable Long receiverId) {
