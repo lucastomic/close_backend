@@ -1,6 +1,7 @@
 package com.close.close.authentication;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import io.jsonwebtoken.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,14 +26,16 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private final String HEADER = "Authorization";
     private final String PREFIX = "Bearer ";
-    private final String SECRET = "mySecretKey"; //TODO:Change for a good key
+
+    @Value("${jwt.secret}")
+    private String SECRET; //TODO:Change for a good key
 
     /**
      This method parses the JWT token from the Authorization header and validates it using the configured secret key.
      @param request The HTTP request object containing the Authorization header.
      @return The parsed and validated JWT token claims.
      */
-    private Claims validateToken(HttpServletRequest request) {
+    private Claims getClaimsFromReq(HttpServletRequest request) {
         String token = request.getHeader(HEADER);
         token = this.removePrefix(token);
         return this.decodeClaims(token);
@@ -95,6 +99,18 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     }
 
     /**
+     * isTokenExpired checks whether a token in a request is expired or not.
+     * @param request request where the token is
+     * @return true if the token is expired and false if it's not
+     */
+    //TODO: Checks if it should be removed
+    private Boolean isTokenExpired(HttpServletRequest request) {
+        String token = request.getHeader(HEADER);
+        final Date expiration = decodeClaims(token).getExpiration();
+        return expiration.before(new Date());
+    }
+
+    /**
      This method is called by the servlet container for each HTTP request that passes through this filter.
      It checks for a valid JWT token and sets the Spring authentication context with the token claims if found.
      If a token is not found or is invalid, it clears the Spring authentication context.
@@ -108,7 +124,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain chain) throws jakarta.servlet.ServletException, IOException {
         try {
             if (tokenExist(request)) {
-                this.setAuthClaimsFromRequest(request);
+                this.setAuthorityClaimsFromRequest(request);
             } else {
                 SecurityContextHolder.clearContext();
             }
@@ -119,12 +135,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * setAuthClaimsFromRequest takes the authority claims of the token's request and set them
+     * setAuthorityClaimsFromRequest takes the authority claims of the token's request and set them
      * in the Spring authentication context. If there isn't any auth claim it clears the Spring auth context
-     * @param request
+     * @param request request where the token to analize is
      */
-    private void setAuthClaimsFromRequest(HttpServletRequest request){
-        Claims claims = validateToken(request);
+    private void setAuthorityClaimsFromRequest(HttpServletRequest request){
+        Claims claims = getClaimsFromReq(request);
         if (claims.get("authorities") != null) {
             setUpSpringAuthentication(claims);
         } else {
