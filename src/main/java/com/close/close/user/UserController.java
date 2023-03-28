@@ -2,20 +2,18 @@ package com.close.close.user;
 
 import com.close.close.apirest.RestSaver;
 import com.close.close.apirest.UserUtils;
-import com.close.close.authentication.TokenService;
+import com.close.close.security.authentication.TokenService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import org.jasypt.encryption.pbe.PBEStringEncryptor;
-import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
-import org.jasypt.util.text.AES256TextEncryptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * UserController is the controller from the User entity.
@@ -29,6 +27,9 @@ public class UserController {
      */
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * repository is the user's repository for DB interaction
@@ -85,15 +86,14 @@ public class UserController {
      * saveUser saves a user on the database. The user information is passed in the request's body.
      * If the user is saved successfully it returns an OK 200 status and a response with the link for
      * accessing the new User inserted. Also, in the body of the response is the information of the user inserted.
-     * Before saving the User data, its password is encrypted using a Password-Based Encryption (PBE)
+     * Before saving the User data, its password is encoded by the PasswordEnconder and then data is saved
      * @return ResponseEntity with the link to the new employee inserted and the user's information in the request's body
      */
     @PostMapping("/users")
     ResponseEntity<?> saveUser(@RequestBody User newUser){
         RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
-        PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
-        String encryptedPassword = encryptor.encrypt(newUser.getPassword());
-        newUser.setPassword(encryptedPassword);
+        String encodedPassword = passwordEncoder.encode(newUser.getPassword());
+        newUser.setPassword(encodedPassword);
         return saver.saveEntity(newUser);
     }
 
@@ -109,10 +109,7 @@ public class UserController {
     ResponseEntity<?> login(@RequestBody UserCredentials credentials){
         User user = this.getUserFromPhone(credentials.getPhone());
 
-        PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
-        String encryptedPassword = encryptor.encrypt(credentials.getPassword());
-
-        if(Objects.equals(encryptedPassword, user.getPassword())){
+        if(passwordEncoder.matches(credentials.getPassword(), user.getPassword())){
             TokenService tokenService = new TokenService();
             return ResponseEntity.ok(tokenService.generateToken(user));
         }else{
@@ -135,9 +132,6 @@ public class UserController {
     @PostMapping("/logout")
     ResponseEntity<?> login(@RequestBody User newUser){
         RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
-        PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
-        String encryptedPassword = encryptor.encrypt(newUser.getPassword());
-        newUser.setPassword(encryptedPassword);
         return saver.saveEntity(newUser);
     }
 
@@ -153,9 +147,6 @@ public class UserController {
         try {
             User userToDelete = REPOSITORY.findById(id)
                     .orElseThrow(() -> new UserNotFoundException(id));
-            PBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
-            String encryptedPassword = encryptor.encrypt(userToDelete.getPassword());
-            userToDelete.setPassword(encryptedPassword);
             REPOSITORY.delete(userToDelete);
             return ResponseEntity.ok().build();
         } catch (UserNotFoundException e) {

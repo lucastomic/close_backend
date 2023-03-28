@@ -6,7 +6,6 @@ package com.close.close.user;
 
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -34,11 +33,13 @@ public class User{
     /**
      * age is the user's age
     */
+    @Column(nullable = false)
     private int age;
 
     /**
      *
      */
+    @Column(nullable = false)
     private String password;
 
     /**

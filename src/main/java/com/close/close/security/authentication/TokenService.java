@@ -1,4 +1,4 @@
-package com.close.close.authentication;
+package com.close.close.security.authentication;
 
 import com.close.close.user.User;
 import io.jsonwebtoken.Jwts;

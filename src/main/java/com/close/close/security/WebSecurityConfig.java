@@ -1,10 +1,13 @@
-package com.close.close.authentication;
+package com.close.close.security;
 
+import com.close.close.security.authentication.JWTAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -30,12 +33,21 @@ class WebSecurityConfig{
         .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests((requests) -> requests
             .requestMatchers(antMatcher(HttpMethod.POST,"/users")).permitAll()
-            .anyRequest().authenticated()
+            .anyRequest().permitAll()
         ).formLogin(form ->form
             .loginPage("/login")
             .permitAll()
         )
         .httpBasic(withDefaults());
         return http.build();
+    }
+
+    /**
+     * Creates a Spring Bean definition for a password encoder, used to encode and compare passwords.
+     * @return An instance of BCryptPasswordEncode, a widely used implementation of PasswordEncoder Interface.
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

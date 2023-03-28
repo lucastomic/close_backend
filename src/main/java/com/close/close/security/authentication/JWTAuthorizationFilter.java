@@ -1,4 +1,4 @@
-package com.close.close.authentication;
+package com.close.close.security.authentication;
 
 import java.io.IOException;
 import java.util.Date;
