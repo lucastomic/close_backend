@@ -1,4 +1,4 @@
-package com.close.close.space_partitioning;
+package com.close.close.location.space_partitioning;
 
 import org.jetbrains.annotations.NotNull;
 import org.jfree.chart.ChartFactory;

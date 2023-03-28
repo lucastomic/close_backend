@@ -1,5 +1,6 @@
-package com.close.close.space_partitioning;
+package com.close.close.location.space_partitioning;
 
+import com.close.close.location.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.plot.XYPlot;
@@ -10,7 +11,7 @@ import javax.swing.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-public class QuadTreeGraphics<T extends Location> {
+public class QuadTreeGraphics<T extends IPosition> {
 
     public void showQueryRangeResult (@NotNull Vector2D origin, double range, Vector2D rangeX, Vector2D rangeY, QuadTree<T> quadTree, @NotNull QueryResult<T> result) {
         XYSeries me = new XYSeries("Me");

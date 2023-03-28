@@ -1,6 +1,8 @@
-package com.close.close.space_partitioning;
+package com.close.close.location;
 
-import com.close.close.space_partitioning.test.DummyLocation;
+import com.close.close.location.space_partitioning.QuadTree;
+import com.close.close.location.space_partitioning.Rectangle;
+import com.close.close.location.space_partitioning.Vector2D;
 
 import java.util.HashMap;
 
@@ -40,11 +42,11 @@ public class UserQuadTree extends QuadTree<UserLocation> {
 
 
     public void requestUpdate(UserLocation userLocation) {
-        if (!updateRequestBuffer.containsKey(userLocation.getUserId()))
-            updateRequestBuffer.put(userLocation.getUserId(), userLocation);
+        if (!updateRequestBuffer.containsKey(userLocation.getUserID()))
+            updateRequestBuffer.put(userLocation.getUserID(), userLocation);
         else {
-            updateRequestBuffer.remove(userLocation.getUserId());
-            updateRequestBuffer.put(userLocation.getUserId(), userLocation);
+            updateRequestBuffer.remove(userLocation.getUserID());
+            updateRequestBuffer.put(userLocation.getUserID(), userLocation);
         }
     }
 

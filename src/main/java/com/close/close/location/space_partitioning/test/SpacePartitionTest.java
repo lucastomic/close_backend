@@ -1,6 +1,6 @@
-package com.close.close.space_partitioning.test;
+package com.close.close.location.space_partitioning.test;
 
-import com.close.close.space_partitioning.*;
+import com.close.close.location.space_partitioning.*;
 
 import java.util.Random;
 import java.util.Scanner;

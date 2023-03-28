@@ -1,16 +1,16 @@
-package com.close.close.space_partitioning;
+package com.close.close.location.space_partitioning;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class QuadTreeBranch<T extends Location> {
+public class QuadTreeBranch<T extends IPosition> {
     private final QuadTree<T> tree;
     private QuadTreeBranch<T> parentBranch;
     private long level;
     private final Rectangle area;
-    private final ArrayList<T> locations;
+    private final ArrayList<T> positions;
     private final ArrayList<QuadTreeBranch<T>> childBranches;
 
 
@@ -26,77 +26,43 @@ public class QuadTreeBranch<T extends Location> {
         this.level = 0;
         this.area = area;
         childBranches = new ArrayList<>();
-        locations = new ArrayList<>();
+        positions = new ArrayList<>();
     }
 
 
+    public QuadTree<T> getTree() { return tree; }
+    public QuadTreeBranch<T> getParentBranch() { return parentBranch; }
     public long getLevel() {
         return level;
     }
-
-    public void getLocations(@NotNull ArrayList<T> result) {
-        result.addAll(locations);
-        for (QuadTreeBranch<T> child : childBranches)
-            child.getLocations(result);
-    }
     public Rectangle getArea() { return area; }
-
+    public void getPositions(@NotNull ArrayList<T> result) {
+        result.addAll(positions);
+        for (QuadTreeBranch<T> child : childBranches)
+            child.getPositions(result);
+    }
     public ArrayList<QuadTreeBranch<T>> getChildBranches() {
         return childBranches;
     }
-
     public boolean isBranched() {
         return childBranches.size() > 0;
     }
 
-    public boolean insert(@NotNull T location) {
-        if (!area.includes(location.getPosition())) return false;
+    public boolean insert(@NotNull T position) {
+        if (!area.includes(position.getPosition())) return false;
 
-        if (isBranched()) findAndInsert(location);
-        else if (locations.size() <= tree.MAX_CAPACITY) {
-            locations.add(location);
-            if (locations.size() == tree.MAX_CAPACITY) branch();
+        if (isBranched()) findAndInsert(position);
+        else if (positions.size() <= tree.MAX_CAPACITY) {
+            positions.add(position);
+            if (positions.size() == tree.MAX_CAPACITY) branch();
         }
 
         return true;
     }
-
-    private void findAndInsert(T location) {
+    private void findAndInsert(T position) {
         Iterator<QuadTreeBranch<T>> iterator = childBranches.iterator();
-        while(iterator.hasNext() && !iterator.next().insert(location));
+        while(iterator.hasNext() && !iterator.next().insert(position));
     }
-
-    public boolean remove(@NotNull T location) {
-        if (!area.includes(location.getPosition())) return false;
-
-        if (isBranched()) findAndRemove(location);
-        else {
-            assert locations.contains(location) : "Location " + location + " in " + this + " is missing";
-            locations.remove(location);
-        }
-
-        return true;
-    }
-
-    private void findAndRemove(T location) {
-        Iterator<QuadTreeBranch<T>> iterator = childBranches.iterator();
-        while(iterator.hasNext() && !iterator.next().remove(location));
-    }
-
-    public void show() {
-        System.out.print("   ");
-        for (int i = 0; i <= level - 1; i++) System.out.print("|  ");
-        System.out.println("|--- Level: " + level + " | Position: " + area.getPosition() + " | Radius: " + area.getDimensions());
-
-        for (Location location : locations) {
-            System.out.print("   ");
-            for (int i = 0; i <= level; i++) System.out.print("|  ");
-            System.out.println(location);
-        }
-
-        for (QuadTreeBranch<T> children : childBranches) children.show();
-    }
-
     private void branch() {
         double newRadius = area.getDimensions().getX() / 2;
 
@@ -118,20 +84,52 @@ public class QuadTreeBranch<T extends Location> {
                         )
                 );
 
-        for (T location : locations) findAndInsert(location);
-        locations.clear();
+        for (T position : positions) findAndInsert(position);
+        positions.clear();
+    }
+
+    public boolean remove(@NotNull T position) {
+        if (!area.includes(position.getPosition())) return false;
+
+        if (isBranched()) findAndRemove(position);
+        else {
+            assert positions.contains(position) : "Position: " + position + " in " + this + " is missing";
+            positions.remove(position);
+        }
+
+        return true;
+    }
+    private void findAndRemove(T position) {
+        Iterator<QuadTreeBranch<T>> iterator = childBranches.iterator();
+        while(iterator.hasNext() && !iterator.next().remove(position));
     }
 
     public Long query(Rectangle queryArea, ArrayList<T> results, ArrayList<T> potentialResults) {
         Long comparisons = 1L;
 
-        if (area.isContainedBy(queryArea)) getLocations(results);
+        if (area.isContainedBy(queryArea)) getPositions(results);
         else if (area.intersectsWith(queryArea)) {
-            potentialResults.addAll(locations);
+            potentialResults.addAll(positions);
             for (QuadTreeBranch<T> child : childBranches)
                 comparisons += child.query(queryArea, results, potentialResults);
         }
 
         return comparisons;
     }
+
+    public void show() {
+        System.out.print("   ");
+        for (int i = 0; i <= level - 1; i++) System.out.print("|  ");
+        System.out.println("|--- Level: " + level + " | Position: " + area.getPosition() + " | Radius: "
+                + area.getDimensions());
+
+        for (T position : positions) {
+            System.out.print("   ");
+            for (int i = 0; i <= level; i++) System.out.print("|  ");
+            System.out.println(position);
+        }
+
+        for (QuadTreeBranch<T> children : childBranches) children.show();
+    }
+
 }

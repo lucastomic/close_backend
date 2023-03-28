@@ -1,4 +1,4 @@
-package com.close.close.space_partitioning;
+package com.close.close.location.space_partitioning;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Huge amounts of inserts can be heavy on performance, so continuous loadings are not recommended.
  * @param <T> The type of Location this tree will handle
  */
-public class QuadTree<T extends Location> {
+public class QuadTree<T extends IPosition> {
     /**
     *  W = width of a quadTree
     *  i = level of the branch
@@ -64,7 +64,7 @@ public class QuadTree<T extends Location> {
      */
     public ArrayList<T> getLocations() {
         ArrayList<T> result = new ArrayList<>();
-        root.getLocations(result);
+        root.getPositions(result);
         return result;
     }
 
