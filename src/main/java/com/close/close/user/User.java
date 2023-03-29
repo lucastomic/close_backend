@@ -58,7 +58,7 @@ public class User{
      * phone is a string with the user's phone number.
      * This column is mandatory
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phone;
 
     /**

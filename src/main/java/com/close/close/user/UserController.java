@@ -139,10 +139,9 @@ public class UserController {
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         try {
-            User userToDelete = repository.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException(id));
+            User userToDelete = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
             repository.delete(userToDelete);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("User "+id+ " has been deleted successfully");
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
