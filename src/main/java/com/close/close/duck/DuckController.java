@@ -76,9 +76,11 @@ public class DuckController {
      */
     @GetMapping("/ducksReceived/{id}")
     public CollectionModel<EntityModel<User>> getDucksReceived(@PathVariable Long id){
-       String queryString = "SELECT d.sender FROM Duck d WHERE d.receiver.id = :id";
-       Query query = entityManager.createQuery(queryString).setParameter("id",id);
-       List<User> users = query.getResultList();
+       //String queryString = "SELECT d.sender FROM Duck d WHERE d.receiver.id = :id";
+       //Query query = entityManager.createQuery(queryString).setParameter("id",id);
+       //List<User> users = query.getResultList();
+        //TODO:TEST
+       List<User> users = repository.getDucksReceived(id);
        UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
        return userUtils.collectionModelFromList(users);
     }
