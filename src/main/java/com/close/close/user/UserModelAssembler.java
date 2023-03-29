@@ -2,6 +2,7 @@ package com.close.close.user;
 
 import com.close.close.duck.DuckController;
 import com.close.close.interest.InterestController;
+import com.close.close.location.Location;
 import com.close.close.location.LocationController;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.EntityModel;
@@ -23,13 +24,31 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
         return EntityModel.of(
                 user,
                 //User Controller Links
-                linkTo(methodOn(UserController.class).getAll()).withRel("users"),
-                linkTo(methodOn(UserController.class).getOne(user.getId())).withSelfRel(),
+                linkTo(methodOn(UserController.class)
+                        .getOne(user.getId())
+                ).withSelfRel(),
+
+                linkTo(methodOn(UserController.class)
+                        .getAll()
+                ).withRel("allUsers"),
+
                 //Duck Controller Links
-                linkTo(methodOn(DuckController.class).sendDuck(user.getId(), 0L)).withRel("sendDuck") ,
-                linkTo(methodOn(DuckController.class).getDucksReceived(user.getId())).withRel("getDucksReceived")
+                linkTo(methodOn(DuckController.class)
+                        .sendDuck(user.getId(), 0L)
+                ).withRel("sendDuck"),
+
+                linkTo(methodOn(DuckController.class)
+                        .getDucksReceived(user.getId())
+                ).withRel("ducksReceived"),
+
                 //Location Controller Links
-                //linkTo(methodOn(LocationController.class).searchUsers(user.getId(), 10)).withRel("closeUsers")
+                linkTo(methodOn(LocationController.class)
+                        .sendLocation(user.getId(), new Location(0, 0))
+                ).withRel("sendLocation"),
+
+                linkTo(methodOn(LocationController.class)
+                        .closeUsers(user.getId(), 10)
+                ).withRel("closeUsers")
         );
     }
 }
