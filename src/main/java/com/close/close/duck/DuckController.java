@@ -20,6 +20,13 @@ import java.util.List;
  */
 @RestController
 public class DuckController {
+
+    public static final String GET_DUCKS               = "/ducks";
+    public static final String GET_USER_RECEIVED_DUCKS = "/users/{userId}/ducks/received";
+    public static final String GET_USER_SENT_DUCKS     = "/users/{userId}/ducks/sent";
+    public static final String POST_SEND_DUCK          = "/users/{senderId}/ducks/send/{receiverId}";
+    public static final String DELETE_RECLAIM_DUCK     = "/users/{reclaimerId}/ducks/reclaim/{receivedId}";
+
     /**
      * repository is the duck's implementations of the repository pattern.
      * Handles all the duck's DB interactions
@@ -40,6 +47,7 @@ public class DuckController {
     @PersistenceContext
     private EntityManager entityManager;
 
+
     /**
      * class constructor with dependency injection
      */
@@ -49,6 +57,33 @@ public class DuckController {
         this.repository = repository;
     }
 
+
+    /**
+     * @return All ducks stored in the database.
+     */
+    @GetMapping(GET_DUCKS)
+    public ResponseEntity<?> allDucks() {
+        List<Duck> ducks = repository.findAll();
+        return ResponseEntity.ok(ducks);
+    }
+
+    /**
+     * getDucksReceived return a collection of the users who have sent a
+     * duck to the user with the specified ID.
+     * @param userId id of the user to know who have sent a duck to
+     * @return CollectionModel with all the users who have sent a duck to this user
+     */
+    @GetMapping(GET_USER_RECEIVED_DUCKS)
+    public CollectionModel<EntityModel<User>> getDucksReceived(@PathVariable Long userId){
+        String queryString = "SELECT d.sender FROM Duck d WHERE d.receiver.id = :id";
+        Query query = entityManager.createQuery(queryString).setParameter("id", userId);
+        List<User> users = query.getResultList();
+        UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
+        return userUtils.collectionModelFromList(users);
+    }
+
+    //TODO Get User Sent Ducks
+
     /**
      * sendDuck sends a duck from a user to another one and save the transaction on the database.
      * The id of the transmitter and the receiver are sent by path.
@@ -56,8 +91,8 @@ public class DuckController {
      * @param receiverId id from the receiver
      * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
      */
-    @PostMapping("/sendDuck")
-    public ResponseEntity sendDuck(@RequestParam Long senderId, @RequestParam Long receiverId) {
+    @PostMapping(POST_SEND_DUCK)
+    public ResponseEntity<?> sendDuck(@RequestParam Long senderId, @RequestParam Long receiverId) {
         UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
         User transmitter = userUtils.findOrThrow(senderId);
         User receiver = userUtils.findOrThrow(receiverId);
@@ -69,44 +104,27 @@ public class DuckController {
     }
 
     /**
-     * getDucksReceived return a collection of the users who have sent a
-     * duck to the user with the specified ID.
-     * @param id id of the user to know who have sent a duck to
-     * @return CollectionModel with all the users who have sent a duck to this user
-     */
-    @GetMapping("/ducksReceived/{id}")
-    public CollectionModel<EntityModel<User>> getDucksReceived(@PathVariable Long id){
-       String queryString = "SELECT d.sender FROM Duck d WHERE d.receiver.id = :id";
-       Query query = entityManager.createQuery(queryString).setParameter("id",id);
-       List<User> users = query.getResultList();
-       UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
-       return userUtils.collectionModelFromList(users);
-    }
-
-    /**
      * Deletes a Duck object with the given senderId and receiverId.
-     * @param senderId the ID of the sender User
-     * @param receiverId the ID of the receiver User
+     * @param reclaimerId the ID of the sender User
+     * @param receivedId the ID of the receiver User
      * @return a ResponseEntity with a message indicating the success of the operation
      */
-    @DeleteMapping("/deleteDuck/{senderId}/{receiverId}")
+    //TODO Complete/Review this
+    @DeleteMapping(DELETE_RECLAIM_DUCK)
     @Transactional
-    public ResponseEntity<?> removeDuck(@PathVariable Long senderId, @PathVariable Long receiverId) {
+    public ResponseEntity<?> removeDuck(@PathVariable Long reclaimerId, @PathVariable Long receivedId) {
         UserUtils userUtils = new UserUtils(userRepository, userModelAssembler);
-        User sender = userUtils.findOrThrow(senderId);
-        User receiver = userUtils.findOrThrow(receiverId);
-        Duck removedDuck = entityManager.find(Duck.class, new DuckId(senderId, receiverId));
+        User sender = userUtils.findOrThrow(reclaimerId);
+        User receiver = userUtils.findOrThrow(receivedId);
+        Duck removedDuck = entityManager.find(Duck.class, new DuckId(reclaimerId, receivedId));
         if (removedDuck == null) {
-            throw new DuckNotFound(senderId,receiverId);
+            throw new DuckNotFound(reclaimerId, receivedId);
         }
         try {
             entityManager.remove(removedDuck);
             return ResponseEntity.ok().body("Duck object has been deleted successfully.");
         } catch (Exception e) {
-            throw new DuckNotFound(senderId,receiverId);
+            throw new DuckNotFound(reclaimerId, receivedId);
         }
     }
-
-
-
 }

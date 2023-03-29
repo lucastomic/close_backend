@@ -42,11 +42,11 @@ public class UserQuadTree extends QuadTree<UserLocation> {
 
 
     public void requestUpdate(UserLocation userLocation) {
-        if (!updateRequestBuffer.containsKey(userLocation.getUserID()))
-            updateRequestBuffer.put(userLocation.getUserID(), userLocation);
+        if (!updateRequestBuffer.containsKey(userLocation.userId()))
+            updateRequestBuffer.put(userLocation.userId(), userLocation);
         else {
-            updateRequestBuffer.remove(userLocation.getUserID());
-            updateRequestBuffer.put(userLocation.getUserID(), userLocation);
+            updateRequestBuffer.remove(userLocation.userId());
+            updateRequestBuffer.put(userLocation.userId(), userLocation);
         }
     }
 

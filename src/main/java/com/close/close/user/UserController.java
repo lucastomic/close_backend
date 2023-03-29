@@ -22,24 +22,23 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    /**
-     * entityManager makes the SQL queries
-     */
+    public static final String GET_USERS  = "/users";
+    public static final String GET_USER   = "/users/{userId}";
+    public static final String POST_USER  = "/users";
+    public static final String DELETE_USER = "/user/{userId}";
+
+    /** entityManager makes the SQL queries */
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /**
-     * repository is the user's repository for DB interaction
-    */
+    /** repository is the user's repository for DB interaction */
     private final UserRepository REPOSITORY;
 
-    /**
-     * assembler is the user's model assembler for converting User models to
-     * AIPRest responses
-     */
+    /** Assembler is the user's model assembler for converting User models to
+     * AIPRest responses */
     private final UserModelAssembler ASSEMBLER;
 
 
@@ -59,7 +58,7 @@ public class UserController {
      * The response is linked to different methods of the APIRest.
      * @return CollectionModel with different links of the APIRest.
      */
-    @GetMapping("/users")
+    @GetMapping(GET_USERS)
     public CollectionModel<EntityModel<User>> getAll(){
             UserUtils utils = new UserUtils(REPOSITORY, ASSEMBLER);
             List<User> allUsers = REPOSITORY.findAll();
@@ -70,17 +69,15 @@ public class UserController {
      * getOne returns a user depending on his ID. The response is modeled with the assembler.
      * In case of no user with the ID specified, it's throws a UserNotFoundException (which will
      * be handled by the UserNotFoundAdvice controller advice)
-     * @param id long with the ID of the user to be returned
+     * @param userId long with the ID of the user to be returned
      * @return EntityModel of the user with the ID
      */
-    @GetMapping("/users/{id}")
-    EntityModel<User> getOne(@PathVariable Long id){
+    @GetMapping(GET_USER)
+    EntityModel<User> getOne(@PathVariable Long userId){
         UserUtils userUtils = new UserUtils(REPOSITORY, ASSEMBLER);
-        User user = userUtils.findOrThrow(id);
+        User user = userUtils.findOrThrow(userId);
         return ASSEMBLER.toModel(user);
     }
-
-
 
     /**
      * saveUser saves a user on the database. The user information is passed in the request's body.
@@ -89,12 +86,32 @@ public class UserController {
      * Before saving the User data, its password is encoded by the PasswordEnconder and then data is saved
      * @return ResponseEntity with the link to the new employee inserted and the user's information in the request's body
      */
-    @PostMapping("/users")
-    ResponseEntity<?> saveUser(@RequestBody User newUser){
+    @PostMapping(POST_USER)
+    ResponseEntity<?> create(@RequestBody User newUser){
         RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
         String encodedPassword = passwordEncoder.encode(newUser.getPassword());
         newUser.setPassword(encodedPassword);
         return saver.saveEntity(newUser);
+    }
+
+    /**
+     * deleteUserById deletes the user whose ID is passed by parameter
+     * @param userId id of the user to be removed
+     * @return
+     */
+    //TODO: REVIEW
+    @DeleteMapping(DELETE_USER)
+    public ResponseEntity<?> delete(@PathVariable Long userId) {
+        try {
+            User userToDelete = REPOSITORY.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException(userId));
+            REPOSITORY.delete(userToDelete);
+            return ResponseEntity.ok().build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     /**
@@ -133,26 +150,5 @@ public class UserController {
     ResponseEntity<?> login(@RequestBody User newUser){
         RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
         return saver.saveEntity(newUser);
-    }
-
-
-    /**
-     * deleteUserById deletes the user whose ID is passed by parameter
-      * @param id id of the user to be removed
-     * @return
-     */
-    //TODO: REVIEW
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
-        try {
-            User userToDelete = REPOSITORY.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException(id));
-            REPOSITORY.delete(userToDelete);
-            return ResponseEntity.ok().build();
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 }

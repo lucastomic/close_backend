@@ -39,7 +39,7 @@ public class SpacePartitionTest {
             double range = scanner.nextDouble();
 
             long treeQueryStart = System.currentTimeMillis();
-            QueryResult<DummyLocation> qr = quadTree.query(pos, range);
+            QueryResult<DummyLocation> qr = quadTree.search(pos, range);
 
             System.out.println("-------------------------------------");
             System.out.println("Query Completed :: Duration: " + (System.currentTimeMillis() - treeQueryStart)/1000f + "s");

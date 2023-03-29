@@ -85,14 +85,14 @@ public class QuadTree<T extends IPosition> {
         root = new QuadTreeBranch<T>(this, AREA);
     }
 
-    public QueryResult<T> query(Vector2D origin, double queryRadius) {
+    public QueryResult<T> search(Vector2D origin, double queryRadius) {
         float SQRT_2 = 1.41421356237f;
         double innerSquareRadius = queryRadius * SQRT_2 / 2;
         Rectangle queryArea = new Rectangle(origin, new Vector2D(innerSquareRadius, innerSquareRadius));
-        return query(queryArea);
+        return search(queryArea);
     }
 
-    public QueryResult<T> query(Rectangle queryArea) {
+    public QueryResult<T> search(Rectangle queryArea) {
         ArrayList<T> results = new ArrayList<>();
         ArrayList<T> potentialResults = new ArrayList<>();
         Long comparisons = root.query(queryArea, results, potentialResults);

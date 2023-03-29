@@ -1,6 +1,5 @@
 package com.close.close.location.space_partitioning;
 
-import com.close.close.location.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.plot.XYPlot;

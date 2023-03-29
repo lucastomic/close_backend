@@ -2,26 +2,50 @@ package com.close.close.location;
 
 import com.close.close.location.space_partitioning.IPosition;
 import com.close.close.location.space_partitioning.Vector2D;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jetbrains.annotations.NotNull;
 
-public class UserLocation implements IPosition {
+/**
+ * @param userId   The unique identifier for the user associated with this UserLocation
+ * @param location The location of the user
+ */
+public record UserLocation(Long userId, Location location) implements IPosition {
 
-    private Long userID;
-    private Long latitude;
-    private Long longitude;
-
-
-    public UserLocation(Long latitude, Long longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+    /**
+     * Constructs a new UserLocation object with the given user ID and location
+     *
+     * @param userId   the unique identifier for the user associated with this UserLocation
+     * @param location the location of the user
+     */
+    public UserLocation(@NotNull Long userId, @NotNull Location location) {
+        this.userId = userId;
+        this.location = location;
     }
 
 
-    public Long getUserID() { return userID; }
-    public void setUserID(Long userID) { this.userID = userID; }
+    /**
+     * Returns the unique identifier for the user associated with this UserLocation
+     *
+     * @return the user ID
+     */
+    @Override
+    public Long userId() {
+        return userId;
+    }
 
+    /**
+     * Returns the location associated with a user
+     *
+     * @return the user Location
+     */
+    @Override
+    public Location location() {
+        return location;
+    }
 
+    @JsonIgnore
     @Override
     public Vector2D getPosition() {
-        return new Vector2D(latitude, longitude);
+        return location.getPosition();
     }
 }

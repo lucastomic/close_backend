@@ -1,13 +1,11 @@
 package com.close.close.interest;
 
 import com.close.close.apirest.RestSaver;
-import com.close.close.user.*;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -19,15 +17,20 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @RestController
 public class InterestController {
-    /**
-     * repository is the user's repository for DB interaction
-     */
+
+    public static final String GET_INTERESTS      = "/interests";
+    public static final String GET_INTEREST       = "/interests/{interestId}";
+    public static final String POST_INTEREST      = "/interests";
+    public static final String GET_USER_INTERESTS = "/users/{userId}/interests";
+
+
+    /** repository is the user's repository for DB interaction */
     private final InterestRepository repository;;
-    /**
-     * assembler is the user's model assembler for converting User models to
-     * AIPRest responses
-     */
+
+    /** Assembler is the user's model assembler for converting User models to
+     * AIPRest responses */
     private final InterestModelAssembler assembler;;
+
 
     /**
      * Class constructor. It implements dependency injection.
@@ -38,13 +41,15 @@ public class InterestController {
         this.repository = repository;
         this.assembler = assembler;
     };
+
+
     /**
      * getAll retrieves a CollectionModel with all the application's interest.
      * The response is linked to different methods of the APIRest.
      * @return CollectionModel with different links of the APIRest.
      */
-    @GetMapping("/interest")
-    CollectionModel<EntityModel<Interest>> getAll(){
+    @GetMapping(GET_INTERESTS)
+    public CollectionModel<EntityModel<Interest>> getAll(){
         List<EntityModel<Interest>> interest = repository.findAll().
                 stream().map(assembler::toModel).toList();
 
@@ -61,8 +66,8 @@ public class InterestController {
      * @param name string with the ID of the interest to be returned
      * @return EntityModel of the interest with the name specified
      */
-    @GetMapping("/interest/{name}")
-    EntityModel<Interest> getOne(@PathVariable String name){
+    @GetMapping(GET_INTEREST)
+    public EntityModel<Interest> getOne(@PathVariable String name){
         Interest interest = repository.findById(name)
                 .orElseThrow(InterestNotFoundException::new);
         return assembler.toModel(interest);
@@ -74,13 +79,11 @@ public class InterestController {
      * @return ResponseEntity with the link to the new interest
      * in the location header and the interest's information in the request's body
      */
-    @PostMapping("/interest")
-    ResponseEntity<?> saveInterest(@RequestBody Interest newInterest){
+    @PostMapping(POST_INTEREST)
+    public ResponseEntity<?> create(@RequestBody Interest newInterest){
         RestSaver<Interest> saver = new RestSaver<Interest>(repository,assembler);
         return saver.saveEntity(newInterest);
     }
 
-
-
-
+    //TODO Get User Interests
 }
