@@ -34,24 +34,16 @@ public class UserController {
     /**
      * repository is the user's repository for DB interaction
     */
-    private final UserRepository REPOSITORY;
+    @Autowired
+    private UserRepository repository;
 
     /**
      * assembler is the user's model assembler for converting User models to
      * AIPRest responses
      */
-    private final UserModelAssembler ASSEMBLER;
+    @Autowired
+    private UserModelAssembler assembler;
 
-
-    /**
-     * Class constructor. It implements dependency injection.
-     * @param repository user's repository
-     * @param assembler user's model assembler
-     */
-    UserController(UserRepository repository, UserModelAssembler assembler){
-        this.REPOSITORY = repository;
-        this.ASSEMBLER = assembler;
-    };
 
 
     /**
@@ -61,8 +53,8 @@ public class UserController {
      */
     @GetMapping("/users")
     public CollectionModel<EntityModel<User>> getAll(){
-            UserUtils utils = new UserUtils(REPOSITORY, ASSEMBLER);
-            List<User> allUsers = REPOSITORY.findAll();
+            UserUtils utils = new UserUtils(repository, assembler);
+            List<User> allUsers = repository.findAll();
             return utils.collectionModelFromList(allUsers);
     }
 
@@ -75,9 +67,9 @@ public class UserController {
      */
     @GetMapping("/users/{id}")
     EntityModel<User> getOne(@PathVariable Long id){
-        UserUtils userUtils = new UserUtils(REPOSITORY, ASSEMBLER);
+        UserUtils userUtils = new UserUtils(repository, assembler);
         User user = userUtils.findOrThrow(id);
-        return ASSEMBLER.toModel(user);
+        return assembler.toModel(user);
     }
 
 
@@ -91,7 +83,7 @@ public class UserController {
      */
     @PostMapping("/users")
     ResponseEntity<?> saveUser(@RequestBody User newUser){
-        RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
+        RestSaver<User> saver = new RestSaver<User>(repository, assembler);
         String encodedPassword = passwordEncoder.encode(newUser.getPassword());
         newUser.setPassword(encodedPassword);
         return saver.saveEntity(newUser);
@@ -107,7 +99,8 @@ public class UserController {
      */
     @PostMapping("/login")
     ResponseEntity<?> login(@RequestBody UserCredentials credentials){
-        User user = this.getUserFromPhone(credentials.getPhone());
+        //User user = this.getUserFromPhone(credentials.getPhone());
+        User user = repository.getUserFromPhone(credentials.getPhone());
 
         if(passwordEncoder.matches(credentials.getPassword(), user.getPassword())){
             TokenService tokenService = new TokenService();
@@ -122,6 +115,7 @@ public class UserController {
      * @param phone user's phone number
      * @return User object with the phone number indicated
      */
+    //TODO: REMOVE?
     private User getUserFromPhone(String phone){
         String queryString = "SELECT u FROM User u WHERE u.phone = :phone";
         Query query = entityManager.createQuery(queryString).setParameter("phone",phone);
@@ -131,7 +125,7 @@ public class UserController {
     //TODO: make
     @PostMapping("/logout")
     ResponseEntity<?> login(@RequestBody User newUser){
-        RestSaver<User> saver = new RestSaver<User>(REPOSITORY, ASSEMBLER);
+        RestSaver<User> saver = new RestSaver<User>(repository, assembler);
         return saver.saveEntity(newUser);
     }
 
@@ -145,9 +139,9 @@ public class UserController {
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         try {
-            User userToDelete = REPOSITORY.findById(id)
+            User userToDelete = repository.findById(id)
                     .orElseThrow(() -> new UserNotFoundException(id));
-            REPOSITORY.delete(userToDelete);
+            repository.delete(userToDelete);
             return ResponseEntity.ok().build();
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
