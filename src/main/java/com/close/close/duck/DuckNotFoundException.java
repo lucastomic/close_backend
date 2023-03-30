@@ -3,7 +3,7 @@ package com.close.close.duck;
 import com.close.close.apirest.StatusException;
 import org.springframework.http.HttpStatus;
 
-public class DuckNotFound extends StatusException {
+public class DuckNotFoundException extends StatusException {
     private final HttpStatus STATUS = HttpStatus.NOT_FOUND;
 
 
@@ -12,7 +12,7 @@ public class DuckNotFound extends StatusException {
      * @param senderId the senderId of the missing Duck object
      * @param receiverId the receiverId of the missing Duck object
      */
-    public DuckNotFound(Long senderId, Long receiverId) {
+    public DuckNotFoundException(Long senderId, Long receiverId) {
         super(String.format("Duck object not found for senderId=%d and receiverId=%d", senderId, receiverId));
     }
 

@@ -1,8 +1,9 @@
 package com.close.close.interest;
 
-import com.close.close.apirest.RestSaver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,67 +24,72 @@ public class InterestController {
     public static final String POST_INTEREST      = "/interests";
     public static final String GET_USER_INTERESTS = "/users/{userId}/interests";
 
-
-    /** repository is the user's repository for DB interaction */
-    private final InterestRepository repository;;
-
-    /** Assembler is the user's model assembler for converting User models to
-     * AIPRest responses */
-    private final InterestModelAssembler assembler;;
+    private final InterestService INTEREST_SERVICE;
+    private final InterestModelAssembler INTEREST_MODEL_ASSEMBLER;
 
 
-    /**
-     * Class constructor. It implements dependency injection.
-     * @param repository user's repository
-     * @param assembler user's model assembler
-     */
-    InterestController(InterestRepository repository, InterestModelAssembler assembler){
-        this.repository = repository;
-        this.assembler = assembler;
+    @Autowired
+    InterestController(InterestService interestService,
+                       InterestModelAssembler interestModelAssembler){
+        this.INTEREST_SERVICE = interestService;
+        this.INTEREST_MODEL_ASSEMBLER = interestModelAssembler;
     };
 
 
     /**
-     * getAll retrieves a CollectionModel with all the application's interest.
+     * Retrieves a CollectionModel with all the application's interest.
      * The response is linked to different methods of the APIRest.
      * @return CollectionModel with different links of the APIRest.
      */
     @GetMapping(GET_INTERESTS)
-    public CollectionModel<EntityModel<Interest>> getAll(){
-        List<EntityModel<Interest>> interest = repository.findAll().
-                stream().map(assembler::toModel).toList();
+    public CollectionModel<EntityModel<Interest>> findAll(){
+        List<EntityModel<Interest>> modelinterests = INTEREST_SERVICE
+                .findAll().stream().map(INTEREST_MODEL_ASSEMBLER::toModel).toList();
 
         return CollectionModel.of(
-                interest,
-                linkTo(methodOn(InterestController.class).getAll()).withSelfRel()
+                modelinterests,
+                linkTo(methodOn(InterestController.class).findAll()).withSelfRel()
         );
     }
 
     /**
-     * getOne returns am interest depending on his ID. The response is modeled with the assembler.
+     * Returns am interest depending on his ID. The response is modeled with the assembler.
      * In case of no interest with the ID specified, it's throws an InterestNotFoundException (which will
      * be handled by the UserNotFoundAdvice controller advice)
-     * @param name string with the ID of the interest to be returned
+     * @param name The id of the interest to be returned
      * @return EntityModel of the interest with the name specified
      */
     @GetMapping(GET_INTEREST)
-    public EntityModel<Interest> getOne(@PathVariable String name){
-        Interest interest = repository.findById(name)
+    public EntityModel<Interest> findById(@PathVariable String name){
+        Interest interest = INTEREST_SERVICE.findById(name)
                 .orElseThrow(InterestNotFoundException::new);
-        return assembler.toModel(interest);
+        return INTEREST_MODEL_ASSEMBLER.toModel(interest);
     }
 
     /**
-     * saveInterest saves an interest on the database. The interest
-     * information is passed in the request's body.
+     * Method for saving an interest on the database.
      * @return ResponseEntity with the link to the new interest
      * in the location header and the interest's information in the request's body
      */
     @PostMapping(POST_INTEREST)
     public ResponseEntity<?> create(@RequestBody Interest newInterest){
-        RestSaver<Interest> saver = new RestSaver<Interest>(repository,assembler);
-        return saver.saveEntity(newInterest);
+        INTEREST_SERVICE.save(newInterest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newInterest);
     }
 
-    //TODO Get User Interests
+    /**
+     * Method for finding a users interests.
+     * @param userId The if of the user whose interests are going to be retrieved
+     * @return The user interests.
+     */
+    @GetMapping(GET_USER_INTERESTS)
+    public CollectionModel<EntityModel<Interest>> findUserInterests(@PathVariable Long userId) {
+        List<EntityModel<Interest>> modelInterests = INTEREST_SERVICE
+                .findUserInterests(userId).stream().map(INTEREST_MODEL_ASSEMBLER::toModel).toList();
+
+        return CollectionModel.of(
+                modelInterests,
+                linkTo(methodOn(InterestController.class).findAll()).withSelfRel()
+        );
+    }
 }

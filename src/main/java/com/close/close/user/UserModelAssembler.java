@@ -1,7 +1,6 @@
 package com.close.close.user;
 
 import com.close.close.duck.DuckController;
-import com.close.close.interest.InterestController;
 import com.close.close.location.Location;
 import com.close.close.location.LocationController;
 import org.jetbrains.annotations.NotNull;
@@ -25,11 +24,11 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                 user,
                 //User Controller Links
                 linkTo(methodOn(UserController.class)
-                        .getOne(user.getId())
+                        .findById(user.getId())
                 ).withSelfRel(),
 
                 linkTo(methodOn(UserController.class)
-                        .getAll()
+                        .findAll()
                 ).withRel("allUsers"),
 
                 //Duck Controller Links

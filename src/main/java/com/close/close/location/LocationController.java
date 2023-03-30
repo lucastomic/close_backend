@@ -1,23 +1,17 @@
 package com.close.close.location;
 
-import com.close.close.location.space_partitioning.QuadTree;
 import com.close.close.location.space_partitioning.QueryResult;
-import com.close.close.location.space_partitioning.Rectangle;
-import com.close.close.location.space_partitioning.Vector2D;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.close.close.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
-@EnableScheduling
 public class LocationController {
 
     //Endpoint URIs
@@ -27,25 +21,12 @@ public class LocationController {
     public static final String GET_USER_LOCATION  = "/users/{userId}/location";
     public static final String POST_USER_LOCATION = "/users/{userId}/location";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationController.class);
-    private static final Long MAX_BRANCH_LEVEL = 9L;
-    private static final Long MAX_BRANCH_CAPACITY = 4L;
-    private static final Long WIDTH = 100000L;
-
-    private final Map<Long, UserLocation> userLocationBuffer;
-    private final QuadTree<UserLocation> userQuadTree;
+    private final LocationService LOCATION_SERVICE;
 
 
-    public LocationController() {
-        userLocationBuffer = new HashMap<>();
-        userQuadTree = new QuadTree<>(
-                MAX_BRANCH_LEVEL,
-                MAX_BRANCH_CAPACITY,
-                new Rectangle(
-                        Vector2D.ZERO,
-                        new Vector2D(WIDTH, WIDTH)
-                )
-        );
+    @Autowired
+    public LocationController(LocationService locationService) {
+        LOCATION_SERVICE = locationService;
     }
 
 
@@ -60,7 +41,7 @@ public class LocationController {
     public ResponseEntity<QueryResult<UserLocation>> searchUsers(@PathVariable double latitude,
                                                                  @PathVariable double longitude,
                                                                  @PathVariable double radius) {
-        QueryResult<UserLocation> result = userQuadTree.search(new Vector2D(latitude, longitude), radius);
+        QueryResult<UserLocation> result = LOCATION_SERVICE.searchUsers(latitude, longitude, radius);
         return ResponseEntity.ok(result);
     }
 
@@ -71,14 +52,18 @@ public class LocationController {
      * @return ResponseEntity containing a QueryResult with the results of the search
      */
     @GetMapping(GET_CLOSE_USERS)
-    public ResponseEntity<QueryResult<UserLocation>> closeUsers(@PathVariable Long userId,
-                                                                @PathVariable double radius) {
+    public ResponseEntity<?> closeUsers(@PathVariable Long userId,
+                                        @PathVariable double radius) {
+        ResponseEntity responseEntity;
         // UserLocation could instead be a column of User in the database...
         // This would also allow us to clear the buffer each time quadtree is updated
-        if (!userLocationBuffer.containsKey(userId)) return ResponseEntity.badRequest().build();
-        UserLocation userLocation = userLocationBuffer.get(userId);
-        QueryResult<UserLocation> result = userQuadTree.search(userLocation.location().getPosition(), radius);
-        return ResponseEntity.ok(result);
+        try {
+            QueryResult<UserLocation> result = LOCATION_SERVICE.closeUsers(userId, radius);
+            responseEntity = ResponseEntity.ok(result);
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.badRequest().build();
+        }
+        return responseEntity;
     }
 
     /**
@@ -87,7 +72,7 @@ public class LocationController {
      */
     @GetMapping(GET_USER_LOCATIONS)
     public ResponseEntity<List<UserLocation>> getLocations() {
-        List<UserLocation> locations = userQuadTree.getLocations();
+        List<UserLocation> locations = LOCATION_SERVICE.findAllUserLocations();
         return ResponseEntity.ok(locations);
     }
 
@@ -98,10 +83,15 @@ public class LocationController {
      * present in the buffer
      */
     @GetMapping(GET_USER_LOCATION)
-    public ResponseEntity<UserLocation> getUserLocation(@PathVariable Long userId) {
-        if (!userLocationBuffer.containsKey(userId)) return ResponseEntity.notFound().build();
-        UserLocation userLocation = userLocationBuffer.get(userId);
-        return ResponseEntity.ok(userLocation);
+    public ResponseEntity<?> getUserLocation(@PathVariable Long userId) {
+        ResponseEntity responseEntity;
+        try {
+            UserLocation userLocation = LOCATION_SERVICE.findUserLocation(userId);
+            responseEntity = ResponseEntity.ok(userLocation);
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.badRequest().build();
+        }
+        return responseEntity;
     }
 
     /**
@@ -112,25 +102,7 @@ public class LocationController {
      */
     @PostMapping(POST_USER_LOCATION)
     public ResponseEntity<?> sendLocation(@PathVariable Long userId, @RequestBody Location location) {
-        synchronized (userLocationBuffer) {
-            //By using put, an already existing entry of userId in the Map will have its value replaced by the new one.
-            userLocationBuffer.put(userId, new UserLocation(userId, location));
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Automatically updates the QuadTree each 2 seconds by building a new QuadTree from the ground up.
-     * Every user that sent its location and did not close the application will continue to have its location inserted
-     * in the new QuadTree.
-     */
-    @Scheduled(fixedRate = 2000)
-    public void updateQuadtree() {
-        userQuadTree.reset();
-        synchronized (userLocationBuffer) {
-            for (UserLocation userLocation : userLocationBuffer.values())
-                userQuadTree.insert(userLocation);
-        }
-        LOGGER.info("Quadtree Updated");
+        LOCATION_SERVICE.sendUserLocation(userId, location);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(location);
     }
 }

@@ -83,25 +83,11 @@ public class User{
      */
     @ManyToMany
     @JoinTable(
-        name = "hasInterest",
+        name = "has_interest",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "interest_id")
     )
     private Set<Interest> interests;
-
-
-    /**
-     * Return if this user is equal to another object
-     * @param o object to compare with this user
-     * @return whether the object is the same or not
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(this.id, user.getId());
-    }
 
 
     public Long getId() {
@@ -155,4 +141,20 @@ public class User{
     public void setInterests(Set<Interest> interests) {
         this.interests = interests;
     }
+
+
+    // Credits to: Lucas Tomic Benitez
+    /**
+     * Return if this user is equal to another object
+     * @param o object to compare with this user
+     * @return whether the object is the same or not
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(this.id, user.getId());
+    }
+
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * DuckRepository is the duck's implementation of the repository pattern.
@@ -15,9 +16,19 @@ import java.util.List;
 
     /**
      * getDucksReceived gets the duck which the user specified by parameter have received
-     * @param id Long with the User's ID
+     * @param userId Long with the User's ID
      * @return List of users who have sent a Duck to the user
      */
-    @Query("SELECT d.sender FROM Duck d WHERE d.receiver.id = :id")
-    public List<User> getDucksReceived(@Param("id") Long id);
+    @Query("SELECT d FROM Duck d WHERE d.receiver.id = :userId")
+    List<Duck> findDucksReceived(@Param("userId") Long userId);
+
+    @Query("SELECT d FROM Duck d WHERE d.sender.id = :userId")
+    List<Duck> findDucksSent(@Param("userId") Long userId);
+
+    @Query("SELECT d " +
+             "FROM Duck d " +
+            "WHERE d.sender.id = :senderId " +
+              "AND d.receiver.id = :receiverId")
+    Optional<Duck> findBySenderReceiver(@Param("senderId") Long reclaimerId,
+                                        @Param("receiverId") Long receivedId);
 }

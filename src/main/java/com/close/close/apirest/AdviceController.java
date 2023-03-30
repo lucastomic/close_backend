@@ -1,6 +1,6 @@
 package com.close.close.apirest;
 
-import com.close.close.duck.DuckNotFound;
+import com.close.close.duck.DuckNotFoundException;
 import com.close.close.duck.DuckToItselfException;
 import com.close.close.interest.InterestNotFoundException;
 import com.close.close.user.InvalidCredentialsException;
@@ -26,7 +26,7 @@ public class AdviceController {
             InterestNotFoundException.class,
             UserNotFoundException.class,
             DuckToItselfException.class,
-            DuckNotFound.class,
+            DuckNotFoundException.class,
             InvalidCredentialsException.class
     })
     ResponseEntity<String> handleFunction(StatusException ex){

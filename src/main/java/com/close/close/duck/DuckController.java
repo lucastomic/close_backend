@@ -1,15 +1,7 @@
 package com.close.close.duck;
 
-import com.close.close.apirest.UserUtils;
-import com.close.close.user.User;
-import com.close.close.user.UserModelAssembler;
-import com.close.close.user.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import com.close.close.user.UserNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,37 +16,17 @@ public class DuckController {
     public static final String GET_DUCKS               = "/ducks";
     public static final String GET_USER_RECEIVED_DUCKS = "/users/{userId}/ducks/received";
     public static final String GET_USER_SENT_DUCKS     = "/users/{userId}/ducks/sent";
-    public static final String POST_SEND_DUCK          = "/users/{senderId}/ducks/send/{receiverId}";
-    public static final String DELETE_RECLAIM_DUCK     = "/users/{reclaimerId}/ducks/reclaim/{receivedId}";
+    public static final String POST_SEND_DUCK          = "/users/ducks/send";
+    public static final String DELETE_RECLAIM_DUCK     = "/users/ducks/reclaim";
 
-    /**
-     * repository is the duck's implementations of the repository pattern.
-     * Handles all the duck's DB interactions
-     */
-    private DuckRepository repository;
-    /**
-     * userRepository is the user's implementation of the repository pattern.
-     * Handles all the user's DB interactions
-     */
-    private UserRepository userRepository;
-    /**
-     * userModelAssmebler manages the User entity modeling
-     */
-    private UserModelAssembler userModelAssembler;
-    /**
-     * entityManager is in charge of managing SQL queries.
-     */
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final DuckService DUCK_SERVICE;
 
 
     /**
      * class constructor with dependency injection
      */
-    DuckController(DuckRepository repository, UserRepository userRepository, UserModelAssembler userModelAssembler){
-        this.userModelAssembler = userModelAssembler;
-        this.userRepository = userRepository;
-        this.repository = repository;
+    DuckController(DuckService duckService){
+        this.DUCK_SERVICE = duckService;
     }
 
 
@@ -62,8 +34,8 @@ public class DuckController {
      * @return All ducks stored in the database.
      */
     @GetMapping(GET_DUCKS)
-    public ResponseEntity<?> allDucks() {
-        List<Duck> ducks = repository.findAll();
+    public ResponseEntity<?> findAll() {
+        List<Duck> ducks = DUCK_SERVICE.findAll();
         return ResponseEntity.ok(ducks);
     }
 
@@ -74,15 +46,16 @@ public class DuckController {
      * @return CollectionModel with all the users who have sent a duck to this user
      */
     @GetMapping(GET_USER_RECEIVED_DUCKS)
-    public CollectionModel<EntityModel<User>> getDucksReceived(@PathVariable Long userId){
-        String queryString = "SELECT d.sender FROM Duck d WHERE d.receiver.id = :id";
-        Query query = entityManager.createQuery(queryString).setParameter("id", userId);
-        List<User> users = query.getResultList();
-        UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
-        return userUtils.collectionModelFromList(users);
+    public ResponseEntity<List<Duck>> getDucksReceived(@PathVariable Long userId) {
+        List<Duck> ducksReceived = DUCK_SERVICE.findDucksReceived(userId);
+        return ResponseEntity.ok(ducksReceived);
     }
 
-    //TODO Get User Sent Ducks
+    @GetMapping(GET_USER_SENT_DUCKS)
+    public ResponseEntity<List<Duck>> getDucksSent(@PathVariable Long userId) {
+        List<Duck> ducksSent = DUCK_SERVICE.findDucksSent(userId);
+        return ResponseEntity.ok(ducksSent);
+    }
 
     /**
      * sendDuck sends a duck from a user to another one and save the transaction on the database.
@@ -93,38 +66,36 @@ public class DuckController {
      */
     @PostMapping(POST_SEND_DUCK)
     public ResponseEntity<?> sendDuck(@RequestParam Long senderId, @RequestParam Long receiverId) {
-        UserUtils userUtils = new UserUtils(userRepository,userModelAssembler);
-        User transmitter = userUtils.findOrThrow(senderId);
-        User receiver = userUtils.findOrThrow(receiverId);
-        Duck duckSent = new Duck(transmitter, receiver);
-        repository.save(duckSent);
-        List<User> usersList = List.of(receiver, transmitter);
-        CollectionModel<EntityModel<User>> body = userUtils.collectionModelFromList(usersList);
-        return ResponseEntity.ok().body(body);
+        ResponseEntity responseEntity;
+
+        try {
+            Duck duckSent = DUCK_SERVICE.sendDuck(senderId, receiverId);
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(duckSent);
+        } catch (UserNotFoundException e) {
+            responseEntity = ResponseEntity.notFound().build();
+        }
+
+        return responseEntity;
     }
 
     /**
      * Deletes a Duck object with the given senderId and receiverId.
      * @param reclaimerId the ID of the sender User
-     * @param receivedId the ID of the receiver User
+     * @param reclaimeeId the ID of the receiver User
      * @return a ResponseEntity with a message indicating the success of the operation
      */
-    //TODO Complete/Review this
     @DeleteMapping(DELETE_RECLAIM_DUCK)
     @Transactional
-    public ResponseEntity<?> removeDuck(@PathVariable Long reclaimerId, @PathVariable Long receivedId) {
-        UserUtils userUtils = new UserUtils(userRepository, userModelAssembler);
-        User sender = userUtils.findOrThrow(reclaimerId);
-        User receiver = userUtils.findOrThrow(receivedId);
-        Duck removedDuck = entityManager.find(Duck.class, new DuckId(reclaimerId, receivedId));
-        if (removedDuck == null) {
-            throw new DuckNotFound(reclaimerId, receivedId);
-        }
+    public ResponseEntity<?> removeDuck(@RequestParam Long reclaimerId, @RequestParam Long reclaimeeId) {
+        ResponseEntity responseEntity;
+
         try {
-            entityManager.remove(removedDuck);
-            return ResponseEntity.ok().body("Duck object has been deleted successfully.");
-        } catch (Exception e) {
-            throw new DuckNotFound(reclaimerId, receivedId);
+            Duck duckRemoved = DUCK_SERVICE.removeDuck(reclaimerId, reclaimeeId);
+            responseEntity = ResponseEntity.noContent().build();
+        } catch (UserNotFoundException | DuckNotFoundException e) {
+            responseEntity = ResponseEntity.notFound().build();
         }
+
+        return responseEntity;
     }
 }

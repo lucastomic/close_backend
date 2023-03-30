@@ -2,19 +2,15 @@ package com.close.close.user;
 
 /**
  * Stores both user phone number and user password (not encrypted) for future user login checks.
+ * @param phone Users phone number
+ * @param password Users plain password
  */
-public class UserCredentials {
-    /** users phone number **/
-    private String phone;
-
-    /** users plain password **/
-    private String password;
-
+public record UserCredentials (String phone, String password) {
 
     /**
      * Constructs a new UserCredential with a phone and password.
-     * @param phone
-     * @param password
+     * @param phone Users phone number
+     * @param password Users plain password
      */
     public UserCredentials(String phone, String password) {
         this.phone = phone;
@@ -26,17 +22,10 @@ public class UserCredentials {
      * @return The users phone number.
      */
     public String getPhone() { return phone; }
-    /**
-     * @param userName Users new name.
-     */
-    public void setUserName(String userName) { this.phone = userName; }
 
     /**
-     * @return The users password.
+     * @return The users' password.
      */
     public String getPassword() { return password; }
-    /**
-     * @param password Users new password
-     */
-    public void setPassword(String password) { this.password = password; }
+
 }

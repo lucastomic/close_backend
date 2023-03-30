@@ -42,7 +42,7 @@ public class UserUtils {
     public CollectionModel<EntityModel<User>> collectionModelFromList(List<User> users){
         return CollectionModel.of(
                 this.modelUsersList(users),
-                linkTo(methodOn(UserController.class).getAll()).withSelfRel()
+                linkTo(methodOn(UserController.class).findAll()).withSelfRel()
         );
     }
     /**

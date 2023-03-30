@@ -1,19 +1,15 @@
 package com.close.close.user;
 
-import com.close.close.apirest.RestSaver;
-import com.close.close.apirest.UserUtils;
-import com.close.close.security.authentication.TokenService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * UserController is the controller from the User entity.
@@ -22,31 +18,29 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    public static final String GET_USERS  = "/users";
-    public static final String GET_USER   = "/users/{userId}";
-    public static final String POST_USER  = "/users";
-    public static final String DELETE_USER = "/user/{userId}";
-
-    /** entityManager makes the SQL queries */
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public static final String GET_ALL_USERS     = "/users";
+    public static final String GET_USER_BY_ID    = "/users/{userId}";
+    public static final String CREATE_USER       = "/users";
+    public static final String DELETE_USER_BY_ID = "/user/{userId}";
 
     /**
      * repository is the user's repository for DB interaction
     */
-    @Autowired
-    private UserRepository repository;
+    private final UserService USER_SERVICE;
 
     /**
      * assembler is the user's model assembler for converting User models to
      * AIPRest responses
      */
-    @Autowired
-    private UserModelAssembler assembler;
+    private UserModelAssembler USER_MODEL_ASSEMBLER;
 
+
+    @Autowired
+    public UserController (UserService userService,
+                           UserModelAssembler userModelAssembler) {
+        USER_SERVICE = userService;
+        USER_MODEL_ASSEMBLER = userModelAssembler;
+    }
 
 
     /**
@@ -54,11 +48,13 @@ public class UserController {
      * The response is linked to different methods of the APIRest.
      * @return CollectionModel with different links of the APIRest.
      */
-    @GetMapping(GET_USERS)
-    public CollectionModel<EntityModel<User>> getAll(){
-            UserUtils utils = new UserUtils(repository, assembler);
-            List<User> allUsers = repository.findAll();
-            return utils.collectionModelFromList(allUsers);
+    @GetMapping(GET_ALL_USERS)
+    public CollectionModel<EntityModel<User>> findAll() {
+        List<EntityModel<User>> modelUsers = USER_SERVICE.getAll().stream().map(USER_MODEL_ASSEMBLER::toModel).toList();
+        return CollectionModel.of(
+                modelUsers,
+                linkTo(methodOn(UserController.class).findAll()).withSelfRel()
+        );
     }
 
     /**
@@ -68,28 +64,23 @@ public class UserController {
      * @param userId long with the ID of the user to be returned
      * @return EntityModel of the user with the ID
      */
-    @GetMapping(GET_USER)
-    EntityModel<User> getOne(@PathVariable Long userId){
-        UserUtils userUtils = new UserUtils(repository, assembler);
-        User user = userUtils.findOrThrow(userId);
-        return assembler.toModel(user);
+    @GetMapping(GET_USER_BY_ID)
+    public EntityModel<User> findById(@PathVariable Long userId){
+        User user = USER_SERVICE.findById(userId);
+        return USER_MODEL_ASSEMBLER.toModel(user);
     }
-
-
 
     /**
      * saveUser saves a user on the database. The user information is passed in the request's body.
      * If the user is saved successfully it returns an OK 200 status and a response with the link for
      * accessing the new User inserted. Also, in the body of the response is the information of the user inserted.
-     * Before saving the User data, its password is encoded by the PasswordEnconder and then data is saved
+     * Before saving the User data, its password is encoded by the PasswordEncoder and then data is saved
      * @return ResponseEntity with the link to the new employee inserted and the user's information in the request's body
      */
-    @PostMapping(POST_USER)
-    ResponseEntity<?> create(@RequestBody User newUser){
-        RestSaver<User> saver = new RestSaver<User>(repository, assembler);
-        String encodedPassword = passwordEncoder.encode(newUser.getPassword());
-        newUser.setPassword(encodedPassword);
-        return saver.saveEntity(newUser);
+    @PostMapping(CREATE_USER)
+    public ResponseEntity<EntityModel<User>> create(@RequestBody User newUser){
+        User user = USER_SERVICE.create(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(USER_MODEL_ASSEMBLER.toModel(user));
     }
 
     /**
@@ -98,13 +89,11 @@ public class UserController {
      * @return
      */
     //TODO: REVIEW
-    @DeleteMapping(DELETE_USER)
+    @DeleteMapping(DELETE_USER_BY_ID)
     public ResponseEntity<?> delete(@PathVariable Long userId) {
         try {
-            User userToDelete = repository.findById(userId)
-                    .orElseThrow(() -> new UserNotFoundException(userId));
-            repository.delete(userToDelete);
-            return ResponseEntity.ok().build();
+            USER_SERVICE.delete(userId);
+            return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -120,8 +109,8 @@ public class UserController {
      * @param credentials credentials to sign in
      * @return ResponseEntity with 200 status code and token in the body
      */
-    @PostMapping("/login")
-    ResponseEntity<?> login(@RequestBody UserCredentials credentials){
+    /** @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserCredentials credentials){
         User user = this.getUserFromPhone(credentials.getPhone());
 
         if(passwordEncoder.matches(credentials.getPassword(), user.getPassword())){
@@ -131,23 +120,13 @@ public class UserController {
             throw new InvalidCredentialsException();
         }
     }
-
-    /**
-     * getUserFromPhone gets a user given his phone number.
-     * @param phone user's phone number
-     * @return User object with the phone number indicated
-     */
-    //TODO: REMOVE?
-    private User getUserFromPhone(String phone){
-        String queryString = "SELECT u FROM User u WHERE u.phone = :phone";
-        Query query = entityManager.createQuery(queryString).setParameter("phone",phone);
-        return (User) query.getResultList().get(0);
-    }
+    **/
 
     //TODO: make
-    @PostMapping("/logout")
-    ResponseEntity<?> login(@RequestBody User newUser){
+    /** @PostMapping("/logout")
+    public ResponseEntity<?> login(@RequestBody User newUser){
         RestSaver<User> saver = new RestSaver<User>(repository, assembler);
         return saver.saveEntity(newUser);
     }
+    **/
 }

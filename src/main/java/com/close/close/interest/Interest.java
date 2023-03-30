@@ -22,6 +22,7 @@ public class Interest {
      */
     @Id
     private String name;
+
     /**
      * userInterested is a collection with the users who
      * have this interest.
