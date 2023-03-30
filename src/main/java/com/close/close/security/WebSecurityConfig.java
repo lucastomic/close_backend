@@ -1,6 +1,5 @@
 package com.close.close.security;
 
-import com.close.close.security.authentication.JWTAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,13 +29,9 @@ class WebSecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-        .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests((requests) -> requests
             .requestMatchers(antMatcher(HttpMethod.POST,"/users")).permitAll()
-            .anyRequest().permitAll()
-        ).formLogin(form ->form
-            .loginPage("/login")
-            .permitAll()
+            .anyRequest().authenticated()
         )
         .httpBasic(withDefaults());
         return http.build();
