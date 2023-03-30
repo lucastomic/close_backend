@@ -2,7 +2,6 @@ package com.close.close.user;
 
 import com.close.close.apirest.RestSaver;
 import com.close.close.apirest.UserUtils;
-import com.close.close.security.authentication.TokenService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -99,15 +98,8 @@ public class UserController {
      */
     @PostMapping("/login")
     ResponseEntity<?> login(@RequestBody UserCredentials credentials){
-        //User user = this.getUserFromPhone(credentials.getPhone());
-        User user = repository.getUserFromPhone(credentials.getPhone());
-
-        if(passwordEncoder.matches(credentials.getPassword(), user.getPassword())){
-            TokenService tokenService = new TokenService();
-            return ResponseEntity.ok(tokenService.generateToken(user));
-        }else{
-            throw new InvalidCredentialsException();
-        }
+        //TODO:IMPLEMENT
+        return ResponseEntity.ok("Ok");
     }
 
     /**
@@ -135,18 +127,11 @@ public class UserController {
       * @param id id of the user to be removed
      * @return
      */
-    //TODO: REVIEW
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
-        try {
-            User userToDelete = repository.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException(id));
-            repository.delete(userToDelete);
-            return ResponseEntity.ok().build();
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+         UserUtils userUtils = new UserUtils(repository,assembler);
+         User userToDelete = userUtils.findOrThrow(id);
+         repository.delete(userToDelete);
+         return ResponseEntity.ok().body("User with ID " + id + " deleted succesfully");
     }
 }
