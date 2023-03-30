@@ -99,17 +99,11 @@ public class UserController {
      */
     //TODO: REVIEW
     @DeleteMapping(DELETE_USER)
-    public ResponseEntity<?> delete(@PathVariable Long userId) {
-        try {
-            User userToDelete = repository.findById(userId)
-                    .orElseThrow(() -> new UserNotFoundException(userId));
-            repository.delete(userToDelete);
-            return ResponseEntity.ok().build();
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        UserUtils userUtils = new UserUtils(repository,assembler);
+        User userToDelete = userUtils.findOrThrow(id);
+        repository.delete(userToDelete);
+        return ResponseEntity.ok().body("User with ID " + id + " deleted succesfully");
     }
 
     /**
@@ -122,14 +116,8 @@ public class UserController {
      */
     @PostMapping("/login")
     ResponseEntity<?> login(@RequestBody UserCredentials credentials){
-        User user = this.getUserFromPhone(credentials.getPhone());
-
-        if(passwordEncoder.matches(credentials.getPassword(), user.getPassword())){
-            TokenService tokenService = new TokenService();
-            return ResponseEntity.ok(tokenService.generateToken(user));
-        }else{
-            throw new InvalidCredentialsException();
-        }
+        //TODO:IMPLEMENT
+        return ResponseEntity.ok("Ok");
     }
 
     /**
