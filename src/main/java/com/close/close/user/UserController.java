@@ -2,7 +2,6 @@ package com.close.close.user;
 
 import com.close.close.apirest.RestSaver;
 import com.close.close.apirest.UserUtils;
-import com.close.close.security.authentication.TokenService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -94,7 +93,7 @@ public class UserController {
 
     /**
      * deleteUserById deletes the user whose ID is passed by parameter
-     * @param userId id of the user to be removed
+     * @param id id of the user to be removed
      * @return
      */
     //TODO: REVIEW
