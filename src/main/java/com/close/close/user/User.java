@@ -7,7 +7,12 @@ package com.close.close.user;
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,8 +20,7 @@ import java.util.Set;
  *User is the application user model.
  */
 @Entity
-public class User{
-
+public class User implements UserDetails {
     /**
      * id is the id of the user. This is a long type number.
      * It's marked as a generated value.
@@ -24,11 +28,19 @@ public class User{
     private @Id @GeneratedValue Long id;
 
     /**
-     * name is a string with the user's name.
+     * username is a string with the user's name.
      * It's not nullable.
      */
-    @Column(nullable=false)
-    private String name;
+    @Column(nullable=false, unique = true)
+    private String username;
+
+
+    /**
+     * profileName is the name of the user that will appear as his real name (not his username).
+     * It can be more than one user with the same profileName
+     */
+    @Column
+    private String profileName;
 
     /**
      * age is the user's age
@@ -37,10 +49,16 @@ public class User{
     private int age;
 
     /**
-     *
+     * password of the user
      */
     @Column(nullable = false)
     private String password;
+
+    /**
+     * role the user takes in the app
+     */
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     /**
      * ducksSent is the collection of DuckShipping where the user is the sender.
@@ -97,13 +115,6 @@ public class User{
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getAge() {
         return age;
     }
@@ -111,33 +122,141 @@ public class User{
         this.age = age;
     }
 
+    /**
+     * Returns the authorities granted to the user. Cannot return <code>null</code>.
+     *
+     * @return the authorities, sorted by natural key (never <code>null</code>)
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
+    }
+
     public String getPassword() { return password; }
+
+    /**
+     * Returns the username used to authenticate the user. Cannot return
+     * <code>null</code>.
+     *
+     * @return the username (never <code>null</code>)
+     */
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    /**
+     * Indicates whether the user's account has expired. An expired account cannot be
+     * authenticated.
+     *
+     * @return <code>true</code> if the user's account is valid (ie non-expired),
+     * <code>false</code> if no longer valid (ie expired)
+     */
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    /**
+     * Indicates whether the user is locked or unlocked. A locked user cannot be
+     * authenticated.
+     *
+     * @return <code>true</code> if the user is not locked, <code>false</code> otherwise
+     */
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    /**
+     * Indicates whether the user's credentials (password) has expired. Expired
+     * credentials prevent authentication.
+     *
+     * @return <code>true</code> if the user's credentials are valid (ie non-expired),
+     * <code>false</code> if no longer valid (ie expired)
+     */
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    /**
+     * Indicates whether the user is enabled or disabled. A disabled user cannot be
+     * authenticated.
+     *
+     * @return <code>true</code> if the user is enabled, <code>false</code> otherwise
+     */
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+    /**
+     * Changes the password value
+     * @param password new password
+     */
     public void setPassword(String password) { this.password = password; }
 
+    /**
+     * Indicates the User phone. In this class, the Phone is unique for every user
+     * @return String with the User phone
+     */
     public String getPhone() {
         return phone;
     }
+
+    /**
+     * Changes the user phone value
+     * @param phone new Phone value
+     */
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    /**
+     * Indicates weather the user's phone is verified or not
+     * @return <code>true</code> if the phone is verified. <code>false</code> if it's not
+     */
     public boolean isPhoneIsVerified() {
         return phoneIsVerified;
     }
+
+    /**
+     * Changes the user's phone value
+     * @param phoneIsVerified String with the new phone value
+     */
     public void setPhoneIsVerified(boolean phoneIsVerified) {
         this.phoneIsVerified = phoneIsVerified;
     }
 
+    /**
+     * Gets a collections of strings with the User's photos
+     * @return Collection of strings with the link to the user's photos
+     */
     public Set<String> getPhotos() {
         return photos;
     }
+
+    /**
+     * Changes the user's photos
+     * @param photos new user's photos
+     */
     public void setPhotos(Set<String> photos) {
         this.photos = photos;
     }
 
+    /**
+     * Gets the user's interests
+     * @return Collection of the Interest objects which are linked with the user
+     */
     public Set<Interest> getInterests() {
         return interests;
     }
+
+    /**
+     * Changes the user's interests
+     * @param interests New interests collection
+     */
     public void setInterests(Set<Interest> interests) {
         this.interests = interests;
     }

@@ -35,7 +35,6 @@ public class UserController {
     private UserModelAssembler USER_MODEL_ASSEMBLER;
 
 
-    @Autowired
     public UserController (UserService userService,
                            UserModelAssembler userModelAssembler) {
         USER_SERVICE = userService;
@@ -88,7 +87,6 @@ public class UserController {
      * @param userId id of the user to be removed
      * @return
      */
-    //TODO: REVIEW
     @DeleteMapping(DELETE_USER_BY_ID)
     public ResponseEntity<?> delete(@PathVariable Long userId) {
         try {
@@ -109,18 +107,11 @@ public class UserController {
      * @param credentials credentials to sign in
      * @return ResponseEntity with 200 status code and token in the body
      */
-    /** @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserCredentials credentials){
-        User user = this.getUserFromPhone(credentials.getPhone());
-
-        if(passwordEncoder.matches(credentials.getPassword(), user.getPassword())){
-            TokenService tokenService = new TokenService();
-            return ResponseEntity.ok(tokenService.generateToken(user));
-        }else{
-            throw new InvalidCredentialsException();
-        }
+    @PostMapping("/login")
+    ResponseEntity<?> login(@RequestBody UserCredentials credentials){
+        //TODO:IMPLEMENT
+        return ResponseEntity.ok("Ok");
     }
-    **/
 
     //TODO: make
     /** @PostMapping("/logout")

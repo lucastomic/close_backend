@@ -14,6 +14,10 @@ public class UserNotFoundException extends StatusException {
         super("Not found user with id " + id);
     }
 
+    public UserNotFoundException(String username){
+        super("Not found user with username " + username);
+    }
+
     @Override
     public HttpStatus getStatus() {
         return STATUS;
