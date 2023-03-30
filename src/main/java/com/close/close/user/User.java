@@ -31,8 +31,16 @@ public class User implements UserDetails {
      * username is a string with the user's name.
      * It's not nullable.
      */
-    @Column(nullable=false)
+    @Column(nullable=false, unique = true)
     private String username;
+
+
+    /**
+     * profileName is the name of the user that will appear as his real name (not his username).
+     * It can be more than one user with the same profileName
+     */
+    @Column
+    private String profileName;
 
     /**
      * age is the user's age
