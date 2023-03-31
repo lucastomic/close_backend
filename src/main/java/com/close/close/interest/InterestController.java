@@ -29,8 +29,10 @@ public class InterestController {
 
 
     @Autowired
-    InterestController(InterestService interestService,
-                       InterestModelAssembler interestModelAssembler){
+    public InterestController(
+            InterestService interestService,
+            InterestModelAssembler interestModelAssembler)
+    {
         this.INTEREST_SERVICE = interestService;
         this.INTEREST_MODEL_ASSEMBLER = interestModelAssembler;
     };

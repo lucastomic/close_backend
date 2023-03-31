@@ -1,11 +1,9 @@
 package com.close.close.location;
 
 import com.close.close.location.space_partitioning.QueryResult;
-import com.close.close.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +19,12 @@ public class LocationController {
     public static final String GET_USER_LOCATION  = "/users/{userId}/location";
     public static final String POST_USER_LOCATION = "/users/{userId}/location";
 
-    private final LocationService LOCATION_SERVICE;
+    private final UserLocationService USER_LOCATION_SERVICE;
 
 
     @Autowired
-    public LocationController(LocationService locationService) {
-        LOCATION_SERVICE = locationService;
+    public LocationController(UserLocationService userLocationService) {
+        USER_LOCATION_SERVICE = userLocationService;
     }
 
 
@@ -38,10 +36,12 @@ public class LocationController {
      * @return ResponseEntity containing a QueryResult with the results of the search
      */
     @GetMapping(GET_SEARCH_USERS)
-    public ResponseEntity<QueryResult<UserLocation>> searchUsers(@PathVariable double latitude,
-                                                                 @PathVariable double longitude,
-                                                                 @PathVariable double radius) {
-        QueryResult<UserLocation> result = LOCATION_SERVICE.searchUsers(latitude, longitude, radius);
+    public ResponseEntity<QueryResult<UserLocation>> searchUsers(
+            @PathVariable double latitude,
+            @PathVariable double longitude,
+            @PathVariable double radius)
+    {
+        QueryResult<UserLocation> result = USER_LOCATION_SERVICE.searchUsers(latitude, longitude, radius);
         return ResponseEntity.ok(result);
     }
 
@@ -58,7 +58,7 @@ public class LocationController {
         // UserLocation could instead be a column of User in the database...
         // This would also allow us to clear the buffer each time quadtree is updated
         try {
-            QueryResult<UserLocation> result = LOCATION_SERVICE.closeUsers(userId, radius);
+            QueryResult<UserLocation> result = USER_LOCATION_SERVICE.closeUsers(userId, radius);
             responseEntity = ResponseEntity.ok(result);
         } catch (Exception e) {
             responseEntity = ResponseEntity.badRequest().build();
@@ -71,8 +71,8 @@ public class LocationController {
      * @return ResponseEntity containing a List of UserLocation objects representing the locations of all users
      */
     @GetMapping(GET_USER_LOCATIONS)
-    public ResponseEntity<List<UserLocation>> getLocations() {
-        List<UserLocation> locations = LOCATION_SERVICE.findAllUserLocations();
+    public ResponseEntity<List<UserLocation>> getUserLocations() {
+        List<UserLocation> locations = USER_LOCATION_SERVICE.findAllUserLocations();
         return ResponseEntity.ok(locations);
     }
 
@@ -86,7 +86,7 @@ public class LocationController {
     public ResponseEntity<?> getUserLocation(@PathVariable Long userId) {
         ResponseEntity responseEntity;
         try {
-            UserLocation userLocation = LOCATION_SERVICE.findUserLocation(userId);
+            UserLocation userLocation = USER_LOCATION_SERVICE.findUserLocation(userId);
             responseEntity = ResponseEntity.ok(userLocation);
         } catch (Exception e) {
             responseEntity = ResponseEntity.badRequest().build();
@@ -101,8 +101,8 @@ public class LocationController {
      * @return ResponseEntity with no content if successful
      */
     @PostMapping(POST_USER_LOCATION)
-    public ResponseEntity<?> sendLocation(@PathVariable Long userId, @RequestBody Location location) {
-        LOCATION_SERVICE.sendUserLocation(userId, location);
+    public ResponseEntity<?> sendUserLocation(@PathVariable Long userId, @RequestBody Location location) {
+        USER_LOCATION_SERVICE.sendUserLocation(userId, location);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(location);
     }
 }

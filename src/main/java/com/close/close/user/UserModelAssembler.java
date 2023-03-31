@@ -47,7 +47,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
 
                 //Location Controller Links
                 linkTo(methodOn(LocationController.class)
-                        .sendLocation(user.getId(), new Location(0, 0))
+                        .sendUserLocation(user.getId(), new Location(0, 0))
                 ).withRel(SENDLOCATIONREL),
 
                 linkTo(methodOn(LocationController.class)
