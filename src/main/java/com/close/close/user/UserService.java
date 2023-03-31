@@ -32,6 +32,7 @@ public class UserService {
 
     public User create(User newUser) {
         //Check if there is a user already registered with such number.
+        //TODO: CHANGE EXCEPTION (CREATE NEW ONE)
         if (USER_REPOSITORY.findByPhone(newUser.getPhone()).isPresent())
             throw new UserNotFoundException(newUser.getId());
 

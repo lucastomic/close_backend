@@ -1,4 +1,4 @@
-package com.close.close.security;
+package com.close.close.security.config;
 
 import com.close.close.user.UserNotFoundException;
 import com.close.close.user.UserRepository;

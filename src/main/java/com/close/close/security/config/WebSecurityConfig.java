@@ -1,4 +1,4 @@
-package com.close.close.security;
+package com.close.close.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
