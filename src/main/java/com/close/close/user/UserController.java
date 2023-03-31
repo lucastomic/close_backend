@@ -75,19 +75,6 @@ public class UserController {
     }
 
     /**
-     * saveUser saves a user on the database. The user information is passed in the request's body.
-     * If the user is saved successfully it returns an OK 200 status and a response with the link for
-     * accessing the new User inserted. Also, in the body of the response is the information of the user inserted.
-     * Before saving the User data, its password is encoded by the PasswordEncoder and then data is saved
-     * @return ResponseEntity with the link to the new employee inserted and the user's information in the request's body
-     */
-    @PostMapping(CREATE_USER)
-    public ResponseEntity<EntityModel<User>> create(@RequestBody User newUser){
-        User user = USER_SERVICE.create(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(USER_MODEL_ASSEMBLER.toModel(user));
-    }
-
-    /**
      * deleteUserById deletes the user whose ID is passed by parameter
      * @param userId id of the user to be removed
      * @return Response with No Content status
@@ -98,25 +85,5 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * login signs in the user.
-     * It expects the user credentials and returns a signed token if
-     * the credentials are valid. If they're not, it returns a
-     * InvalidCredentialsException.
-     * @param credentials credentials to sign in
-     * @return ResponseEntity with 200 status code and token in the body
-     */
-    @PostMapping(LOGIN)
-    ResponseEntity<?> login(@RequestBody UserCredentials credentials){
-        //TODO:IMPLEMENT
-        return ResponseEntity.ok("Ok");
-    }
 
-    //TODO: make
-    /** @PostMapping("/logout")
-    public ResponseEntity<?> login(@RequestBody User newUser){
-        RestSaver<User> saver = new RestSaver<User>(repository, assembler);
-        return saver.saveEntity(newUser);
-    }
-    **/
 }
