@@ -16,12 +16,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * It is in charge of handling the APIRest interactions with the User.
  */
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
-    public static final String GET_ALL_USERS     = "/users";
-    public static final String GET_USER_BY_ID    = "/users/{userId}";
-    public static final String CREATE_USER       = "/users";
-    public static final String DELETE_USER_BY_ID = "/user/{userId}";
+    public static final String GET_ALL_USERS     = "";
+    public static final String GET_USER_BY_ID    = "/{userId}";
+    public static final String CREATE_USER       = "";
+    public static final String DELETE_USER_BY_ID = "/{userId}";
+    public static final String LOGIN = "/login";
 
     /**
      * repository is the user's repository for DB interaction
@@ -35,8 +37,11 @@ public class UserController {
     private UserModelAssembler USER_MODEL_ASSEMBLER;
 
 
-    public UserController (UserService userService,
-                           UserModelAssembler userModelAssembler) {
+    @Autowired
+    public UserController (
+            UserService userService,
+            UserModelAssembler userModelAssembler
+    ) {
         USER_SERVICE = userService;
         USER_MODEL_ASSEMBLER = userModelAssembler;
     }
@@ -85,18 +90,12 @@ public class UserController {
     /**
      * deleteUserById deletes the user whose ID is passed by parameter
      * @param userId id of the user to be removed
-     * @return
+     * @return Response with No Content status
      */
     @DeleteMapping(DELETE_USER_BY_ID)
     public ResponseEntity<?> delete(@PathVariable Long userId) {
-        try {
-            USER_SERVICE.delete(userId);
-            return ResponseEntity.noContent().build();
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        USER_SERVICE.delete(userId);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -107,7 +106,7 @@ public class UserController {
      * @param credentials credentials to sign in
      * @return ResponseEntity with 200 status code and token in the body
      */
-    @PostMapping("/login")
+    @PostMapping(LOGIN)
     ResponseEntity<?> login(@RequestBody UserCredentials credentials){
         //TODO:IMPLEMENT
         return ResponseEntity.ok("Ok");

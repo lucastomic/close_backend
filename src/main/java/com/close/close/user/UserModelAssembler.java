@@ -29,7 +29,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                 user,
                 //User Controller Links
                 linkTo(methodOn(UserController.class)
-                        .getOne(user.getId())
+                        .findById(user.getId())
                 ).withSelfRel(),
 
                 linkTo(methodOn(UserController.class)

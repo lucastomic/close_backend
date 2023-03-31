@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,6 +61,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
+     * Generates a token from a request and user details and sets it in the SecurityContextHolder.
+     * @param request It is the request where the info will be taken from
+     * @param userDetails User details used to generate the token
+     */
+    private void setAuthTokenInContext(HttpServletRequest request, UserDetails userDetails){
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
+        authToken.setDetails(
+                new WebAuthenticationDetailsSource().buildDetails(request)
+        );
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+
+    /**
      * Same contract as for {@code doFilter}, but guaranteed to be
      * just invoked once per request within a single request thread.
      *
@@ -80,15 +98,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(username != null && !userIsAuthenticated()){
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                 if(jwtService.isTokenValid(token, userDetails)){
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    setAuthTokenInContext(request,userDetails);
                 }
 
             }

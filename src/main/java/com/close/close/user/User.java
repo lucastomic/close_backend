@@ -20,7 +20,7 @@ import java.util.Set;
  *User is the application user model.
  */
 @Entity
-public class User implements UserDetails {
+public class    User implements UserDetails {
     /**
      * id is the id of the user. This is a long type number.
      * It's marked as a generated value.
