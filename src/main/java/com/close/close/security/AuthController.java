@@ -1,5 +1,6 @@
 package com.close.close.security;
 
+import com.close.close.user.Role;
 import com.close.close.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,13 +39,23 @@ public class AuthController {
     }
 
     /**
-     * Registers a user in the system, given their information
+     * Registers a user in the system, given their information.
+     * For example, this could be a body to register a user:
+     * {
+     *     "profileName":"Enzo",
+     *     "username":"enzoFernandez5",
+     *     "age":22,
+     *     "phone":"624 423 123",
+     *     "password":"secretPassword",
+     * }
+     *
      * @param newUser User object with the new user information
      * @return If the user is created properly, it returns a 201 (created) status code, with
      * a response with token
      */
     @PostMapping(REGISTER)
     public ResponseEntity register(@RequestBody User newUser){
+        newUser.setRole(Role.USER);
         AuthenticationResponse response = service.register(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

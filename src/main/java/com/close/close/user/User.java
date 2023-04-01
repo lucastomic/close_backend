@@ -34,12 +34,11 @@ public class    User implements UserDetails {
     @Column(nullable=false, unique = true)
     private String username;
 
-
     /**
      * profileName is the name of the user that will appear as his real name (not his username).
      * It can be more than one user with the same profileName
      */
-    @Column
+    @Column(nullable = false)
     private String profileName;
 
     /**
@@ -53,6 +52,7 @@ public class    User implements UserDetails {
      */
     @Column(nullable = false)
     private String password;
+
 
     /**
      * role the user takes in the app
@@ -261,8 +261,34 @@ public class    User implements UserDetails {
         this.interests = interests;
     }
 
+    /**
+     * Gets the user profile name
+     * @return String with the profile name
+     */
+    public String getProfileName() {
+        return profileName;
+    }
 
-    // Credits to: Lucas Tomic Benitez
+    /**
+     * Changes the profile name of the user
+     * @param profileName New profile name
+     */
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     /**
      * Return if this user is equal to another object
      * @param o object to compare with this user
