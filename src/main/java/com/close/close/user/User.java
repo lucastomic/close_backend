@@ -7,6 +7,7 @@ package com.close.close.user;
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
 import jakarta.persistence.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- *User is the application user model.
+ * User is the application user model.
  */
 @Entity
 public class User implements UserDetails {
@@ -25,13 +26,14 @@ public class User implements UserDetails {
      * id is the id of the user. This is a long type number.
      * It's marked as a generated value.
      */
-    private @Id @GeneratedValue Long id;
+    private @Id
+    @GeneratedValue Long id;
 
     /**
      * username is a string with the user's name.
      * It's not nullable.
      */
-    @Column(nullable=false, unique = true)
+    @Column(nullable = false, unique = true)
     private String username;
 
     /**
@@ -43,7 +45,7 @@ public class User implements UserDetails {
 
     /**
      * age is the user's age
-    */
+     */
     @Column(nullable = false)
     private int age;
 
@@ -102,16 +104,28 @@ public class User implements UserDetails {
      */
     @ManyToMany
     @JoinTable(
-        name = "has_interest",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "interest_id")
+            name = "has_interest",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "interest_id")
     )
     private Set<Interest> interests;
+
+    public User (Long id, String username, String profileName, int age, String password, Role role, String phone, boolean phoneIsVerified){
+        this.id=id;
+        this.username=username;
+        this.profileName=profileName;
+        this.age=age;
+        this.password=password;
+        this.role=role;
+        this.phone=phone;
+        this.phoneIsVerified=phoneIsVerified;
+    }
 
 
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -119,6 +133,7 @@ public class User implements UserDetails {
     public int getAge() {
         return age;
     }
+
     public void setAge(int age) {
         this.age = age;
     }
@@ -133,7 +148,9 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
 
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
     /**
      * Returns the username used to authenticate the user. Cannot return
@@ -194,12 +211,16 @@ public class User implements UserDetails {
 
     /**
      * Changes the password value
+     *
      * @param password new password
      */
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     /**
      * Indicates the User phone. In this class, the Phone is unique for every user
+     *
      * @return String with the User phone
      */
     public String getPhone() {
@@ -208,6 +229,7 @@ public class User implements UserDetails {
 
     /**
      * Changes the user phone value
+     *
      * @param phone new Phone value
      */
     public void setPhone(String phone) {
@@ -216,6 +238,7 @@ public class User implements UserDetails {
 
     /**
      * Indicates weather the user's phone is verified or not
+     *
      * @return <code>true</code> if the phone is verified. <code>false</code> if it's not
      */
     public boolean isPhoneIsVerified() {
@@ -224,6 +247,7 @@ public class User implements UserDetails {
 
     /**
      * Changes the user's phone value
+     *
      * @param phoneIsVerified String with the new phone value
      */
     public void setPhoneIsVerified(boolean phoneIsVerified) {
@@ -232,6 +256,7 @@ public class User implements UserDetails {
 
     /**
      * Gets a collections of strings with the User's photos
+     *
      * @return Collection of strings with the link to the user's photos
      */
     public Set<String> getPhotos() {
@@ -240,6 +265,7 @@ public class User implements UserDetails {
 
     /**
      * Changes the user's photos
+     *
      * @param photos new user's photos
      */
     public void setPhotos(Set<String> photos) {
@@ -248,6 +274,7 @@ public class User implements UserDetails {
 
     /**
      * Gets the user's interests
+     *
      * @return Collection of the Interest objects which are linked with the user
      */
     public Set<Interest> getInterests() {
@@ -256,6 +283,7 @@ public class User implements UserDetails {
 
     /**
      * Changes the user's interests
+     *
      * @param interests New interests collection
      */
     public void setInterests(Set<Interest> interests) {
@@ -264,6 +292,7 @@ public class User implements UserDetails {
 
     /**
      * Gets the user profile name
+     *
      * @return String with the profile name
      */
     public String getProfileName() {
@@ -272,6 +301,7 @@ public class User implements UserDetails {
 
     /**
      * Changes the profile name of the user
+     *
      * @param profileName New profile name
      */
     public void setProfileName(String profileName) {
@@ -292,6 +322,7 @@ public class User implements UserDetails {
 
     /**
      * Return if this user is equal to another object
+     *
      * @param o object to compare with this user
      * @return whether the object is the same or not
      */
