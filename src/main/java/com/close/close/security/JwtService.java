@@ -7,12 +7,10 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 /**
  * This class provides methods for generating and validating JSON Web Tokens (JWTs) using the io.jsonwebtoken library.
@@ -27,7 +25,7 @@ public class JwtService {
     /**
      * The expiration time for JWTs, in milliseconds.
      */
-    private final int TOKEN_EXPIRATION =  1000*60*24;
+    private final int TOKEN_EXPIRATION =  1000*60*60*24;
     /**
      * Extracts a claim from a JWT using a function that takes a Claims object and returns a type T.
      *
@@ -131,7 +129,4 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
     }
-
-
-
 }

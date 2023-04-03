@@ -1,5 +1,6 @@
 package com.close.close.user;
 
+import com.close.close.apirest.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -34,7 +35,7 @@ public class UserController {
      * assembler is the user's model assembler for converting User models to
      * AIPRest responses
      */
-    private UserModelAssembler USER_MODEL_ASSEMBLER;
+    private final UserModelAssembler USER_MODEL_ASSEMBLER;
 
 
     @Autowired
@@ -54,7 +55,9 @@ public class UserController {
      */
     @GetMapping(GET_ALL_USERS)
     public CollectionModel<EntityModel<User>> findAll() {
-        List<EntityModel<User>> modelUsers = USER_SERVICE.getAll().stream().map(USER_MODEL_ASSEMBLER::toModel).toList();
+        UserUtils utils = new UserUtils(null, USER_MODEL_ASSEMBLER);
+        List<User> users = USER_SERVICE.getAll();
+        List<EntityModel<User>> modelUsers = utils.modelUsersList(users);
         return CollectionModel.of(
                 modelUsers,
                 linkTo(methodOn(UserController.class).findAll()).withSelfRel()

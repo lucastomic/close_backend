@@ -49,9 +49,9 @@ public class UserUtils {
      * modelUsersList takes a user's list, model each one to an EntityModel
      * and returns a list with all the EntityModelObjects
      * @param users list of users to parse
-     * @return list of EntityModel objects with the users parsered
+     * @return list of EntityModel objects with the users parsed
      */
-    private List<EntityModel<User>> modelUsersList(List<User>users){
+    public List<EntityModel<User>> modelUsersList(List<User>users){
         return users.stream().map(assembler::toModel).toList();
     }
 

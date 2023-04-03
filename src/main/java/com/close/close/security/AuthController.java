@@ -29,6 +29,11 @@ public class AuthController {
 
     /**
      * Signs in a user, given their credentials
+     * For example, this could be a body to authenticate a user:
+     * {
+     *     "username":"enzoFernandez5",
+     *     "password":"secretPassword",
+     * }
      * @param request an object with the user's credentials
      * @return Response entity with a 200 status code if the credentials are correct.
      */

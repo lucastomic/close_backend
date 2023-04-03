@@ -4,6 +4,7 @@ import org.apache.logging.log4j.spi.DefaultThreadContextStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,17 +50,21 @@ public class UserService {
      * @param newUser User object to create
      * @return If the user was created successfully, it returns the user created
      */
-    public User create(User newUser) {
+    public User create(User newUser) throws CannotCreateTransactionException{
+            newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
+            USER_REPOSITORY.save(newUser);
+            return newUser;
+
         //Check if there is a user already registered with such number.
         //TODO: CHANGE EXCEPTION (CREATE NEW ONE)
         //TODO: REVIEW (LUCAS TOMIC)
-        if (USER_REPOSITORY.findByPhone(newUser.getPhone()).isPresent())
-            throw new UserNotFoundException(newUser.getId());
-        //TODO: CHECK USERNAME ALSO
-
-        newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
-        USER_REPOSITORY.save(newUser);
-        return newUser;
+//        if (USER_REPOSITORY.findByPhone(newUser.getPhone()).isPresent())
+//            throw new UserNotFoundException(newUser.getId());
+//        //TODO: CHECK USERNAME ALSO
+//
+//        newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
+//        USER_REPOSITORY.save(newUser);
+//        return newUser;
     }
 
     /**

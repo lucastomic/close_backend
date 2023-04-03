@@ -2,20 +2,15 @@ package com.close.close.security.config;
 
 import com.close.close.user.UserNotFoundException;
 import com.close.close.user.UserRepository;
-import com.mysql.cj.protocol.AuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 /**
 
@@ -27,7 +22,6 @@ public class ApplicationConfig {
     private final UserRepository repository;
 
     /**
-
      Constructor for the ApplicationConfig class.
      @param repository user repository
      */
@@ -35,6 +29,7 @@ public class ApplicationConfig {
     public ApplicationConfig(UserRepository repository) {
         this.repository = repository;
     }
+
     /**
      Defines a bean for the user details service.
      @return user details service
@@ -57,6 +52,7 @@ public class ApplicationConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
     /**
      * Defines our custom authentication manager
      */
@@ -66,8 +62,8 @@ public class ApplicationConfig {
     }
 
     /**
-     * Defines our password econder. It's used the BCryptPasswordEconder.
-     * @return PasswordEconder object
+     * Defines our password encoder. It's used the BCryptPasswordEncoder.
+     * @return PasswordEncoder object
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
