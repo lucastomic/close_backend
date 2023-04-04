@@ -3,7 +3,9 @@
  */
 package com.close.close.interest;
 import com.close.close.user.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 
@@ -23,11 +25,19 @@ public class Interest {
     @Id
     private String name;
 
+    public Interest(String name) {
+        this.name = name;
+    }
+
+    public Interest() {
+    }
+
     /**
      * userInterested is a collection with the users who
      * have this interest.
      */
-    @ManyToMany(mappedBy = "interests")
+    @JsonIgnore
+    @ManyToMany(mappedBy = "interests", fetch = FetchType.EAGER)
     private Set<User> usersInterested;
 
     // getters and setters

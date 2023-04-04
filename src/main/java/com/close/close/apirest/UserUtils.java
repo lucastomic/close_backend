@@ -12,7 +12,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * UserUtils manages the common logic of the user operations.
- * This is, User type handling (parsings), common User datbase opeartions, etc
+ * This is, User type handling (parsings), common User database operations, etc
  */
 public class UserUtils {
     /**

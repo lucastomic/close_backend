@@ -101,7 +101,9 @@ public class User implements UserDetails {
      * interests are the user's interests set.
      * As this is a M-N relation it's saved in a different table.
      */
-    @ManyToMany
+    @ManyToMany(
+            fetch = FetchType.EAGER
+    )
     @JoinTable(
             name = "has_interest",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -289,6 +291,14 @@ public class User implements UserDetails {
      */
     public void setInterests(Set<Interest> interests) {
         this.interests = interests;
+    }
+
+    /**
+     * Adds an interest into the user's interests
+     * @param interest interest to add
+     */
+    public void addInterest(Interest interest){
+        this.interests.add(interest);
     }
 
     /**

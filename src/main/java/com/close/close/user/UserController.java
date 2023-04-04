@@ -1,11 +1,14 @@
 package com.close.close.user;
 
 import com.close.close.apirest.UserUtils;
+import com.close.close.interest.Interest;
+import com.close.close.interest.InterestService;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -25,6 +28,7 @@ public class UserController {
     public static final String CREATE_USER       = "";
     public static final String DELETE_USER_BY_ID = "/{userId}";
     public static final String LOGIN = "/login";
+    public static final String ADD_INTEREST = "/addInterest/{interestName}";
 
     /**
      * repository is the user's repository for DB interaction
@@ -37,14 +41,18 @@ public class UserController {
      */
     private final UserModelAssembler USER_MODEL_ASSEMBLER;
 
+    private final InterestService INTEREST_SERVICE;
 
     @Autowired
     public UserController (
             UserService userService,
-            UserModelAssembler userModelAssembler
+            UserModelAssembler userModelAssembler,
+            InterestService interestService
+
     ) {
         USER_SERVICE = userService;
         USER_MODEL_ASSEMBLER = userModelAssembler;
+        INTEREST_SERVICE = interestService;
     }
 
 
@@ -88,5 +96,18 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Adds an interest given its name to the user currently authenticated
+     * @param interestName interest's name to add to the user
+     * @return EntityModel of the user updated
+     */
+    //TODO: still not working
+    @PutMapping(ADD_INTEREST)
+    public EntityModel<User> addInterest(@PathVariable String interestName){
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Interest interest = INTEREST_SERVICE.findOrCreate(interestName);
+        USER_SERVICE.addInterest(principal,interest);
+        return USER_MODEL_ASSEMBLER.toModel(principal);
+    }
 
 }

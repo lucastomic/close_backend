@@ -1,5 +1,7 @@
 package com.close.close.user;
 
+import com.close.close.interest.Interest;
+import com.close.close.interest.InterestService;
 import org.apache.logging.log4j.spi.DefaultThreadContextStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,7 +22,6 @@ public class UserService {
 
     private final UserRepository USER_REPOSITORY;
     private final PasswordEncoder PASSWORD_ENCODER;
-
 
     @Autowired
     public UserService(UserRepository userRepository,
@@ -45,6 +46,17 @@ public class UserService {
      */
     public User findById(Long userId) {
         return USER_REPOSITORY.findById(userId).orElseThrow();
+    }
+
+
+    /**
+     * Adds an interest to a User and persists it in de database
+     * @param user user to add the interest
+     * @param interest interest to be added
+     */
+    public void addInterest(User user, Interest interest){
+        user.addInterest(interest);
+        USER_REPOSITORY.save(user);
     }
 
     /**
