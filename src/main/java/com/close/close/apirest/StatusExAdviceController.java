@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * AdviceController handles exceptions which implies a status code (implement the StatusException interface).
+ * StatusExAdviceController handles exceptions which implies a status code (implement the StatusException interface).
  * It's triggered every time an exception with status code is thrown all over the application.
  */
 @ControllerAdvice
-public class AdviceController {
+public class StatusExAdviceController {
     /**
      * handleFunction is triggered every time an exception to the defined below
      * is thrown in any part of the application. It returns the exception's

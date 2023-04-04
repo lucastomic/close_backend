@@ -16,7 +16,7 @@ import java.io.IOException;
 
 /**
  * JwtAuthenticationFilter is a filter executed once per request within a single request thread.
- * It
+ * It checks whether the token JWT exists and if the user loaded on it is valid
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

@@ -4,9 +4,14 @@ import com.close.close.user.User;
 import com.close.close.user.UserRepository;
 import com.close.close.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
+
+import java.sql.SQLException;
 
 /**
  * AuthenticationService manages the operations wihch implies
@@ -35,6 +40,7 @@ public class AuthenticationService {
     /**
      * Creates a new user and generates a JWT (Json Web Token) given his information
      * @param newUser User to create
+     * @throws CannotCreateTransactionException is thrown when the DB transaction doesn't work properly
      * @return AuthenticationResponse object with the JWT created
      */
     public AuthenticationResponse register(User newUser){
@@ -49,7 +55,7 @@ public class AuthenticationService {
      * @return If the authentication is successful it returns an AuthenticationResponse object
      * with the JWT generated, otherwise it returns an error
      */
-    public AuthenticationResponse authenticate(AuthenticationRequest request){
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),

@@ -2,10 +2,13 @@ package com.close.close.user;
 
 import org.apache.logging.log4j.spi.DefaultThreadContextStack;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,9 +51,10 @@ public class UserService {
      * Creates a new User storing it in the database, if there is no other user with the same
      * number phone and username
      * @param newUser User object to create
+     * @throws CannotCreateTransactionException is thrown when the DB transaction doesn't work properly
      * @return If the user was created successfully, it returns the user created
      */
-    public User create(User newUser) throws CannotCreateTransactionException{
+    public User create(User newUser) {
             newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
             USER_REPOSITORY.save(newUser);
             return newUser;

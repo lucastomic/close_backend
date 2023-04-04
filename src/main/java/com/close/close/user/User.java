@@ -7,7 +7,6 @@ package com.close.close.user;
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
 import jakarta.persistence.*;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -121,6 +120,8 @@ public class User implements UserDetails {
         this.phoneIsVerified=phoneIsVerified;
     }
 
+    public User() {
+    }
 
     public Long getId() {
         return id;
