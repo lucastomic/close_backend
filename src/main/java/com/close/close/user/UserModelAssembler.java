@@ -22,6 +22,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
     private final String DUCKSRECEIVEDREL = "ducksReceived";
     private final String SENDLOCATIONREL = "sendLocation";
     private final String CLOSEUSERSREL = "closeUsers";
+    private final String ADDINTEREST = "addInterest";
 
     @Override
     public @NotNull EntityModel<User> toModel(@NotNull User user) {
@@ -36,6 +37,9 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                         .findAll()
                 ).withRel(GETALLREL),
 
+                linkTo(methodOn(UserController.class)
+                        .addInterest("Chess")
+                ).withRel(ADDINTEREST),
                 //Duck Controller Links
                 linkTo(methodOn(DuckController.class)
                         .sendDuck(user.getId(), 0L)

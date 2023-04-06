@@ -4,6 +4,7 @@
 package com.close.close.interest;
 import com.close.close.user.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -16,6 +17,7 @@ import java.util.Set;
  * Interest are the user's interests
  */
 @Entity
+
 public class Interest {
 
     /**

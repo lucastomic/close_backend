@@ -98,13 +98,11 @@ public class UserController {
      * @param interestName interest's name to add to the user
      * @return EntityModel of the user updated
      */
-    //TODO: still not working
     @PutMapping(ADD_INTEREST)
     public EntityModel<User> addInterest(@PathVariable String interestName){
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Interest interest = INTEREST_SERVICE.findOrCreate(interestName);
-        USER_SERVICE.addInterest(principal,interest);
-        return USER_MODEL_ASSEMBLER.toModel(principal);
+        User userToReturn = USER_SERVICE.addInterest(interest);
+        return USER_MODEL_ASSEMBLER.toModel(userToReturn);
     }
 
 }

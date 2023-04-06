@@ -5,6 +5,7 @@ import com.close.close.interest.InterestService;
 import org.apache.logging.log4j.spi.DefaultThreadContextStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -50,13 +51,15 @@ public class UserService {
 
 
     /**
-     * Adds an interest to a User and persists it in de database
-     * @param user user to add the interest
+     * Adds an interest the User currently authenticated and persists it in de database.
      * @param interest interest to be added
+     * @return the User who has been modified
      */
-    public void addInterest(User user, Interest interest){
+    public User addInterest(Interest interest){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         user.addInterest(interest);
         USER_REPOSITORY.save(user);
+        return this.findById(user.getId());
     }
 
     /**
