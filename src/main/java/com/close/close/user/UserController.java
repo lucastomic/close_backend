@@ -3,7 +3,6 @@ package com.close.close.user;
 import com.close.close.apirest.UserUtils;
 import com.close.close.interest.Interest;
 import com.close.close.interest.InterestService;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -25,9 +24,7 @@ public class UserController {
 
     public static final String GET_ALL_USERS     = "";
     public static final String GET_USER_BY_ID    = "/{userId}";
-    public static final String CREATE_USER       = "";
     public static final String DELETE_USER_BY_ID = "/{userId}";
-    public static final String LOGIN = "/login";
     public static final String ADD_INTEREST = "/addInterest/{interestName}";
 
     /**

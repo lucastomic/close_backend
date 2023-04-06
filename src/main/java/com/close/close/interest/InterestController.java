@@ -17,12 +17,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * It is in charge of handling the APIRest interactions with the User.
  */
 @RestController
+@RequestMapping("/interests")
 public class InterestController {
 
-    public static final String GET_INTERESTS      = "/interests";
-    public static final String GET_INTEREST       = "/interests/{interestId}";
-    public static final String POST_INTEREST      = "/interests";
-    public static final String GET_USER_INTERESTS = "/users/{userId}/interests";
+    public static final String GET_INTERESTS      = "";
+    public static final String GET_INTEREST       = "/{interestId}";
+    public static final String POST_INTEREST      = "";
+    public static final String GET_USER_INTERESTS = "/{userId}";
 
     private final InterestService INTEREST_SERVICE;
     private final InterestModelAssembler INTEREST_MODEL_ASSEMBLER;
