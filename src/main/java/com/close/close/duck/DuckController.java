@@ -17,6 +17,7 @@ public class DuckController {
     public static final String GET_USER_RECEIVED_DUCKS = "/users/{userId}/ducks/received";
     public static final String GET_USER_SENT_DUCKS     = "/users/{userId}/ducks/sent";
     public static final String POST_SEND_DUCK          = "/users/ducks/send";
+    public static final String SEND_DUCK          = "/users/ducks/send";
     public static final String DELETE_RECLAIM_DUCK     = "/users/ducks/reclaim";
 
     private final DuckService DUCK_SERVICE;
@@ -58,24 +59,15 @@ public class DuckController {
     }
 
     /**
-     * sendDuck sends a duck from a user to another one and save the transaction on the database.
-     * The id of the transmitter and the receiver are sent by path.
-     * @param senderId id from the transmitter
+     * sendDuck sends a duck from the user currently authenticated to another one and save
+     * the transaction on the database. The id of the transmitter and the receiver are sent by path.
      * @param receiverId id from the receiver
      * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
      */
-    @PostMapping(POST_SEND_DUCK)
-    public ResponseEntity<?> sendDuck(@RequestParam Long senderId, @RequestParam Long receiverId) {
-        ResponseEntity responseEntity;
-
-        try {
-            Duck duckSent = DUCK_SERVICE.sendDuck(senderId, receiverId);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(duckSent);
-        } catch (UserNotFoundException e) {
-            responseEntity = ResponseEntity.notFound().build();
-        }
-
-        return responseEntity;
+    @PostMapping(SEND_DUCK)
+    public ResponseEntity<?> sendDuck(@RequestParam Long receiverId) {
+        Duck duckSent = DUCK_SERVICE.sendDuck(receiverId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(duckSent);
     }
 
     /**

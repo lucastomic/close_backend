@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -25,6 +24,7 @@ public class UserController {
     public static final String GET_ALL_USERS     = "";
     public static final String GET_USER_BY_ID    = "/{userId}";
     public static final String DELETE_USER_BY_ID = "/{userId}";
+    public static final String DELETE_USER = "/";
     public static final String ADD_INTEREST = "/addInterest/{interestName}";
 
     /**
@@ -87,9 +87,21 @@ public class UserController {
      * @param userId id of the user to be removed
      * @return Response with No Content status
      */
+    //TODO: This endpoint must require ADMIN Authorization
     @DeleteMapping(DELETE_USER_BY_ID)
     public ResponseEntity<?> delete(@PathVariable Long userId) {
         USER_SERVICE.delete(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Deletes the user currently authenticated, deleting all their data
+     * from the whole application
+     * @return Response with No Content status
+     */
+    @DeleteMapping(DELETE_USER)
+    public ResponseEntity<?> delete(){
+        USER_SERVICE.delete();
         return ResponseEntity.noContent().build();
     }
 

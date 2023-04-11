@@ -1,6 +1,7 @@
 package com.close.close.duck;
 
 import com.close.close.apirest.UserUtils;
+import com.close.close.security.AuthenticationService;
 import com.close.close.user.User;
 import com.close.close.user.UserController;
 import com.close.close.user.UserNotFoundException;
@@ -25,13 +26,16 @@ public class DuckService {
      */
     private final DuckRepository DUCK_REPOSITORY;
     private final UserRepository USER_REPOSITORY;
+    private final AuthenticationService AUTH_SERVICE;
 
 
     @Autowired
     public DuckService (DuckRepository duckRepository,
-                        UserRepository userRepository) {
+                        UserRepository userRepository,
+                        AuthenticationService authenticationService) {
         this.DUCK_REPOSITORY = duckRepository;
         this.USER_REPOSITORY = userRepository;
+        this.AUTH_SERVICE = authenticationService;
     }
 
 
@@ -47,10 +51,15 @@ public class DuckService {
         return DUCK_REPOSITORY.findDucksSent(userId);
     }
 
+    /**
+     * Sends a duck from the user currently authenticated to the user whose
+     * ID is specified by parameter.
+     * @param receiverId parameter of the duck's receiver
+     * @return Duck object of the Duck which has been just sended
+     */
     @Transactional
-    public Duck sendDuck(Long senderId, Long receiverId) {
-        User sender = USER_REPOSITORY.findById(senderId)
-                .orElseThrow( () -> new UserNotFoundException(senderId));
+    public Duck sendDuck(Long receiverId) {
+        User sender = AUTH_SERVICE.getAuthenticated();
         User receiver = USER_REPOSITORY.findById(receiverId)
                 .orElseThrow( () -> new UserNotFoundException(receiverId));
         Duck duckSent = new Duck(sender, receiver);

@@ -2,6 +2,7 @@ package com.close.close.user;
 
 import com.close.close.interest.Interest;
 import com.close.close.interest.InterestService;
+import com.close.close.security.AuthenticationService;
 import org.apache.logging.log4j.spi.DefaultThreadContextStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,13 +24,17 @@ public class UserService {
 
     private final UserRepository USER_REPOSITORY;
     private final PasswordEncoder PASSWORD_ENCODER;
+    private final AuthenticationService AUTH_SERVICE;
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationService authenticationService) {
         USER_REPOSITORY = userRepository;
         PASSWORD_ENCODER = passwordEncoder;
+        AUTH_SERVICE = authenticationService;
     }
+
 
     /**
      * Retrieves all the users stored in the system
@@ -56,10 +61,10 @@ public class UserService {
      * @return the User who has been modified
      */
     public User addInterest(Interest interest){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = AUTH_SERVICE.getAuthenticated();
         user.addInterest(interest);
         USER_REPOSITORY.save(user);
-        return this.findById(user.getId());
+        return user;
     }
 
     /**
@@ -97,5 +102,13 @@ public class UserService {
         if (user.isEmpty()) throw new UserNotFoundException(userId);
 
         USER_REPOSITORY.delete(user.get());
+    }
+
+    /**
+     * Deletes the user currently authenticated
+     */
+    public void delete(){
+        User user = AUTH_SERVICE.getAuthenticated();
+        USER_REPOSITORY.delete(user);
     }
 }

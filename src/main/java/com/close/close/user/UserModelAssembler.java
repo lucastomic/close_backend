@@ -42,7 +42,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                 ).withRel(ADDINTEREST),
                 //Duck Controller Links
                 linkTo(methodOn(DuckController.class)
-                        .sendDuck(user.getId(), 0L)
+                        .sendDuck(0L)
                 ).withRel(SENDDUCKREL),
 
                 linkTo(methodOn(DuckController.class)

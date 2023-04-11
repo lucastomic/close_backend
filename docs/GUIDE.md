@@ -126,30 +126,10 @@ and maintained more easily and independently.
 
 ## Interface
 
-### Get all the users
-`GET /users`
+### Delete the currently authenticated user
+`DELETE /users`
 
-Retrieves all the users from the app
-
-### Get a user given their ID
-`GET /users/{userId}`
-
-Parameters
-
-| Name   | Tipo | Required | Description                |
-|--------|------|----------|----------------------------|
-| userId | Long | Yes      | Id of the user to retrieve |
-
-Retrieves the user with the giVen ID
-
-### Deletes a user
-`DELETE /users/{userId}`
-
-| Name   | Tipo | Required | Description              |
-|--------|------|----------|--------------------------|
-| userId | Long | Yes      | Id of the user to delete |
-
-Deletes a user given its ID
+Deletes the user who is currently authenticated
 
 ### Add an interest to a User
 `PUT /users/addInterest/{interestName}`
@@ -158,6 +138,30 @@ Deletes a user given its ID
 |--------------|--------|----------|-----------------------------------------|
 | interestName | String | Yes      | Name of the interest to add to the user |
 
-
 Adds an interest to the User currently authenticated. If the interest specified doesn't
 exist already, it creates it on the database.
+
+### Authenticate
+`POST /authenticate`
+
+| Name | Tipo                  | Required | Description                           |
+|------|-----------------------|----------|---------------------------------------|
+| body | AuthenticationRequest | Yes      | Username and password to authenticate |
+
+
+Authenticates the user on the system. If the credentials are right it returns the Token 
+to authenticate the next requests
+
+This is how the body of the request must look
+
+```
+{
+    username:"myUsernameToLogIn",
+    password:"mySecretPassword"
+}
+```
+
+### Register
+`POST /authenticate`
+
+//TODO: Continue

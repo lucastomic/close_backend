@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -37,6 +38,7 @@ public class SecurityConfiguration {
      @return a SecurityFilterChain object representing the configured filter chain.
      @throws Exception if an error occurs during configuration.
      */
+    //TODO:SOLVE EXCEPTION HANDLING ERROR https://stackoverflow.com/questions/55905824/spring-security-returns-404-instead-of-403-when-using-preauthorize
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
