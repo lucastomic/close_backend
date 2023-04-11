@@ -16,7 +16,7 @@ public class DuckController {
     public static final String GET_DUCKS               = "/ducks";
     public static final String GET_USER_RECEIVED_DUCKS = "/users/{userId}/ducks/received";
     public static final String GET_USER_SENT_DUCKS     = "/users/{userId}/ducks/sent";
-    public static final String POST_SEND_DUCK          = "/users/ducks/send";
+    public static final String GET_DUCKS_SENT     = "/users/ducks/sent";
     public static final String SEND_DUCK          = "/users/ducks/send";
     public static final String DELETE_RECLAIM_DUCK     = "/users/ducks/reclaim";
 
@@ -59,11 +59,23 @@ public class DuckController {
     }
 
     /**
+     * Get the Ducks which have been sent by the currently authenticated
+     * user
+     * @return Response entity with a 200 OK status code and the list of ducks in the body
+     */
+    @GetMapping(GET_DUCKS_SENT)
+    public ResponseEntity<List<Duck>> getDucksSent() {
+        List<Duck> ducksSent = DUCK_SERVICE.getDucksSent();
+        return ResponseEntity.ok(ducksSent);
+    }
+
+    /**
      * sendDuck sends a duck from the user currently authenticated to another one and save
      * the transaction on the database. The id of the transmitter and the receiver are sent by path.
      * @param receiverId id from the receiver
      * @return ResponseEntity with a 200 status code and a CollectionModel with the implied users in the body
      */
+    //TODO: Must check whether the user is close enough to send a Duck
     @PostMapping(SEND_DUCK)
     public ResponseEntity<?> sendDuck(@RequestParam Long receiverId) {
         Duck duckSent = DUCK_SERVICE.sendDuck(receiverId);
@@ -71,23 +83,14 @@ public class DuckController {
     }
 
     /**
-     * Deletes a Duck object with the given senderId and receiverId.
-     * @param reclaimerId the ID of the sender User
-     * @param reclaimeeId the ID of the receiver User
+     * Deletes a Duck object sent by the currently authenticated user with the given receiverId.
+     * @param receiverId the ID of the receiver User
      * @return a ResponseEntity with a message indicating the success of the operation
      */
     @DeleteMapping(DELETE_RECLAIM_DUCK)
     @Transactional
-    public ResponseEntity<?> removeDuck(@RequestParam Long reclaimerId, @RequestParam Long reclaimeeId) {
-        ResponseEntity responseEntity;
-
-        try {
-            Duck duckRemoved = DUCK_SERVICE.removeDuck(reclaimerId, reclaimeeId);
-            responseEntity = ResponseEntity.noContent().build();
-        } catch (UserNotFoundException | DuckNotFoundException e) {
-            responseEntity = ResponseEntity.notFound().build();
-        }
-
-        return responseEntity;
+    public ResponseEntity<?> removeDuck(@RequestParam Long receiverId) {
+        DUCK_SERVICE.removeDuck(receiverId);
+        return ResponseEntity.noContent().build();
     }
 }

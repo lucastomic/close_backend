@@ -52,6 +52,16 @@ public class DuckService {
     }
 
     /**
+     * Get the Ducks which have been sent by the currently authenticated
+     * user
+     * @return List with all the ducks sent by the user
+     */
+    public List<Duck> getDucksSent(){
+        User user = AUTH_SERVICE.getAuthenticated();
+        return DUCK_REPOSITORY.findDucksSent(user.getId());
+    }
+
+    /**
      * Sends a duck from the user currently authenticated to the user whose
      * ID is specified by parameter.
      * @param receiverId parameter of the duck's receiver
@@ -67,14 +77,19 @@ public class DuckService {
         return duckSent;
     }
 
+    /**
+     * Removes a Duck who have been sent previously by the
+     * User currently authenticated, given the receiver ID.
+     * @param receivedId Long with the receiver ID
+     * @return Duck which has been just deleted
+     */
     @Transactional
-    public Duck removeDuck(Long reclaimerId, Long receivedId) {
-        User sender = USER_REPOSITORY.findById(reclaimerId)
-                .orElseThrow( () -> new UserNotFoundException(receivedId));
+    public Duck removeDuck(Long receivedId) {
+        User sender = AUTH_SERVICE.getAuthenticated();
         User receiver = USER_REPOSITORY.findById(receivedId)
                 .orElseThrow( () -> new UserNotFoundException(receivedId));
-        Duck duck = DUCK_REPOSITORY.findBySenderReceiver(reclaimerId, receivedId)
-                .orElseThrow( () -> new DuckNotFoundException(reclaimerId, receivedId));
+        Duck duck = DUCK_REPOSITORY.findBySenderReceiver(sender.getId(), receivedId)
+                .orElseThrow( () -> new DuckNotFoundException(sender.getId(), receivedId));
         DUCK_REPOSITORY.delete(duck);
         return duck;
     }

@@ -152,7 +152,7 @@ exist already, it creates it on the database.
 Authenticates the user on the system. If the credentials are right it returns the Token 
 to authenticate the next requests
 
-This is how the body of the request must look
+This is how the body of the request must look like
 
 ```
 {
@@ -162,6 +162,32 @@ This is how the body of the request must look
 ```
 
 ### Register
-`POST /authenticate`
+`POST /register`
 
-//TODO: Continue
+| Name | Tipo | Required | Description           |
+|------|------|----------|-----------------------|
+| body | User | Yes      | User to be registered |
+
+Registers a user in the system, given their information.
+
+This is how the body of the request must look like
+
+```
+{
+  "profileName":"Enzo",
+  "username":"enzoFernandez5",
+  "age":22,
+  "phone":"624 423 123",
+  "password":"secretPassword",
+}
+```
+
+### Get ducks sent
+`GET /users/ducks/sent`
+
+
+Get the Ducks which have been sent by the currently authenticated user
+
+
+
+
