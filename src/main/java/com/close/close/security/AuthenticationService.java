@@ -4,18 +4,15 @@ import com.close.close.user.User;
 import com.close.close.user.UserRepository;
 import com.close.close.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
 
-import java.sql.SQLException;
 
 /**
- * AuthenticationService manages the operations wihch implies
+ * AuthenticationService manages the operations which implies
  * authentication logic
  */
 @Service
@@ -36,7 +33,7 @@ public class AuthenticationService {
 
     private final JwtService jwtService;
     private final UserRepository repository;
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     /**
      * Creates a new user and generates a JWT (Json Web Token) given his information

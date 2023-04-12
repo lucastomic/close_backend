@@ -1,18 +1,12 @@
 package com.close.close.user;
 
 import com.close.close.interest.Interest;
-import com.close.close.interest.InterestService;
-import com.close.close.security.AuthenticationService;
-import org.apache.logging.log4j.spi.DefaultThreadContextStack;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,15 +18,12 @@ public class UserService {
 
     private final UserRepository USER_REPOSITORY;
     private final PasswordEncoder PASSWORD_ENCODER;
-    private final AuthenticationService AUTH_SERVICE;
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       AuthenticationService authenticationService) {
+                       PasswordEncoder passwordEncoder) {
         USER_REPOSITORY = userRepository;
         PASSWORD_ENCODER = passwordEncoder;
-        AUTH_SERVICE = authenticationService;
     }
 
 
@@ -61,7 +52,8 @@ public class UserService {
      * @return the User who has been modified
      */
     public User addInterest(Interest interest){
-        User user = AUTH_SERVICE.getAuthenticated();
+        User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+;
         user.addInterest(interest);
         USER_REPOSITORY.save(user);
         return user;
@@ -78,17 +70,6 @@ public class UserService {
             newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
             USER_REPOSITORY.save(newUser);
             return newUser;
-
-        //Check if there is a user already registered with such number.
-        //TODO: CHANGE EXCEPTION (CREATE NEW ONE)
-        //TODO: REVIEW (LUCAS TOMIC)
-//        if (USER_REPOSITORY.findByPhone(newUser.getPhone()).isPresent())
-//            throw new UserNotFoundException(newUser.getId());
-//        //TODO: CHECK USERNAME ALSO
-//
-//        newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
-//        USER_REPOSITORY.save(newUser);
-//        return newUser;
     }
 
     /**
@@ -108,7 +89,8 @@ public class UserService {
      * Deletes the user currently authenticated
      */
     public void delete(){
-        User user = AUTH_SERVICE.getAuthenticated();
+        User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         USER_REPOSITORY.delete(user);
     }
 }
