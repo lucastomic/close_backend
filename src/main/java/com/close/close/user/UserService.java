@@ -51,9 +51,7 @@ public class UserService {
      * @param interest interest to be added
      * @return the User who has been modified
      */
-    public User addInterest(Interest interest){
-        User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-;
+    public User addInterest(User user, Interest interest){
         user.addInterest(interest);
         USER_REPOSITORY.save(user);
         return user;
@@ -85,12 +83,4 @@ public class UserService {
         USER_REPOSITORY.delete(user.get());
     }
 
-    /**
-     * Deletes the user currently authenticated
-     */
-    public void delete(){
-        User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        USER_REPOSITORY.delete(user);
-    }
 }

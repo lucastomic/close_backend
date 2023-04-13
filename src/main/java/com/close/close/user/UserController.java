@@ -3,6 +3,7 @@ package com.close.close.user;
 import com.close.close.apirest.UserUtils;
 import com.close.close.interest.Interest;
 import com.close.close.interest.InterestService;
+import com.close.close.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -39,17 +40,20 @@ public class UserController {
     private final UserModelAssembler USER_MODEL_ASSEMBLER;
 
     private final InterestService INTEREST_SERVICE;
+    private final AuthenticationService AUTH_SERVICE;
 
     @Autowired
     public UserController (
             UserService userService,
             UserModelAssembler userModelAssembler,
-            InterestService interestService
+            InterestService interestService,
+            AuthenticationService authenticationService
 
     ) {
         USER_SERVICE = userService;
         USER_MODEL_ASSEMBLER = userModelAssembler;
         INTEREST_SERVICE = interestService;
+        AUTH_SERVICE = authenticationService;
     }
 
 
@@ -101,7 +105,8 @@ public class UserController {
      */
     @DeleteMapping(DELETE_USER)
     public ResponseEntity<?> delete(){
-        USER_SERVICE.delete();
+        User user = AUTH_SERVICE.getAuthenticated();
+        USER_SERVICE.delete(user.getId());
         return ResponseEntity.noContent().build();
     }
 
@@ -113,8 +118,9 @@ public class UserController {
     @PutMapping(ADD_INTEREST)
     public EntityModel<User> addInterest(@PathVariable String interestName){
         Interest interest = INTEREST_SERVICE.findOrCreate(interestName);
-        User userToReturn = USER_SERVICE.addInterest(interest);
-        return USER_MODEL_ASSEMBLER.toModel(userToReturn);
+        User user = AUTH_SERVICE.getAuthenticated();
+        USER_SERVICE.addInterest(user, interest);
+        return USER_MODEL_ASSEMBLER.toModel(user);
     }
 
 }
