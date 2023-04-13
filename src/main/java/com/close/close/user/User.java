@@ -6,7 +6,6 @@ package com.close.close.user;
 
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

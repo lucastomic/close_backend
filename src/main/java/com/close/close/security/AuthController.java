@@ -66,11 +66,4 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    //TODO: make
-    /** @PostMapping("/logout")
-    public ResponseEntity<?> login(@RequestBody User newUser){
-    RestSaver<User> saver = new RestSaver<User>(repository, assembler);
-    return saver.saveEntity(newUser);
-    }
-     **/
 }

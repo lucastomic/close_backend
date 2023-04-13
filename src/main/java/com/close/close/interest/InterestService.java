@@ -21,19 +21,12 @@ public class InterestService {
     private final InterestRepository INTEREST_REPOSITORY;
 
     /**
-     * The assembler for converting interest entities to models.
-     */
-    private final InterestModelAssembler INTEREST_ASSEMBLER;
-
-    /**
      * Constructs a new instance of the interest service.
      *
      * @param repository The repository for managing interests.
-     * @param assembler The assembler for converting interest entities to models.
      */
-    public InterestService(InterestRepository repository, InterestModelAssembler assembler) {
+    public InterestService(InterestRepository repository) {
         this.INTEREST_REPOSITORY = repository;
-        this.INTEREST_ASSEMBLER = assembler;
     }
 
     /**

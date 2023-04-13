@@ -2,7 +2,6 @@ package com.close.close.user;
 
 import com.close.close.interest.Interest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -47,27 +46,25 @@ public class UserService {
 
 
     /**
-     * Adds an interest the User currently authenticated and persists it in de database.
+     * Adds an interest to a user
+     * @param user user to add the interest
      * @param interest interest to be added
-     * @return the User who has been modified
      */
-    public User addInterest(User user, Interest interest){
+    public void addInterest(User user, Interest interest){
         user.addInterest(interest);
         USER_REPOSITORY.save(user);
-        return user;
     }
 
     /**
-     * Creates a new User storing it in the database, if there is no other user with the same
-     * number phone and username
+     * Creates a new User storing it in the database, encrypting their password
      * @param newUser User object to create
      * @throws CannotCreateTransactionException is thrown when the DB transaction doesn't work properly
      * @return If the user was created successfully, it returns the user created
      */
     public User create(User newUser) {
-            newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
-            USER_REPOSITORY.save(newUser);
-            return newUser;
+        newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
+        USER_REPOSITORY.save(newUser);
+        return newUser;
     }
 
     /**
