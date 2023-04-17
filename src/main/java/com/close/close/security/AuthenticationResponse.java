@@ -1,7 +1,7 @@
 package com.close.close.security;
 
 /**
- * AuthenticationResponse is the object returned when a User makes a
+ * AuthenticationResponse is the object returned when a User makes an
  * authentication operation (sign in, register, etc)
  */
 public class AuthenticationResponse {

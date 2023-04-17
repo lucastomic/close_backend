@@ -44,6 +44,15 @@ public class UserService {
         return USER_REPOSITORY.findById(userId).orElseThrow();
     }
 
+    /**
+     * Retrieves a user given its username
+     * @param username String with username
+     * @return User with the given username. If there isn't, it throws an exception
+     */
+    public User findByUsername(String username){
+        return USER_REPOSITORY.findByUsername(username).orElseThrow();
+    }
+
 
     /**
      * Adds an interest to a user
@@ -62,9 +71,19 @@ public class UserService {
      * @return If the user was created successfully, it returns the user created
      */
     public User create(User newUser) {
-        newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
+        this.encodePassword(newUser);
         USER_REPOSITORY.save(newUser);
         return newUser;
+    }
+
+    /**
+     * Encodes a user password, given the user
+     * @param user user to encode the password
+     */
+    private void encodePassword(User user){
+        String decryptedPassword = user.getPassword();
+        String encodedPassword = PASSWORD_ENCODER.encode(decryptedPassword);
+        user.setPassword(encodedPassword);
     }
 
     /**

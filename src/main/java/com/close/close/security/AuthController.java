@@ -2,6 +2,7 @@ package com.close.close.security;
 
 import com.close.close.user.Role;
 import com.close.close.user.User;
+import com.close.close.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,13 @@ public class AuthController {
     public static final String AUTHENTICATE = "/authenticate";
 
     private final AuthenticationService service;
+    private final UserService userService;
 
     @Autowired
-    public AuthController(AuthenticationService service) {
+    public AuthController(AuthenticationService service,
+                          UserService userService) {
         this.service = service;
+        this.userService = userService;
     }
 
     /**
@@ -40,7 +44,8 @@ public class AuthController {
      */
     @PostMapping(AUTHENTICATE)
     public ResponseEntity authenticate(@RequestBody AuthenticationRequest request){
-        AuthenticationResponse response = service.authenticate(request);
+        User user = userService.findByUsername(request.getUsername());
+        AuthenticationResponse response = service.authenticate(user);
         return ResponseEntity.ok(response);
     }
 
@@ -62,7 +67,8 @@ public class AuthController {
     @PostMapping(REGISTER)
     public ResponseEntity register(@RequestBody User newUser){
         newUser.setRole(Role.USER);
-        AuthenticationResponse response = service.register(newUser);
+        User finalUser = userService.create(newUser);
+        AuthenticationResponse response = service.generateToken(finalUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
