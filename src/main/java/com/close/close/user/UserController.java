@@ -105,8 +105,8 @@ public class UserController {
      */
     @DeleteMapping(DELETE_USER)
     public ResponseEntity<?> delete(){
-        User user = AUTH_SERVICE.getAuthenticated();
-        USER_SERVICE.delete(user.getId());
+        Long userId = AUTH_SERVICE.getIdAuthenticated();
+        USER_SERVICE.delete(userId);
         return ResponseEntity.noContent().build();
     }
 

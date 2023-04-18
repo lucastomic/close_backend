@@ -2,7 +2,6 @@ package com.close.close.duck;
 
 import com.close.close.security.AuthenticationService;
 import com.close.close.user.User;
-import com.close.close.user.UserNotFoundException;
 import com.close.close.user.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
@@ -17,8 +16,8 @@ import java.util.List;
 public class DuckController {
 
     public static final String GET_DUCKS               = "/ducks";
-    public static final String GET_USER_RECEIVED_DUCKS = "/users/{userId}/ducks/received";
-    public static final String GET_USER_SENT_DUCKS     = "/users/{userId}/ducks/sent";
+    public static final String GET_USER_RECEIVED_DUCKS = "/users/ducks/received";
+    public static final String GET_DUCKS_SENT = "/ducks/sent";
     public static final String SEND_DUCK          = "/users/ducks/send";
     public static final String DELETE_RECLAIM_DUCK     = "/users/ducks/reclaim";
 
@@ -50,23 +49,23 @@ public class DuckController {
 
     /**
      * getDucksReceived return a collection of the users who have sent a
-     * duck to the user with the specified ID.
-     * @param userId id of the user to know who have sent a duck to
+     * duck to the user currently authenticated
      * @return CollectionModel with all the users who have sent a duck to this user
      */
     @GetMapping(GET_USER_RECEIVED_DUCKS)
-    public ResponseEntity<List<Duck>> getDucksReceived(@PathVariable Long userId) {
+    public ResponseEntity<List<Duck>> getDucksReceived() {
+        Long userId = AUTH_SERVICE.getIdAuthenticated();
         List<Duck> ducksReceived = DUCK_SERVICE.findDucksReceived(userId);
         return ResponseEntity.ok(ducksReceived);
     }
 
     /**
-     * Retrieves the ducks which has been sent to the user whose ID is specified by argument.
-     * @param userId ID of the user who has sent the ducks
-     * @return Response entity with a 200 OK status and all the ducks sended
+     * Retrieves the ducks which has been sent by the user who is currently authenticated
+     * @return Response entity with a 200 OK status and all the ducks sent
      */
-    @GetMapping(GET_USER_SENT_DUCKS)
-    public ResponseEntity<List<Duck>> getDucksSent(@PathVariable Long userId) {
+    @GetMapping(GET_DUCKS_SENT)
+    public ResponseEntity<List<Duck>> getDucksSent() {
+        Long userId = AUTH_SERVICE.getIdAuthenticated();
         List<Duck> ducksSent = DUCK_SERVICE.findDucksSent(userId);
         return ResponseEntity.ok(ducksSent);
     }

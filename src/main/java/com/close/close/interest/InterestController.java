@@ -1,5 +1,8 @@
 package com.close.close.interest;
 
+import com.close.close.security.AuthenticationResponse;
+import com.close.close.security.AuthenticationService;
+import com.close.close.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -23,17 +26,20 @@ public class InterestController {
     public static final String GET_INTERESTS      = "";
     public static final String GET_INTEREST       = "/{interestId}";
     public static final String POST_INTEREST      = "";
-    public static final String GET_USER_INTERESTS = "/{userId}";
+    public static final String GET_USER_INTERESTS = "/currentUser";
 
     private final InterestService INTEREST_SERVICE;
+    private final AuthenticationService AUTH_SERVICE;
     private final InterestModelAssembler INTEREST_MODEL_ASSEMBLER;
 
 
     @Autowired
     InterestController(InterestService interestService,
-                       InterestModelAssembler interestModelAssembler){
+                       InterestModelAssembler interestModelAssembler,
+                       AuthenticationService authenticationService){
         this.INTEREST_SERVICE = interestService;
         this.INTEREST_MODEL_ASSEMBLER = interestModelAssembler;
+        this.AUTH_SERVICE = authenticationService;
     };
 
 
@@ -42,13 +48,14 @@ public class InterestController {
      * The response is linked to different methods of the APIRest.
      * @return CollectionModel with different links of the APIRest.
      */
+    //TODO: Must need an Admin authorization
     @GetMapping(GET_INTERESTS)
     public CollectionModel<EntityModel<Interest>> findAll(){
-        List<EntityModel<Interest>> modelinterests = INTEREST_SERVICE
+        List<EntityModel<Interest>> modelInterests = INTEREST_SERVICE
                 .findAll().stream().map(INTEREST_MODEL_ASSEMBLER::toModel).toList();
 
         return CollectionModel.of(
-                modelinterests,
+                modelInterests,
                 linkTo(methodOn(InterestController.class).findAll()).withSelfRel()
         );
     }
@@ -60,6 +67,7 @@ public class InterestController {
      * @param name The id of the interest to be returned
      * @return EntityModel of the interest with the name specified
      */
+    //TODO: Must need an Admin authorization
     @GetMapping(GET_INTEREST)
     public EntityModel<Interest> findById(@PathVariable String name){
         Interest interest = INTEREST_SERVICE.findById(name)
@@ -71,6 +79,10 @@ public class InterestController {
      * Method for saving an interest on the database.
      * @return ResponseEntity with the link to the new interest
      * in the location header and the interest's information in the request's body
+     * For example, this would be a correct request body:
+     * {
+     *     "name":"Chess"
+     * }
      */
     @PostMapping(POST_INTEREST)
     public ResponseEntity<?> create(@RequestBody Interest newInterest){
@@ -78,13 +90,16 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newInterest);
     }
 
+
     /**
-     * Method for finding a users interests.
-     * @param userId The if of the user whose interests are going to be retrieved
-     * @return The user interests.
+     * Finds the interests of the currently authenticated user.
+     * @return Collection model with all the user interests
      */
     @GetMapping(GET_USER_INTERESTS)
-    public CollectionModel<EntityModel<Interest>> findUserInterests(@PathVariable Long userId) {
+    public CollectionModel<EntityModel<Interest>> findUserInterests() {
+
+        Long userId = AUTH_SERVICE.getIdAuthenticated();
+
         List<EntityModel<Interest>> modelInterests = INTEREST_SERVICE
                 .findUserInterests(userId).stream().map(INTEREST_MODEL_ASSEMBLER::toModel).toList();
 
@@ -93,4 +108,5 @@ public class InterestController {
                 linkTo(methodOn(InterestController.class).findAll()).withSelfRel()
         );
     }
+
 }

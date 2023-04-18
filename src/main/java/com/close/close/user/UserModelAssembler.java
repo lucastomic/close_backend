@@ -46,7 +46,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                 ).withRel(SENDDUCKREL),
 
                 linkTo(methodOn(DuckController.class)
-                        .getDucksReceived(user.getId())
+                        .getDucksReceived()
                 ).withRel(DUCKSRECEIVEDREL),
 
                 //Location Controller Links

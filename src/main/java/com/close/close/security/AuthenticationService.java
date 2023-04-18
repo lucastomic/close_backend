@@ -65,4 +65,13 @@ public class AuthenticationService {
 
         return userService.findById(userToReturn.getId());
     }
+
+    /**
+     * Gets the ID from the user currently authenticated
+     */
+    public Long getIdAuthenticated(){
+        User userToReturn =  (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return userToReturn.getId();
+    }
 }

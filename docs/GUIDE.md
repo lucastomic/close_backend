@@ -134,7 +134,7 @@ Deletes the user who is currently authenticated
 ### Add an interest to a User
 `PUT /users/addInterest/{interestName}`
 
-| Name         | Tipo   | Required | Description                             |
+| Name         | Type   | Required | Description                             |
 |--------------|--------|----------|-----------------------------------------|
 | interestName | String | Yes      | Name of the interest to add to the user |
 
@@ -144,7 +144,7 @@ exist already, it creates it on the database.
 ### Authenticate
 `POST /authenticate`
 
-| Name | Tipo                  | Required | Description                           |
+| Name | Type                  | Required | Description                           |
 |------|-----------------------|----------|---------------------------------------|
 | body | AuthenticationRequest | Yes      | Username and password to authenticate |
 
@@ -156,15 +156,15 @@ This is how the body of the request must look like
 
 ```
 {
-    username:"myUsernameToLogIn",
-    password:"mySecretPassword"
+    "username":"myUsernameToLogIn",
+    "password":"mySecretPassword"
 }
 ```
 
 ### Register
 `POST /register`
 
-| Name | Tipo | Required | Description           |
+| Name | Type | Required | Description           |
 |------|------|----------|-----------------------|
 | body | User | Yes      | User to be registered |
 
@@ -188,6 +188,36 @@ This is how the body of the request must look like
 
 Get the Ducks which have been sent by the currently authenticated user
 
+### Get ducks received
+`GET /users/ducks/received`
 
 
+Get the Ducks which have been sent to the currently authenticated user
+
+### Delete duck sent
+`DELETE /users/ducks/reclaim`
+
+| Name       | Type | Required | Description                   |
+|------------|------|----------|-------------------------------|
+| receiverId | Long | Yes      | User who the Duck was sent to |
+
+Deletes a duck which has been sent before, from the user currently authenticated to the onw with the ID specified
+
+
+### Create a new interest
+`POST /interest`
+
+
+This is how the body of the request must look like
+```
+{
+    "name":"chess"
+}
+```
+Creates a new interest, given its name
+
+### Get currently authenticated interests
+`POST /interest/currentUser`
+
+Finds the interests of the currently authenticated user.
 
