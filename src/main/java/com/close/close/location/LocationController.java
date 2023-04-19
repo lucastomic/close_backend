@@ -58,7 +58,7 @@ public class LocationController {
         // UserLocation could instead be a column of User in the database...
         // This would also allow us to clear the buffer each time quadtree is updated
         try {
-            QueryResult<UserLocation> result = LOCATION_SERVICE.closeUsers(userId, radius);
+            QueryResult<UserAndLocation> result = LOCATION_SERVICE.closeUsers(userId, radius);
             responseEntity = ResponseEntity.ok(result);
         } catch (Exception e) {
             responseEntity = ResponseEntity.badRequest().build();

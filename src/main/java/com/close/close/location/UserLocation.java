@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
  * @param location The location of the user
  */
 public record UserLocation(Long userId, Location location) implements IPosition {
-
     /**
      * Constructs a new UserLocation object with the given user ID and location
      *
@@ -20,27 +19,6 @@ public record UserLocation(Long userId, Location location) implements IPosition 
     public UserLocation(@NotNull Long userId, @NotNull Location location) {
         this.userId = userId;
         this.location = location;
-    }
-
-
-    /**
-     * Returns the unique identifier for the user associated with this UserLocation
-     *
-     * @return the user ID
-     */
-    @Override
-    public Long userId() {
-        return userId;
-    }
-
-    /**
-     * Returns the location associated with a user
-     *
-     * @return the user Location
-     */
-    @Override
-    public Location location() {
-        return location;
     }
 
     @JsonIgnore

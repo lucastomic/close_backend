@@ -4,6 +4,8 @@ import com.close.close.location.space_partitioning.QueryResult;
 import com.close.close.location.space_partitioning.QuadTree;
 import com.close.close.location.space_partitioning.Rectangle;
 import com.close.close.location.space_partitioning.Vector2D;
+import com.close.close.user.User;
+import com.close.close.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @EnableScheduling
@@ -22,6 +22,7 @@ public class LocationService {
 
     private final Map<Long, UserLocation> USER_LOCATION_BUFFER;
     private final QuadTree<UserLocation> USER_QUADTREE;
+    private final UserRepository USER_REPOSITORY;
 
     private static final Long MAX_BRANCH_LEVEL = 9L;
     private static final Long MAX_BRANCH_CAPACITY = 4L;
@@ -29,7 +30,8 @@ public class LocationService {
 
 
     @Autowired
-    public LocationService() {
+    public LocationService(UserRepository userRepository) {
+        USER_REPOSITORY = userRepository;
         USER_LOCATION_BUFFER = new HashMap<>();
         USER_QUADTREE = new QuadTree<>(
                 MAX_BRANCH_LEVEL,
@@ -43,15 +45,34 @@ public class LocationService {
 
 
     public QueryResult<UserLocation> searchUsers(double latitude, double longitude, double radius) {
-        QueryResult<UserLocation> result = USER_QUADTREE.search(new Vector2D(latitude, longitude), radius);
-        return result;
+        return USER_QUADTREE.search(new Vector2D(latitude, longitude), radius);
     }
 
-    public QueryResult<UserLocation> closeUsers(Long userId, double radius) {
+    public QueryResult<UserAndLocation> closeUsers(Long userId, double radius) {
         if (!USER_LOCATION_BUFFER.containsKey(userId))
             throw new IllegalArgumentException("userId not found");
+
         UserLocation userLocation = USER_LOCATION_BUFFER.get(userId);
-        return USER_QUADTREE.search(userLocation.location().getPosition(), radius);
+        QueryResult<UserLocation> queryResult = USER_QUADTREE.search(userLocation.location().getPosition(), radius);
+
+        List<UserAndLocation> usersAndLocationsResults = new ArrayList<>();
+        List<UserAndLocation> usersAndLocationsPotentialResults = new ArrayList<>();
+
+        for (UserLocation uloc : queryResult.RESULTS)
+            USER_REPOSITORY.findById(uloc.userId())
+                    .ifPresent(user -> usersAndLocationsResults
+                            .add(new UserAndLocation(user, uloc.location())));
+
+        for (UserLocation uloc : queryResult.POTENTIAL_RESULTS)
+            USER_REPOSITORY.findById(uloc.userId())
+                    .ifPresent(user -> usersAndLocationsPotentialResults
+                            .add(new UserAndLocation(user, uloc.location())));
+
+        return new QueryResult<UserAndLocation> (
+                usersAndLocationsResults,
+                usersAndLocationsPotentialResults,
+                queryResult.COMPARISONS
+        );
     }
 
     public List<UserLocation> findAllUserLocations() {

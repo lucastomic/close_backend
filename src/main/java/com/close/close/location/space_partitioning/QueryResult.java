@@ -1,14 +1,15 @@
 package com.close.close.location.space_partitioning;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class QueryResult<T extends IPosition> {
-    public final ArrayList<T> RESULTS;
-    public final ArrayList<T> POTENTIAL_RESULTS;
+    public final List<T> RESULTS;
+    public final List<T> POTENTIAL_RESULTS;
     public final long COMPARISONS;
 
 
-    public QueryResult(ArrayList<T> results, ArrayList<T> potentialResults, long comparisons) {
+    public QueryResult(List<T> results, List<T> potentialResults, long comparisons) {
         this.RESULTS = results;
         this.POTENTIAL_RESULTS = potentialResults;
         this.COMPARISONS = comparisons;
