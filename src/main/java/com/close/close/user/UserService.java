@@ -98,5 +98,7 @@ public class UserService {
 
         USER_REPOSITORY.delete(user.get());
     }
-
+    public Optional<User> getInfoById(Long userId){
+        return USER_REPOSITORY.findById(userId);
+    }
 }

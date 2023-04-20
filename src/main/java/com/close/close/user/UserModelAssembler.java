@@ -23,6 +23,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
     private final String SENDLOCATIONREL = "sendLocation";
     private final String CLOSEUSERSREL = "closeUsers";
     private final String ADDINTEREST = "addInterest";
+    private final String GETUSERINFO ="userInfo";
 
     @Override
     public @NotNull EntityModel<User> toModel(@NotNull User user) {
@@ -56,7 +57,8 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
 
                 linkTo(methodOn(LocationController.class)
                         .closeUsers(user.getId(), 10)
-                ).withRel(CLOSEUSERSREL)
+                ).withRel(CLOSEUSERSREL),
+                linkTo(methodOn(UserController.class).getUserInformation(user.getId())).withRel(GETUSERINFO)
         );
     }
 }

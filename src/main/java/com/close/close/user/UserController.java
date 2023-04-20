@@ -27,6 +27,7 @@ public class UserController {
     public static final String DELETE_USER_BY_ID = "/{userId}";
     public static final String DELETE_USER = "/";
     public static final String ADD_INTEREST = "/addInterest/{interestName}";
+    public static final String GET_INFO = "/getInfo";
 
     /**
      * repository is the user's repository for DB interaction
@@ -123,4 +124,14 @@ public class UserController {
         return USER_MODEL_ASSEMBLER.toModel(user);
     }
 
+    @GetMapping(GET_INFO)
+    public ResponseEntity<User> getUserInformation(@RequestParam Long id){
+        User user= USER_SERVICE.findById(id);
+        if(user.isCredentialsNonExpired()){
+            return ResponseEntity.ok(user);
+        }
+        else{
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
