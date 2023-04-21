@@ -6,6 +6,7 @@ package com.close.close.user;
 
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -51,6 +52,7 @@ public class User implements UserDetails {
     /**
      * password of the user
      */
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -87,6 +89,7 @@ public class User implements UserDetails {
      * It's not nullable and has a default value un false (because the user can't verify his phone number
      * before the user is created)
      */
+
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean phoneIsVerified;
 
@@ -150,7 +153,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
-
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -161,6 +164,7 @@ public class User implements UserDetails {
      *
      * @return the username (never <code>null</code>)
      */
+    @JsonIgnore
     @Override
     public String getUsername() {
         return this.username;
@@ -217,6 +221,7 @@ public class User implements UserDetails {
      *
      * @param password new password
      */
+    @JsonIgnore
     public void setPassword(String password) {
         this.password = password;
     }
@@ -226,6 +231,7 @@ public class User implements UserDetails {
      *
      * @return String with the User phone
      */
+    @JsonIgnore
     public String getPhone() {
         return phone;
     }
@@ -235,6 +241,7 @@ public class User implements UserDetails {
      *
      * @param phone new Phone value
      */
+    @JsonIgnore
     public void setPhone(String phone) {
         this.phone = phone;
     }
@@ -253,6 +260,7 @@ public class User implements UserDetails {
      *
      * @param phoneIsVerified String with the new phone value
      */
+    @JsonIgnore
     public void setPhoneIsVerified(boolean phoneIsVerified) {
         this.phoneIsVerified = phoneIsVerified;
     }
@@ -262,6 +270,7 @@ public class User implements UserDetails {
      *
      * @return Collection of strings with the link to the user's photos
      */
+    @JsonIgnore
     public Set<String> getPhotos() {
         return photos;
     }
@@ -271,6 +280,7 @@ public class User implements UserDetails {
      *
      * @param photos new user's photos
      */
+    @JsonIgnore
     public void setPhotos(Set<String> photos) {
         this.photos = photos;
     }
@@ -280,6 +290,7 @@ public class User implements UserDetails {
      *
      * @return Collection of the Interest objects which are linked with the user
      */
+    @JsonIgnore
     public Set<Interest> getInterests() {
         return interests;
     }
@@ -289,6 +300,7 @@ public class User implements UserDetails {
      *
      * @param interests New interests collection
      */
+    @JsonIgnore
     public void setInterests(Set<Interest> interests) {
         this.interests = interests;
     }
@@ -306,6 +318,7 @@ public class User implements UserDetails {
      *
      * @return String with the profile name
      */
+    @JsonIgnore
     public String getProfileName() {
         return profileName;
     }
@@ -315,6 +328,7 @@ public class User implements UserDetails {
      *
      * @param profileName New profile name
      */
+    @JsonIgnore
     public void setProfileName(String profileName) {
         this.profileName = profileName;
     }
@@ -323,10 +337,12 @@ public class User implements UserDetails {
         this.username = username;
     }
 
+    @JsonIgnore
     public Role getRole() {
         return role;
     }
 
+    @JsonIgnore
     public void setRole(Role role) {
         this.role = role;
     }
