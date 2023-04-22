@@ -182,14 +182,6 @@ This is how the body of the request must look like
 }
 ```
 
-### Get ducks sent
-`GET /users/ducks/sent`
-
-
-Get the Ducks which have been sent by the currently authenticated user
-
-### Get ducks received
-`GET /users/ducks/received`
 
 
 Get the Ducks which have been sent to the currently authenticated user
@@ -216,8 +208,4 @@ This is how the body of the request must look like
 ```
 Creates a new interest, given its name
 
-### Get currently authenticated interests
-`POST /interest/currentUser`
-
-Finds the interests of the currently authenticated user.
 
