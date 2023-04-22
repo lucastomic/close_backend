@@ -65,6 +65,16 @@ public class UserService {
     }
 
     /**
+     * Deletes an interest to a user
+     * @param user user to delete the interest
+     * @param interest interest to be deleted
+     */
+    public void removeInterest(User user, Interest interest){
+        user.removeInterest(interest);
+        USER_REPOSITORY.save(user);
+    }
+
+    /**
      * Creates a new User storing it in the database, encrypting their password
      * @param newUser User object to create
      * @throws CannotCreateTransactionException is thrown when the DB transaction doesn't work properly

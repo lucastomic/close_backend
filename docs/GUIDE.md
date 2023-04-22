@@ -134,6 +134,16 @@ Deletes the user who is currently authenticated
 ### Add an interest to a User
 `PUT /users/addInterest/{interestName}`
 
+| Name         | Type   | Required | Description                                  |
+|--------------|--------|----------|----------------------------------------------|
+| interestName | String | Yes      | Name of the interest to remove from the user |
+
+Removes an interest to the User currently authenticated. If the interest specified doesn't
+exist already, it returns an error.
+
+### Remove an interest from a User
+`PUT /users/addInterest/{interestName}`
+
 | Name         | Type   | Required | Description                             |
 |--------------|--------|----------|-----------------------------------------|
 | interestName | String | Yes      | Name of the interest to add to the user |
