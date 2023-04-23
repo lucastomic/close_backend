@@ -134,6 +134,16 @@ Deletes the user who is currently authenticated
 ### Add an interest to a User
 `PUT /users/addInterest/{interestName}`
 
+| Name         | Type   | Required | Description                                  |
+|--------------|--------|----------|----------------------------------------------|
+| interestName | String | Yes      | Name of the interest to remove from the user |
+
+Removes an interest to the User currently authenticated. If the interest specified doesn't
+exist already, it returns an error.
+
+### Remove an interest from a User
+`PUT /users/addInterest/{interestName}`
+
 | Name         | Type   | Required | Description                             |
 |--------------|--------|----------|-----------------------------------------|
 | interestName | String | Yes      | Name of the interest to add to the user |
@@ -182,14 +192,6 @@ This is how the body of the request must look like
 }
 ```
 
-### Get ducks sent
-`GET /users/ducks/sent`
-
-
-Get the Ducks which have been sent by the currently authenticated user
-
-### Get ducks received
-`GET /users/ducks/received`
 
 
 Get the Ducks which have been sent to the currently authenticated user
@@ -216,8 +218,4 @@ This is how the body of the request must look like
 ```
 Creates a new interest, given its name
 
-### Get currently authenticated interests
-`POST /interest/currentUser`
-
-Finds the interests of the currently authenticated user.
 

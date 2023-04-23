@@ -54,15 +54,4 @@ public class UserUtils {
     public List<EntityModel<User>> modelUsersList(List<User>users){
         return users.stream().map(assembler::toModel).toList();
     }
-
-    /**
-     * findOrThrow looks a user for his id, and if it doesn't exist it throws a
-     * UserNotFoundException
-     * @param id id which is looked for
-     * @return User with the ID
-     */
-    public User findOrThrow(Long id){
-        return repository.findById(id).orElseThrow(()->new UserNotFoundException(id));
-    }
-
 }

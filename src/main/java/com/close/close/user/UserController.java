@@ -2,6 +2,7 @@ package com.close.close.user;
 
 import com.close.close.apirest.UserUtils;
 import com.close.close.interest.Interest;
+import com.close.close.interest.InterestNotFoundException;
 import com.close.close.interest.InterestService;
 import com.close.close.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class UserController {
     public static final String DELETE_USER_BY_ID = "/{userId}";
     public static final String DELETE_USER = "/";
     public static final String ADD_INTEREST = "/addInterest/{interestName}";
+    public static final String REMOVE_INTEREST = "/deleteInterest/{interestName}";
+    public static final String GET_USER_INFO = "/getUserInfo";
 
     /**
      * repository is the user's repository for DB interaction
@@ -123,4 +126,27 @@ public class UserController {
         return USER_MODEL_ASSEMBLER.toModel(user);
     }
 
+    /**
+     * Adds an interest given its name to the user currently authenticated
+     * @param interestName interest's name to add to the user
+     * @return EntityModel of the user updated
+     */
+    @DeleteMapping(REMOVE_INTEREST)
+    public EntityModel<User> removeInterest(@PathVariable String interestName){
+        Interest interest = INTEREST_SERVICE.findById(interestName).orElseThrow(InterestNotFoundException::new);
+        User user = AUTH_SERVICE.getAuthenticated();
+        USER_SERVICE.removeInterest(user, interest);
+        return USER_MODEL_ASSEMBLER.toModel(user);
+    }
+
+    /**
+     * Returns the information about the user currently authenticated
+     * @return Response entity with status code 200, and the current authenticated user in the body
+     */
+    @GetMapping(GET_USER_INFO)
+    public ResponseEntity<EntityModel<User>> getUserInformation(){
+        User user= AUTH_SERVICE.getAuthenticated();
+        EntityModel<User> response = USER_MODEL_ASSEMBLER.toModel(user);
+        return ResponseEntity.ok(response);
+    }
 }

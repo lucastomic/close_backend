@@ -23,6 +23,8 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
     private final String SENDLOCATIONREL = "sendLocation";
     private final String CLOSEUSERSREL = "closeUsers";
     private final String ADDINTEREST = "addInterest";
+    private final String REMOVE_INTEREST = "removeInterest";
+    private final String GETUSERINFO ="userInfo";
 
     @Override
     public @NotNull EntityModel<User> toModel(@NotNull User user) {
@@ -40,6 +42,9 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                 linkTo(methodOn(UserController.class)
                         .addInterest("Chess")
                 ).withRel(ADDINTEREST),
+                linkTo(methodOn(UserController.class)
+                        .removeInterest("Chess")
+                ).withRel(REMOVE_INTEREST),
                 //Duck Controller Links
                 linkTo(methodOn(DuckController.class)
                         .sendDuck(user.getId())
@@ -56,7 +61,8 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
 
                 linkTo(methodOn(LocationController.class)
                         .closeUsers(user.getId(), 10)
-                ).withRel(CLOSEUSERSREL)
+                ).withRel(CLOSEUSERSREL),
+                linkTo(methodOn(UserController.class).getUserInformation()).withRel(GETUSERINFO)
         );
     }
 }

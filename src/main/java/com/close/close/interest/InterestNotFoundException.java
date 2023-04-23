@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 public class InterestNotFoundException extends StatusException {
     private final HttpStatus STATUS = HttpStatus.NOT_FOUND;
 
-    InterestNotFoundException(){
+    public InterestNotFoundException(){
         super("No interest found");
     }
 

@@ -87,6 +87,7 @@ public class User implements UserDetails {
      * It's not nullable and has a default value un false (because the user can't verify his phone number
      * before the user is created)
      */
+
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean phoneIsVerified;
 
@@ -150,7 +151,6 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
-
     public String getPassword() {
         return password;
     }
@@ -299,6 +299,14 @@ public class User implements UserDetails {
      */
     public void addInterest(Interest interest){
         this.interests.add(interest);
+    }
+
+    /**
+     * Remove an interest from the user's interests
+     * @param interest interest to add
+     */
+    public void removeInterest(Interest interest){
+        this.interests.remove(interest);
     }
 
     /**
