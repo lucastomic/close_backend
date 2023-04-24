@@ -38,14 +38,13 @@ public class SecurityConfiguration {
      @return a SecurityFilterChain object representing the configured filter chain.
      @throws Exception if an error occurs during configuration.
      */
-    //TODO:SOLVE EXCEPTION HANDLING ERROR https://stackoverflow.com/questions/55905824/spring-security-returns-404-instead-of-403-when-using-preauthorize
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

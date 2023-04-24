@@ -44,8 +44,7 @@ public class AuthController {
      */
     @PostMapping(AUTHENTICATE)
     public ResponseEntity authenticate(@RequestBody AuthenticationRequest request){
-        User user = userService.findByUsername(request.getUsername());
-        AuthenticationResponse response = service.authenticate(user);
+        AuthenticationResponse response = service.authenticate(request);
         return ResponseEntity.ok(response);
     }
 

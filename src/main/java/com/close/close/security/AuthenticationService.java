@@ -41,17 +41,18 @@ public class AuthenticationService {
 
     /**
      * Authenticates a user given them request AuthenticationRequest object with the user credentials
-     * @param user user to be authenticated
+     * @param request AuthenticationRequest object with the user credentials which attempt to authenticate
      * @return If the authentication is successful it returns an AuthenticationResponse object
      * with the JWT generated, otherwise it returns an error
      */
-    public AuthenticationResponse authenticate(User user) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        user.getPassword()
+                        request.getUsername(),
+                        request.getPassword()
                 )
         );
+        User user = userService.findByUsername(request.getUsername());
         String jwt = jwtService.generateToken(user);
         return new AuthenticationResponse(jwt);
 
