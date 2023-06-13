@@ -1,6 +1,7 @@
 package com.close.close.user;
 
 import com.close.close.interest.Interest;
+import com.close.close.security.InvalidPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -81,9 +82,16 @@ public class UserService {
      * @return If the user was created successfully, it returns the user created
      */
     public User create(User newUser) {
+        if (!validatePassword(newUser.getPassword())){
+            throw new InvalidPasswordException();
+        }
         this.encodePassword(newUser);
         USER_REPOSITORY.save(newUser);
         return newUser;
+    }
+
+    private boolean validatePassword(String password){
+        return password.length() > User.MINIMUM_PASSWORD_LENGTH;
     }
 
     /**

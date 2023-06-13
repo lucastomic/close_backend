@@ -3,6 +3,7 @@ package com.close.close.apirest;
 import com.close.close.duck.DuckNotFoundException;
 import com.close.close.duck.DuckToItselfException;
 import com.close.close.interest.InterestNotFoundException;
+import com.close.close.security.InvalidPasswordException;
 import com.close.close.user.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,6 +27,7 @@ public class StatusExAdviceController {
             UserNotFoundException.class,
             DuckToItselfException.class,
             DuckNotFoundException.class,
+            InvalidPasswordException.class,
     })
     ResponseEntity<String> handleFunction(StatusException ex){
         return new ResponseEntity<String>(ex.getMessage(),ex.getStatus());
