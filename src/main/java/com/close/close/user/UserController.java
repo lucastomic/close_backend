@@ -22,10 +22,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-    public static final String GET_ALL_USERS     = "";
-    public static final String GET_USER_BY_ID    = "/{userId}";
-    public static final String DELETE_USER_BY_ID = "/{userId}";
     public static final String DELETE_USER = "/";
     public static final String ADD_INTEREST = "/addInterest/{interestName}";
     public static final String REMOVE_INTEREST = "/deleteInterest/{interestName}";
@@ -59,47 +55,6 @@ public class UserController {
         AUTH_SERVICE = authenticationService;
     }
 
-
-    /**
-     * getAll retrieves a CollectionModel with all the application's users.
-     * The response is linked to different methods of the APIRest.
-     * @return CollectionModel with different links of the APIRest.
-     */
-    @GetMapping(GET_ALL_USERS)
-    public CollectionModel<EntityModel<User>> findAll() {
-        UserUtils utils = new UserUtils(null, USER_MODEL_ASSEMBLER);
-        List<User> users = USER_SERVICE.getAll();
-        List<EntityModel<User>> modelUsers = utils.modelUsersList(users);
-        return CollectionModel.of(
-                modelUsers,
-                linkTo(methodOn(UserController.class).findAll()).withSelfRel()
-        );
-    }
-
-    /**
-     * getOne returns a user depending on his ID. The response is modeled with the assembler.
-     * In case of no user with the ID specified, it's throws a UserNotFoundException (which will
-     * be handled by the UserNotFoundAdvice controller advice)
-     * @param userId long with the ID of the user to be returned
-     * @return EntityModel of the user with the ID
-     */
-    @GetMapping(GET_USER_BY_ID)
-    public EntityModel<User> findById(@PathVariable Long userId){
-        User user = USER_SERVICE.findById(userId);
-        return USER_MODEL_ASSEMBLER.toModel(user);
-    }
-
-    /**
-     * deleteUserById deletes the user whose ID is passed by parameter
-     * @param userId id of the user to be removed
-     * @return Response with No Content status
-     */
-    //TODO: This endpoint must require ADMIN Authorization
-    @DeleteMapping(DELETE_USER_BY_ID)
-    public ResponseEntity<?> delete(@PathVariable Long userId) {
-        USER_SERVICE.delete(userId);
-        return ResponseEntity.noContent().build();
-    }
 
     /**
      * Deletes the user currently authenticated, deleting all their data
@@ -149,4 +104,5 @@ public class UserController {
         EntityModel<User> response = USER_MODEL_ASSEMBLER.toModel(user);
         return ResponseEntity.ok(response);
     }
+
 }

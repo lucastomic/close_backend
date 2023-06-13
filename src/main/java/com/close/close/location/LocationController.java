@@ -1,7 +1,9 @@
 package com.close.close.location;
 
 import com.close.close.location.space_partitioning.QueryResult;
+import com.close.close.security.AuthenticationService;
 import com.close.close.user.User;
+import com.close.close.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,12 @@ public class LocationController {
     public static final String POST_USER_LOCATION = "/users/{userId}/location";
 
     private final LocationService LOCATION_SERVICE;
-
+    private final AuthenticationService AUTH_SERVICE;
 
     @Autowired
-    public LocationController(LocationService locationService) {
+    public LocationController(LocationService locationService, AuthenticationService authenticationService) {
         LOCATION_SERVICE = locationService;
+        AUTH_SERVICE = authenticationService;
     }
 
 
@@ -46,18 +49,17 @@ public class LocationController {
     }
 
     /**
-     * Searches for users within a certain radius from a given user id
-     * @param userId The id of the user to search from
+     * Searches for users within a certain radius from the authenticated user
      * @param radius The radius within which to search for users
      * @return ResponseEntity containing a QueryResult with the results of the search
      */
     @GetMapping(GET_CLOSE_USERS)
-    public ResponseEntity<?> closeUsers(@PathVariable Long userId,
-                                        @PathVariable double radius) {
+    public ResponseEntity<?> closeUsers(@PathVariable double radius) {
         ResponseEntity responseEntity;
         // UserLocation could instead be a column of User in the database...
         // This would also allow us to clear the buffer each time quadtree is updated
         try {
+            Long userId = AUTH_SERVICE.getIdAuthenticated();
             QueryResult<UserAndLocation> result = LOCATION_SERVICE.closeUsers(userId, radius);
             responseEntity = ResponseEntity.ok(result);
         } catch (Exception e) {
@@ -95,13 +97,13 @@ public class LocationController {
     }
 
     /**
-     * Sends the location of a user with the given userId to the server.
-     * @param userId The ID of the user whose location will be sent
+     * Sends the location of the authenticated user to the server.
      * @param location The location to be sent
      * @return ResponseEntity with no content if successful
      */
     @PostMapping(POST_USER_LOCATION)
-    public ResponseEntity<?> sendLocation(@PathVariable Long userId, @RequestBody Location location) {
+    public ResponseEntity<?> sendLocation(@RequestBody Location location) {
+        Long userId = AUTH_SERVICE.getIdAuthenticated();
         LOCATION_SERVICE.sendUserLocation(userId, location);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(location);
     }

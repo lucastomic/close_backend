@@ -22,15 +22,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/interests")
 public class InterestController {
-
-    public static final String GET_INTERESTS      = "";
-    public static final String GET_INTEREST       = "/{interestId}";
     public static final String POST_INTEREST      = "";
-    public static final String GET_USER_INTERESTS = "/currentUser";
+    public static final String DELETE_INTEREST      = "/{interestName}";
 
     private final InterestService INTEREST_SERVICE;
-    private final AuthenticationService AUTH_SERVICE;
-    private final InterestModelAssembler INTEREST_MODEL_ASSEMBLER;
 
 
     @Autowired
@@ -38,42 +33,8 @@ public class InterestController {
                        InterestModelAssembler interestModelAssembler,
                        AuthenticationService authenticationService){
         this.INTEREST_SERVICE = interestService;
-        this.INTEREST_MODEL_ASSEMBLER = interestModelAssembler;
-        this.AUTH_SERVICE = authenticationService;
     };
 
-
-    /**
-     * Retrieves a CollectionModel with all the application's interest.
-     * The response is linked to different methods of the APIRest.
-     * @return CollectionModel with different links of the APIRest.
-     */
-    //TODO: Must need an Admin authorization
-    @GetMapping(GET_INTERESTS)
-    public CollectionModel<EntityModel<Interest>> findAll(){
-        List<EntityModel<Interest>> modelInterests = INTEREST_SERVICE
-                .findAll().stream().map(INTEREST_MODEL_ASSEMBLER::toModel).toList();
-
-        return CollectionModel.of(
-                modelInterests,
-                linkTo(methodOn(InterestController.class).findAll()).withSelfRel()
-        );
-    }
-
-    /**
-     * Returns am interest depending on his ID. The response is modeled with the assembler.
-     * In case of no interest with the ID specified, it's throws an InterestNotFoundException (which will
-     * be handled by the UserNotFoundAdvice controller advice)
-     * @param name The id of the interest to be returned
-     * @return EntityModel of the interest with the name specified
-     */
-    //TODO: Must need an Admin authorization
-    @GetMapping(GET_INTEREST)
-    public EntityModel<Interest> findById(@PathVariable String name){
-        Interest interest = INTEREST_SERVICE.findById(name)
-                .orElseThrow(InterestNotFoundException::new);
-        return INTEREST_MODEL_ASSEMBLER.toModel(interest);
-    }
 
     /**
      * Method for saving an interest on the database.
@@ -90,23 +51,16 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newInterest);
     }
 
-
     /**
-     * Finds the interests of the currently authenticated user.
-     * @return Collection model with all the user interests
+     * Deletes an interest, given its name
+     * @param interestName name of the interest to delete
+     * @return no contente response
      */
-    @GetMapping(GET_USER_INTERESTS)
-    public CollectionModel<EntityModel<Interest>> findUserInterests() {
-
-        Long userId = AUTH_SERVICE.getIdAuthenticated();
-
-        List<EntityModel<Interest>> modelInterests = INTEREST_SERVICE
-                .findUserInterests(userId).stream().map(INTEREST_MODEL_ASSEMBLER::toModel).toList();
-
-        return CollectionModel.of(
-                modelInterests,
-                linkTo(methodOn(InterestController.class).findAll()).withSelfRel()
-        );
+    @DeleteMapping(DELETE_INTEREST)
+    public ResponseEntity<?> delete(@PathVariable String interestName){
+        INTEREST_SERVICE.deleteById(interestName);
+        return ResponseEntity.noContent().build();
     }
+
 
 }

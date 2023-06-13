@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 public class DuckController {
 
-    public static final String GET_DUCKS               = "/ducks";
     public static final String GET_USER_RECEIVED_DUCKS = "/users/ducks/received";
     public static final String GET_DUCKS_SENT = "/ducks/sent";
     public static final String SEND_DUCK          = "/users/ducks/send";
@@ -35,16 +34,6 @@ public class DuckController {
         this.DUCK_SERVICE = duckService;
         this.AUTH_SERVICE = authenticationService;
         this.USER_SERVICE = userService;
-    }
-
-
-    /**
-     * @return All ducks stored in the database.
-     */
-    @GetMapping(GET_DUCKS)
-    public ResponseEntity<?> findAll() {
-        List<Duck> ducks = DUCK_SERVICE.findAll();
-        return ResponseEntity.ok(ducks);
     }
 
     /**

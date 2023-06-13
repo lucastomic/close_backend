@@ -23,8 +23,8 @@ public class InterestModelAssembler implements RepresentationModelAssembler<Inte
     public EntityModel<Interest> toModel(Interest interest) {
         return EntityModel.of(
                 interest,
-                linkTo(methodOn(InterestController.class).findAll()).withRel("interests"),
-                linkTo(methodOn(InterestController.class).findById(interest.getName())).withSelfRel()
+                linkTo(methodOn(InterestController.class).create(new Interest("chess"))).withRel("create"),
+                linkTo(methodOn(InterestController.class).delete("chess")).withRel("delete")
         );
     }
 }
