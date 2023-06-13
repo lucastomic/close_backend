@@ -1,6 +1,7 @@
 package com.close.close.user;
 
 import com.close.close.duck.DuckController;
+import com.close.close.interest.InterestController;
 import com.close.close.location.Location;
 import com.close.close.location.LocationController;
 import org.jetbrains.annotations.NotNull;
@@ -17,14 +18,18 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @Component
 public class UserModelAssembler  implements RepresentationModelAssembler<User, EntityModel<User>> {
-    private final String GETALLREL = "allUsers";
     private final String SENDDUCKREL = "sendDuck";
+    private final String DELETEUSER = "deleteUser";
     private final String DUCKSRECEIVEDREL = "ducksReceived";
+    private final String REMOVE_DUCK = "removeDuck";
     private final String SENDLOCATIONREL = "sendLocation";
     private final String CLOSEUSERSREL = "closeUsers";
     private final String ADDINTEREST = "addInterest";
     private final String REMOVE_INTEREST = "removeInterest";
     private final String GETUSERINFO ="userInfo";
+    private final String GETDUCKSSENT ="getDucksSent";
+
+
 
     @Override
     public @NotNull EntityModel<User> toModel(@NotNull User user) {
@@ -32,16 +37,11 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                 user,
                 //User Controller Links
                 linkTo(methodOn(UserController.class)
-                        .findById(user.getId())
-                ).withSelfRel(),
-
-                linkTo(methodOn(UserController.class)
-                        .findAll()
-                ).withRel(GETALLREL),
-
-                linkTo(methodOn(UserController.class)
                         .addInterest("Chess")
                 ).withRel(ADDINTEREST),
+                linkTo(methodOn(UserController.class)
+                        .delete()
+                ).withRel(DELETEUSER),
                 linkTo(methodOn(UserController.class)
                         .removeInterest("Chess")
                 ).withRel(REMOVE_INTEREST),
@@ -54,15 +54,24 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                         .getDucksReceived()
                 ).withRel(DUCKSRECEIVEDREL),
 
+                linkTo(methodOn(DuckController.class)
+                        .getDucksSent()
+                ).withRel(GETDUCKSSENT),
+
+                linkTo(methodOn(DuckController.class)
+                        .getDucksSent()
+                ).withRel(REMOVE_DUCK),
+
                 //Location Controller Links
                 linkTo(methodOn(LocationController.class)
-                        .sendLocation(user.getId(), new Location(0, 0))
+                        .sendLocation( new Location(0, 0))
                 ).withRel(SENDLOCATIONREL),
 
                 linkTo(methodOn(LocationController.class)
-                        .closeUsers(user.getId(), 10)
+                        .closeUsers(10)
                 ).withRel(CLOSEUSERSREL),
                 linkTo(methodOn(UserController.class).getUserInformation()).withRel(GETUSERINFO)
+
         );
     }
 }
