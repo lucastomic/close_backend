@@ -42,7 +42,7 @@ public class UserService {
      * there isn't it throws an exception
      */
     public User findById(Long userId) {
-        return USER_REPOSITORY.findById(userId).orElseThrow();
+        return USER_REPOSITORY.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
     }
 
     /**

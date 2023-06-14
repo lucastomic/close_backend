@@ -1,20 +1,13 @@
 package com.close.close.user;
 
-import com.close.close.apirest.UserUtils;
 import com.close.close.interest.Interest;
 import com.close.close.interest.InterestNotFoundException;
 import com.close.close.interest.InterestService;
 import com.close.close.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 /**
  * UserController is the controller from the User entity.
  * It is in charge of handling the APIRest interactions with the User.

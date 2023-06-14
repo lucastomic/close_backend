@@ -1,20 +1,9 @@
 package com.close.close.duck;
 
-import com.close.close.apirest.UserUtils;
-import com.close.close.security.AuthenticationService;
 import com.close.close.user.User;
-import com.close.close.user.UserController;
-import com.close.close.user.UserNotFoundException;
-import com.close.close.user.UserRepository;
-import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import java.util.List;
 
 @Service
