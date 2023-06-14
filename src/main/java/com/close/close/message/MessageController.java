@@ -41,21 +41,20 @@ public class MessageController {
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestParam Long receiverID, @RequestParam String value){
         User sender = AUTH_SERVICE.getAuthenticated();
-        User receiver = USER_SERVICE.findById(receiverID);
-        Message message = MESSAGE_SERVICE.sendMessage(receiver,sender,value);
+        User receiver = USER_SERVICE.findById(receiverID);Message message = MESSAGE_SERVICE.sendMessage(receiver,sender,value);
         EntityModel<Message> response = MODEL_ASSEMBLER.toModel(message);
         return ResponseEntity.ok(response);
     }
 
     /**
      * Sends a messages from the authenticated user to the one with the ID specified
-     * @param receiverID Long with the ID of the message receiver
+     * @param receiverId Long with the ID of the message receiver
      * @return Response Entity with status 200 OK and the message in the body if success
      */
     @GetMapping("/get/{receiverId}")
-    public ResponseEntity<?> getMessage(@PathVariable Long receiverID){
+    public ResponseEntity<?> getMessage(@PathVariable Long receiverId){
         User sender = AUTH_SERVICE.getAuthenticated();
-        User receiver = USER_SERVICE.findById(receiverID);
+        User receiver = USER_SERVICE.findById(receiverId);
         List<Message> message = MESSAGE_SERVICE.getMessages(receiver,sender);
         CollectionModel<EntityModel<Message>> response = MODEL_ASSEMBLER.toCollectionModel(message);
         return ResponseEntity.ok(response);

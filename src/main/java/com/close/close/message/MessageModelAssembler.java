@@ -1,5 +1,6 @@
 package com.close.close.message;
 
+import com.close.close.user.UserController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -17,7 +18,8 @@ public class MessageModelAssembler implements RepresentationModelAssembler<Messa
     public EntityModel<Message> toModel(Message message) {
         return EntityModel.of(
             message,
-            linkTo(methodOn(MessageController.class).getMessage(1L)
+            linkTo(methodOn(MessageController.class)
+                    .getMessage(message.getId())
             ).withRel(GETMESSAGEREL)
         );
     }

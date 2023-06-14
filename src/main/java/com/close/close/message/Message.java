@@ -16,6 +16,9 @@ public class Message {
     @Column(name="value")
     private String value;
 
+    public Message() {
+    }
+
     public Message(User receiver, User sender, String value) {
         this.sender = sender;
         this.receiver = receiver;
