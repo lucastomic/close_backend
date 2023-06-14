@@ -6,6 +6,7 @@ package com.close.close.user;
 
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
+import com.close.close.message.Message;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -54,7 +55,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
     public static final int MINIMUM_PASSWORD_LENGTH = 5;
-
+    
     /**
      * role the user takes in the app
      */
@@ -63,17 +64,21 @@ public class User implements UserDetails {
     private Role role;
 
     /**
-     * ducksSent is the collection of DuckShipping where the user is the sender.
+     * ducksSent is the collection of Duck where the user is the sender.
      */
     @OneToMany(mappedBy = "sender")
     private Set<Duck> ducksSent;
 
     /**
-     * ducksSent is the collection of DuckShipping where the user is the receiver.
+     * ducksSent is the collection of Duck where the user is the receiver.
      */
     @OneToMany(mappedBy = "receiver")
     private Set<Duck> ducksReceived;
 
+    @OneToMany(mappedBy = "sender")
+    private Set<Message> messagesSent;
+    @OneToMany(mappedBy = "receiver")
+    private Set<Message> messageReceived;
     /**
      * phone is a string with the user's phone number.
      * This column is mandatory
