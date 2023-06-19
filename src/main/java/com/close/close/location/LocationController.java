@@ -25,6 +25,7 @@ public class LocationController {
 
     private final LocationService LOCATION_SERVICE;
     private final AuthenticationService AUTH_SERVICE;
+    private final double RADIUS = 10;
 
     @Autowired
     public LocationController(LocationService locationService, AuthenticationService authenticationService) {
@@ -54,13 +55,13 @@ public class LocationController {
      * @return ResponseEntity containing a QueryResult with the results of the search
      */
     @GetMapping(GET_CLOSE_USERS)
-    public ResponseEntity<?> closeUsers(@PathVariable double radius) {
+    public ResponseEntity<?> closeUsers() {
         ResponseEntity responseEntity;
         // UserLocation could instead be a column of User in the database...
         // This would also allow us to clear the buffer each time quadtree is updated
         try {
             Long userId = AUTH_SERVICE.getIdAuthenticated();
-            QueryResult<UserAndLocation> result = LOCATION_SERVICE.closeUsers(userId, radius);
+            QueryResult<UserAndLocation> result = LOCATION_SERVICE.closeUsers(userId, RADIUS);
             responseEntity = ResponseEntity.ok(result);
         } catch (Exception e) {
             responseEntity = ResponseEntity.badRequest().build();
