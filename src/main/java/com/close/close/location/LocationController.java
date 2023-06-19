@@ -51,7 +51,6 @@ public class LocationController {
 
     /**
      * Searches for users within a certain radius from the authenticated user
-     * @param radius The radius within which to search for users
      * @return ResponseEntity containing a QueryResult with the results of the search
      */
     @GetMapping(GET_CLOSE_USERS)
