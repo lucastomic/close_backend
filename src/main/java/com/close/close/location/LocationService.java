@@ -5,6 +5,7 @@ import com.close.close.location.space_partitioning.QuadTree;
 import com.close.close.location.space_partitioning.Rectangle;
 import com.close.close.location.space_partitioning.Vector2D;
 import com.close.close.user.User;
+import com.close.close.user.UserNotFoundException;
 import com.close.close.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +44,13 @@ public class LocationService {
         );
     }
 
-
     public QueryResult<UserLocation> searchUsers(double latitude, double longitude, double radius) {
         return USER_QUADTREE.search(new Vector2D(latitude, longitude), radius);
     }
 
     public QueryResult<UserAndLocation> closeUsers(Long userId, double radius) {
         if (!USER_LOCATION_BUFFER.containsKey(userId))
-            throw new IllegalArgumentException("userId not found");
+            throw new UserNotFoundException(userId);
 
         UserLocation userLocation = USER_LOCATION_BUFFER.get(userId);
         QueryResult<UserLocation> queryResult = USER_QUADTREE.search(userLocation.location().getPosition(), radius);

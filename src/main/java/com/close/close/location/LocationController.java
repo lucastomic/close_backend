@@ -3,13 +3,19 @@ package com.close.close.location;
 import com.close.close.location.space_partitioning.QueryResult;
 import com.close.close.security.AuthenticationService;
 import com.close.close.user.User;
-import com.close.close.user.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 
@@ -47,25 +53,6 @@ public class LocationController {
                                                                  @PathVariable double radius) {
         QueryResult<UserLocation> result = LOCATION_SERVICE.searchUsers(latitude, longitude, radius);
         return ResponseEntity.ok(result);
-    }
-
-    /**
-     * Searches for users within a certain radius from the authenticated user
-     * @return ResponseEntity containing a QueryResult with the results of the search
-     */
-    @GetMapping(GET_CLOSE_USERS)
-    public ResponseEntity<?> closeUsers() {
-        ResponseEntity responseEntity;
-        // UserLocation could instead be a column of User in the database...
-        // This would also allow us to clear the buffer each time quadtree is updated
-        try {
-            Long userId = AUTH_SERVICE.getIdAuthenticated();
-            QueryResult<UserAndLocation> result = LOCATION_SERVICE.closeUsers(userId, RADIUS);
-            responseEntity = ResponseEntity.ok(result);
-        } catch (Exception e) {
-            responseEntity = ResponseEntity.badRequest().build();
-        }
-        return responseEntity;
     }
 
     /**
