@@ -56,12 +56,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "receiver")
     private Set<Message> messageReceived;
 
-    /**
-     * photos is the list of user's photos. They are in string format to a URL.
-     * Photos are saved in a different table
-     */
-    @ElementCollection
-    private Set<String> photos;
+    @Column()
+    private String photo;
 
     /**
      * interests are the user's interests set.
@@ -183,17 +179,13 @@ public class User implements UserDetails {
      *
      * @return Collection of strings with the link to the user's photos
      */
-    public Set<String> getPhotos() {
-        return photos;
+    public String getPhoto() {
+        return photo;
     }
 
-    /**
-     * Changes the user's photos
-     *
-     * @param photos new user's photos
-     */
-    public void setPhotos(Set<String> photos) {
-        this.photos = photos;
+
+    public void setPhotos(String photo) {
+        this.photo = photo;
     }
 
     /**
