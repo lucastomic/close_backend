@@ -55,22 +55,6 @@ public class User implements UserDetails {
     private Set<Message> messagesSent;
     @OneToMany(mappedBy = "receiver")
     private Set<Message> messageReceived;
-    /**
-     * phone is a string with the user's phone number.
-     * This column is mandatory
-     */
-    @Column(nullable = false, unique = true)
-    private String phone;
-
-    /**
-     * phoneIsVerified checks whether the user's phone number has been verified or not.
-     * This verification is compulsory for the app usage.
-     * It's not nullable and has a default value un false (because the user can't verify his phone number
-     * before the user is created)
-     */
-
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean phoneIsVerified;
 
     /**
      * photos is the list of user's photos. They are in string format to a URL.
@@ -93,14 +77,12 @@ public class User implements UserDetails {
     )
     private Set<Interest> interests;
 
-    public User (Long id, String username, String profileName, String password, Role role, String phone, boolean phoneIsVerified){
+    public User (Long id, String username, String profileName, String password, Role role){
         this.id=id;
         this.username=username;
         this.profileName=profileName;
         this.password=password;
         this.role=role;
-        this.phone=phone;
-        this.phoneIsVerified=phoneIsVerified;
     }
 
     public User() {
@@ -194,42 +176,6 @@ public class User implements UserDetails {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * Indicates the User phone. In this class, the Phone is unique for every user
-     *
-     * @return String with the User phone
-     */
-    public String getPhone() {
-        return phone;
-    }
-
-    /**
-     * Changes the user phone value
-     *
-     * @param phone new Phone value
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    /**
-     * Indicates weather the user's phone is verified or not
-     *
-     * @return <code>true</code> if the phone is verified. <code>false</code> if it's not
-     */
-    public boolean isPhoneIsVerified() {
-        return phoneIsVerified;
-    }
-
-    /**
-     * Changes the user's phone value
-     *
-     * @param phoneIsVerified String with the new phone value
-     */
-    public void setPhoneIsVerified(boolean phoneIsVerified) {
-        this.phoneIsVerified = phoneIsVerified;
     }
 
     /**

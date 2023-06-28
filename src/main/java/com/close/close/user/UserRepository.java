@@ -12,14 +12,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long>{
 
     /**
-     * getUserFromPhone gets the user given a number phone
-     * @param phone phone of the user to look for
-     * @return user with that phone
-     */
-    @Query("SELECT u FROM User u WHERE u.phone = :phone")
-    public Optional<User> findByPhone(@Param("phone") String phone);
-
-    /**
      * Gets the user with the username specified
      * @param username username to look for
      * @return User with that username
