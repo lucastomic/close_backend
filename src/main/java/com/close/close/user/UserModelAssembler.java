@@ -1,9 +1,10 @@
 package com.close.close.user;
 
 import com.close.close.duck.DuckController;
-import com.close.close.interest.InterestController;
 import com.close.close.location.Location;
 import com.close.close.location.LocationController;
+import com.close.close.socialnetwork.ESocialNetwork;
+import com.close.close.socialnetwork.SocialNetworkController;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -23,7 +24,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
     private final String DUCKSRECEIVEDREL = "ducksReceived";
     private final String REMOVE_DUCK = "removeDuck";
     private final String SENDLOCATIONREL = "sendLocation";
-    private final String CLOSEUSERSREL = "closeUsers";
+    private final String ADDSOCIALNETWORKREL = "addSocialNetwork";
     private final String ADDINTEREST = "addInterest";
     private final String REMOVE_INTEREST = "removeInterest";
     private final String GETUSERINFO ="userInfo";
@@ -67,9 +68,9 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                         .sendLocation( new Location(0, 0))
                 ).withRel(SENDLOCATIONREL),
 
-//                linkTo(methodOn(LocationController.class)
-//                        .closeUsers()
-//                ).withRel(CLOSEUSERSREL),
+                linkTo(methodOn(SocialNetworkController.class)
+                        .addSocialNetwork(ESocialNetwork.INSTAGRAM,"myinstagrmausername")
+                ).withRel(ADDSOCIALNETWORKREL),
                 linkTo(methodOn(UserController.class).getUserInformation()).withRel(GETUSERINFO)
 
         );

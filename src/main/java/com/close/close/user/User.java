@@ -7,6 +7,7 @@ package com.close.close.user;
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
 import com.close.close.message.Message;
+import com.close.close.socialnetwork.SocialNetwork;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,50 +23,31 @@ import java.util.Set;
  */
 @Entity
 public class User implements UserDetails {
-    /**
-     * id is the id of the user. This is a long type number.
-     * It's marked as a generated value.
-     */
-    private @Id
-    @GeneratedValue Long id;
+    public static final int MINIMUM_PASSWORD_LENGTH = 5;
 
-    /**
-     * username is a string with the user's name.
-     * It's not nullable.
-     */
+    private @Id
+    @GeneratedValue
+    Long id;
+
     @Column(nullable = false, unique = true)
     private String username;
 
-    /**
-     * profileName is the name of the user that will appear as his real name (not his username).
-     * It can be more than one user with the same profileName
-     */
     @Column(nullable = false)
     private String profileName;
 
-    /**
-     * password of the user
-     */
     @Column(nullable = false)
     private String password;
-    public static final int MINIMUM_PASSWORD_LENGTH = 5;
-    
-    /**
-     * role the user takes in the app
-     */
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
-    /**
-     * ducksSent is the collection of Duck where the user is the sender.
-     */
+    @OneToMany(mappedBy = "user")
+    private List<SocialNetwork> socialNetworks;
+
     @OneToMany(mappedBy = "sender")
     private Set<Duck> ducksSent;
 
-    /**
-     * ducksSent is the collection of Duck where the user is the receiver.
-     */
     @OneToMany(mappedBy = "receiver")
     private Set<Duck> ducksReceived;
 
@@ -143,6 +125,9 @@ public class User implements UserDetails {
     }
     public String getPassword() {
         return password;
+    }
+    public void addSocialNetwork(SocialNetwork socialNetwork){
+        this.socialNetworks.add(socialNetwork);
     }
 
     /**
