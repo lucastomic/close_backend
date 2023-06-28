@@ -3,6 +3,7 @@ package com.close.close.user;
 import com.close.close.interest.Interest;
 import com.close.close.security.InvalidPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -75,18 +76,16 @@ public class UserService {
         USER_REPOSITORY.save(user);
     }
 
-    /**
-     * Creates a new User storing it in the database, encrypting their password
-     * @param newUser User object to create
-     * @throws CannotCreateTransactionException is thrown when the DB transaction doesn't work properly
-     * @return If the user was created successfully, it returns the user created
-     */
     public User create(User newUser) {
         if (!validatePassword(newUser.getPassword())){
             throw new InvalidPasswordException();
         }
         this.encodePassword(newUser);
-        USER_REPOSITORY.save(newUser);
+        try{
+            USER_REPOSITORY.save(newUser);
+        }catch (DataIntegrityViolationException e){
+            throw new UsernameDuplicatedException(newUser.getUsername());
+        }
         return newUser;
     }
 

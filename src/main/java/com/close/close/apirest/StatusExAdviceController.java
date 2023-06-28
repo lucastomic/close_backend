@@ -5,6 +5,7 @@ import com.close.close.duck.DuckToItselfException;
 import com.close.close.interest.InterestNotFoundException;
 import com.close.close.security.InvalidPasswordException;
 import com.close.close.user.UserNotFoundException;
+import com.close.close.user.UsernameDuplicatedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +28,7 @@ public class StatusExAdviceController {
             UserNotFoundException.class,
             DuckToItselfException.class,
             DuckNotFoundException.class,
+            UsernameDuplicatedException.class,
             InvalidPasswordException.class,
     })
     ResponseEntity<String> handleFunction(StatusException ex){
