@@ -44,12 +44,6 @@ public class User implements UserDetails {
     private String profileName;
 
     /**
-     * age is the user's age
-     */
-    @Column(nullable = false)
-    private int age;
-
-    /**
      * password of the user
      */
     @Column(nullable = false)
@@ -117,11 +111,10 @@ public class User implements UserDetails {
     )
     private Set<Interest> interests;
 
-    public User (Long id, String username, String profileName, int age, String password, Role role, String phone, boolean phoneIsVerified){
+    public User (Long id, String username, String profileName, String password, Role role, String phone, boolean phoneIsVerified){
         this.id=id;
         this.username=username;
         this.profileName=profileName;
-        this.age=age;
         this.password=password;
         this.role=role;
         this.phone=phone;
@@ -137,14 +130,6 @@ public class User implements UserDetails {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     /**
