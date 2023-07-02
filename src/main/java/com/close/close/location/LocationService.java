@@ -19,17 +19,13 @@ import java.util.*;
 @Service
 @EnableScheduling
 public class LocationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
-
-    private final Map<Long, UserLocation> USER_LOCATION_BUFFER;
-    private final QuadTree<UserLocation> USER_QUADTREE;
-    private final UserRepository USER_REPOSITORY;
-
     private static final Long MAX_BRANCH_LEVEL = 9L;
     private static final Long MAX_BRANCH_CAPACITY = 4L;
     private static final Long WIDTH = 100000L;
-
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
+    private final Map<Long, UserLocation> USER_LOCATION_BUFFER;
+    private final QuadTree<UserLocation> USER_QUADTREE;
+    private final UserRepository USER_REPOSITORY;
     @Autowired
     public LocationService(UserRepository userRepository) {
         USER_REPOSITORY = userRepository;
@@ -44,30 +40,12 @@ public class LocationService {
         );
     }
 
-    public QueryResult<UserLocation> searchUsers(double latitude, double longitude, double radius) {
-        return USER_QUADTREE.search(new Vector2D(latitude, longitude), radius);
-    }
-
     public QueryResult<UserAndLocation> closeUsers(Long userId, double radius) {
-        if (!USER_LOCATION_BUFFER.containsKey(userId))
-            throw new UserNotFoundException(userId);
-
+        validateUserIsInBuffer(userId);
         UserLocation userLocation = USER_LOCATION_BUFFER.get(userId);
         QueryResult<UserLocation> queryResult = USER_QUADTREE.search(userLocation.location().getPosition(), radius);
-
-        List<UserAndLocation> usersAndLocationsResults = new ArrayList<>();
-        List<UserAndLocation> usersAndLocationsPotentialResults = new ArrayList<>();
-
-        for (UserLocation uloc : queryResult.RESULTS)
-            USER_REPOSITORY.findById(uloc.userId())
-                    .ifPresent(user -> usersAndLocationsResults
-                            .add(new UserAndLocation(user, uloc.location())));
-
-        for (UserLocation uloc : queryResult.POTENTIAL_RESULTS)
-            USER_REPOSITORY.findById(uloc.userId())
-                    .ifPresent(user -> usersAndLocationsPotentialResults
-                            .add(new UserAndLocation(user, uloc.location())));
-
+        List<UserAndLocation> usersAndLocationsResults =parse(queryResult.RESULTS);
+        List<UserAndLocation> usersAndLocationsPotentialResults = parse(queryResult.POTENTIAL_RESULTS);
         return new QueryResult<UserAndLocation> (
                 usersAndLocationsResults,
                 usersAndLocationsPotentialResults,
@@ -75,22 +53,11 @@ public class LocationService {
         );
     }
 
-    public List<UserLocation> findAllUserLocations() {
-        return USER_QUADTREE.getLocations();
-    }
-
-    public UserLocation findUserLocation(Long userId) {
-        if (!USER_LOCATION_BUFFER.containsKey(userId))
-            throw new IllegalArgumentException("userId not found");
-        return USER_LOCATION_BUFFER.get(userId);
-    }
-
     public void sendUserLocation(Long userId, Location location) {
         synchronized (USER_LOCATION_BUFFER) {
             USER_LOCATION_BUFFER.put(userId, new UserLocation(userId, location));
         }
     }
-
 
     @Scheduled(fixedRate = 2000)
     public void updateUserQuadTree() {
@@ -100,5 +67,23 @@ public class LocationService {
                 USER_QUADTREE.insert(userLocation);
         }
         LOGGER.info("Quadtree Updated");
+    }
+    private void validateUserIsInBuffer(Long userId){
+        if (!USER_LOCATION_BUFFER.containsKey(userId))
+            throw new UserNotFoundException(userId);
+    }
+
+    private List<UserAndLocation> parse(List<UserLocation> rawList){
+        List<UserAndLocation> listParsed = new ArrayList();
+        for (UserLocation userLocation : rawList)
+            listParsed.add(parse(userLocation));
+        return listParsed;
+    }
+
+    private UserAndLocation parse(UserLocation userLocation){
+        final UserAndLocation[] response = new UserAndLocation[1];
+        USER_REPOSITORY.findById(userLocation.userId())
+                .ifPresent(user -> response[0] = new UserAndLocation(user, userLocation.location()));
+        return response[0];
     }
 }
