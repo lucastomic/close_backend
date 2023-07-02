@@ -2,7 +2,7 @@ package com.close.close.location;
 
 import com.close.close.location.space_partitioning.QueryResult;
 import com.close.close.location.space_partitioning.QuadTree;
-import com.close.close.location.space_partitioning.Rectangle;
+import com.close.close.location.space_partitioning.geometry.Rectangle;
 import com.close.close.location.space_partitioning.Vector2D;
 import com.close.close.user.User;
 import com.close.close.user.UserNotFoundException;
@@ -25,10 +25,9 @@ public class LocationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
     private final Map<Long, UserLocation> USER_LOCATION_BUFFER;
     private final QuadTree<UserLocation> USER_QUADTREE;
-    private final UserRepository USER_REPOSITORY;
-    @Autowired
-    public LocationService(UserRepository userRepository) {
-        USER_REPOSITORY = userRepository;
+    private final double radius = 10;
+
+    public LocationService() {
         USER_LOCATION_BUFFER = new HashMap<>();
         USER_QUADTREE = new QuadTree<>(
                 MAX_BRANCH_LEVEL,
@@ -40,22 +39,15 @@ public class LocationService {
         );
     }
 
-    public QueryResult<UserAndLocation> closeUsers(Long userId, double radius) {
-        validateUserIsInBuffer(userId);
-        UserLocation userLocation = USER_LOCATION_BUFFER.get(userId);
-        QueryResult<UserLocation> queryResult = USER_QUADTREE.search(userLocation.location().getPosition(), radius);
-        List<UserAndLocation> usersAndLocationsResults =parse(queryResult.RESULTS);
-        List<UserAndLocation> usersAndLocationsPotentialResults = parse(queryResult.POTENTIAL_RESULTS);
-        return new QueryResult<UserAndLocation> (
-                usersAndLocationsResults,
-                usersAndLocationsPotentialResults,
-                queryResult.COMPARISONS
-        );
+    public QueryResult<UserLocation> closeUsers(User user) {
+        validateUserIsInBuffer(user);
+        UserLocation userLocation = USER_LOCATION_BUFFER.get(user.getId());
+        return USER_QUADTREE.search(userLocation.getPosition(), radius);
     }
 
-    public void sendUserLocation(Long userId, Location location) {
+    public void sendUserLocation(User user, Location location) {
         synchronized (USER_LOCATION_BUFFER) {
-            USER_LOCATION_BUFFER.put(userId, new UserLocation(userId, location));
+            USER_LOCATION_BUFFER.put(user.getId(), new UserLocation(user, location));
         }
     }
 
@@ -64,26 +56,18 @@ public class LocationService {
         USER_QUADTREE.reset();
         synchronized (USER_LOCATION_BUFFER) {
             for (UserLocation userLocation : USER_LOCATION_BUFFER.values())
-                USER_QUADTREE.insert(userLocation);
+                insertOrRemoveLocation(userLocation);
         }
         LOGGER.info("Quadtree Updated");
     }
-    private void validateUserIsInBuffer(Long userId){
-        if (!USER_LOCATION_BUFFER.containsKey(userId))
-            throw new UserNotFoundException(userId);
+
+    private void validateUserIsInBuffer(User user){
+        if (!USER_LOCATION_BUFFER.containsKey(user.getId()))
+            throw new UserNotFoundException(user.getUsername());
     }
 
-    private List<UserAndLocation> parse(List<UserLocation> rawList){
-        List<UserAndLocation> listParsed = new ArrayList();
-        for (UserLocation userLocation : rawList)
-            listParsed.add(parse(userLocation));
-        return listParsed;
-    }
-
-    private UserAndLocation parse(UserLocation userLocation){
-        final UserAndLocation[] response = new UserAndLocation[1];
-        USER_REPOSITORY.findById(userLocation.userId())
-                .ifPresent(user -> response[0] = new UserAndLocation(user, userLocation.location()));
-        return response[0];
+    private void insertOrRemoveLocation(UserLocation location){
+        if(!location.hasExpired())USER_QUADTREE.insert(location);
+        else USER_LOCATION_BUFFER.remove(location.getUser().getId());
     }
 }

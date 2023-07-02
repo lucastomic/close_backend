@@ -1,6 +1,7 @@
 package com.close.close.location;
 
 import com.close.close.security.AuthenticationService;
+import com.close.close.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,8 @@ public class LocationController {
      */
     @PostMapping(POST_USER_LOCATION)
     public ResponseEntity<?> sendLocation(@RequestBody Location location) {
-        Long userId = AUTH_SERVICE.getIdAuthenticated();
-        LOCATION_SERVICE.sendUserLocation(userId, location);
+        User user = AUTH_SERVICE.getAuthenticated();
+        LOCATION_SERVICE.sendUserLocation(user, location);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(location);
     }
 }
