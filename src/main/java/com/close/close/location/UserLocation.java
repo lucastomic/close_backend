@@ -13,7 +13,7 @@ public class UserLocation implements IPosition {
     private final User user;
     private Location location;
     private final Date expirationTime;
-    private final int expirationTimeInSeconds = 5;
+    private final int EXPIRATION_TIME_SECONDS = 5;
 
     public UserLocation(@NotNull User user, @NotNull Location location) {
         this.user = user;
@@ -28,8 +28,7 @@ public class UserLocation implements IPosition {
     }
 
     public boolean hasExpired(){
-        boolean res = expirationTime.before(new Date());
-        return res;
+        return expirationTime.before(new Date());
     }
 
     public User getUser() {
@@ -47,7 +46,7 @@ public class UserLocation implements IPosition {
     private Date getExpirationTime(){
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.SECOND, expirationTimeInSeconds);
+        calendar.add(Calendar.SECOND, EXPIRATION_TIME_SECONDS);
         return calendar.getTime();
     }
 }

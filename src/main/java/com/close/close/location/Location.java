@@ -32,14 +32,6 @@ public class Location implements IPosition {
     }
 
     /**
-     * Setter for the latitude coordinate of the location.
-     * @param latitude the new latitude coordinate of the location
-     */
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    /**
      * Getter for the longitude coordinate of the location.
      * @return the longitude coordinate of the location
      */
@@ -47,12 +39,11 @@ public class Location implements IPosition {
         return longitude;
     }
 
-    /**
-     * Setter for the longitude coordinate of the location.
-     * @param longitude the new longitude coordinate of the location
-     */
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public double getLatitudeInRadians(){
+        return Math.toRadians(latitude);
+    }
+    public double getLongitudeInRadians(){
+        return Math.toRadians(longitude);
     }
 
     /**

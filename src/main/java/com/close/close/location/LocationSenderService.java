@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class LocationSenderService {
@@ -52,15 +53,11 @@ public class LocationSenderService {
         }
     }
 
-    private QueryResult<UserLocation> getResponseBodyWhenLocationWasSentFirst(){
+    private List<User> getResponseBodyWhenLocationWasSentFirst(){
         return LOCATION_SERVICE.closeUsers(currentReceiver);
     }
 
-    private QueryResult<UserLocation>  getNoLocationSentFirstResponseBody(){
-        return new QueryResult(
-                new ArrayList(),
-                new ArrayList(),
-                0L
-        );
+    private List<User>  getNoLocationSentFirstResponseBody(){
+        return  new ArrayList<>();
     }
 }

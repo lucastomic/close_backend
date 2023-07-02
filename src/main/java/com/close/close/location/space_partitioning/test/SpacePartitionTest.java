@@ -1,6 +1,7 @@
 package com.close.close.location.space_partitioning.test;
 
 import com.close.close.location.space_partitioning.*;
+import com.close.close.location.space_partitioning.geometry.Rectangle;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -9,7 +10,7 @@ import java.util.Scanner;
  * Simple QuadTree test with fake users and fake locations
  */
 public class SpacePartitionTest {
-    private static final long MADRID_POPULATION = 1000;
+    private static final long MADRID_POPULATION = 10000;
     private static final double SIDE_M = 6000;
     private static final Vector2D box = new Vector2D(SIDE_M/2, SIDE_M/2);
 
