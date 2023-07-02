@@ -16,7 +16,6 @@ public class LocationSenderService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final LocationService LOCATION_SERVICE;
     public static final String WS_MESSAGE_TRANSFER_DESTINATION = "/queue/closeusers";
-    private final double RADIUS = 10;
     private final ArrayList<User> receivers ;
     private User currentReceiver;
 
@@ -45,7 +44,7 @@ public class LocationSenderService {
         simpMessagingTemplate.convertAndSendToUser(username,WS_MESSAGE_TRANSFER_DESTINATION, responseBody);
     }
 
-    private ResponseEntity<?> getResponseBody(){
+    private Object getResponseBody(){
         try {
             return getResponseBodyWhenLocationWasSentFirst();
         } catch (UserNotFoundException ex){
@@ -53,13 +52,15 @@ public class LocationSenderService {
         }
     }
 
-    private ResponseEntity<QueryResult<UserAndLocation>> getResponseBodyWhenLocationWasSentFirst(){
-        Long userId = currentReceiver.getId();
-        QueryResult<UserAndLocation> result = LOCATION_SERVICE.closeUsers(userId, RADIUS);
-        return ResponseEntity.ok(result);
+    private QueryResult<UserLocation> getResponseBodyWhenLocationWasSentFirst(){
+        return LOCATION_SERVICE.closeUsers(currentReceiver);
     }
 
-    private ResponseEntity<String> getNoLocationSentFirstResponseBody(){
-        return ResponseEntity.status(400).body("Tried to retrieve close users when no location was sent first");
+    private QueryResult<UserLocation>  getNoLocationSentFirstResponseBody(){
+        return new QueryResult(
+                new ArrayList(),
+                new ArrayList(),
+                0L
+        );
     }
 }
