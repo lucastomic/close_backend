@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * LocationService uses a Quadtree Space Partitioning algorithm to reduce the number of iterations when searching for close users.
@@ -25,12 +26,12 @@ public class LocationService {
     private static final Long MAX_BRANCH_LEVEL = 9L;
     private static final Long MAX_BRANCH_CAPACITY = 4L;
     private static final Long WIDTH = 100000L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
     private final Map<Long, UserLocation> USER_LOCATION_BUFFER;
     //Quadtree from Space Partitioning algorithm
     private final QuadTree<UserLocation> USER_QUADTREE;
     private final double queryRadius = 1;
     private final double MAX_DISTANCE_METERS = 20;
+
 
     public LocationService() {
         USER_LOCATION_BUFFER = new HashMap<>();
@@ -50,33 +51,23 @@ public class LocationService {
         QueryResult<UserLocation> locationQueryResult =  USER_QUADTREE.search(userLocation.getPosition(), queryRadius);
         List<User> result= filterCloseUsers(locationQueryResult.POTENTIAL_RESULTS, userLocation.getLocation());
         result.addAll(filterCloseUsers(locationQueryResult.RESULTS,userLocation.getLocation()));
+        result.remove(user);
         return result;
     }
 
     public void sendUserLocation(User user, Location location) {
-        synchronized (USER_LOCATION_BUFFER) {
-            USER_LOCATION_BUFFER.put(user.getId(), new UserLocation(user, location));
-        }
+        USER_LOCATION_BUFFER.put(user.getId(), new UserLocation(user, location));
     }
 
-    @Scheduled(fixedRate = 2000)
+    @Scheduled(fixedRate = 1000)
     public void updateUserQuadTree() {
         USER_QUADTREE.reset();
-        synchronized (USER_LOCATION_BUFFER) {
-            for (UserLocation userLocation : USER_LOCATION_BUFFER.values())
-                insertOrRemoveLocation(userLocation);
-        }
-        LOGGER.info("Quadtree Updated");
+        dumpBufferIntoQuadTree();
     }
 
     private void validateUserIsInBuffer(User user){
         if (!USER_LOCATION_BUFFER.containsKey(user.getId()))
             throw new UserNotFoundException(user.getUsername());
-    }
-
-    private void insertOrRemoveLocation(UserLocation location){
-        if(!location.hasExpired())USER_QUADTREE.insert(location);
-        else USER_LOCATION_BUFFER.remove(location.getUser().getId());
     }
 
     private List<User> filterCloseUsers(List<UserLocation> allLocations, Location userLocation){
@@ -87,5 +78,17 @@ public class LocationService {
             }
         }
         return response;
+    }
+
+    private void dumpBufferIntoQuadTree(){
+        // The array must be copied before iterating because the buffer can be modified in the iterations, what would throw a concurrency exception
+        List<UserLocation> locationsCopy =  new ArrayList<>(USER_LOCATION_BUFFER.values());
+        for (UserLocation userLocation :locationsCopy)
+            insertOrRemoveLocation(userLocation);
+    }
+
+    private void insertOrRemoveLocation(UserLocation location){
+        if (!location.hasExpired()) USER_QUADTREE.insert(location);
+        else USER_LOCATION_BUFFER.remove(location.getUser().getId());
     }
 }
