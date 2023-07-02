@@ -67,9 +67,7 @@ public class QuadTree<T extends IPosition> {
      * If none is found, will return an empty array.
      */
     public ArrayList<T> getLocations() {
-        ArrayList<T> result = new ArrayList<>();
-        root.getPositions(result);
-        return result;
+        return (ArrayList<T>) root.getPositions();
     }
 
     /**
@@ -91,14 +89,7 @@ public class QuadTree<T extends IPosition> {
 
     public QueryResult<T> search(Vector2D origin, double queryRadius) {
         Circle queryArea = new Circle(queryRadius, new Point(origin));
-        return search(queryArea);
-    }
-
-    public QueryResult<T> search(Circle queryArea) {
-        ArrayList<T> results = new ArrayList<>();
-        ArrayList<T> potentialResults = new ArrayList<>();
-        Long comparisons = root.query(queryArea, results, potentialResults);
-        return new QueryResult<T>(results, potentialResults, comparisons);
+        return root.query(queryArea);
     }
 
     public void show()

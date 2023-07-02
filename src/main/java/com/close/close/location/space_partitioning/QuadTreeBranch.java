@@ -1,11 +1,14 @@
 package com.close.close.location.space_partitioning;
 
+import com.close.close.location.UserLocation;
 import com.close.close.location.space_partitioning.geometry.Circle;
 import com.close.close.location.space_partitioning.geometry.Rectangle;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class QuadTreeBranch<T extends IPosition> {
     private final QuadTree<T> tree;
@@ -38,10 +41,11 @@ public class QuadTreeBranch<T extends IPosition> {
         return level;
     }
     public Rectangle getArea() { return area; }
-    public void getPositions(@NotNull ArrayList<T> result) {
-        result.addAll(positions);
+    public List<T> getPositions() {
+        List<T> response = new ArrayList<>(positions);
         for (QuadTreeBranch<T> child : childBranches)
-            child.getPositions(result);
+            response.addAll(child.getPositions());
+        return response;
     }
     public ArrayList<QuadTreeBranch<T>> getChildBranches() {
         return childBranches;
@@ -106,17 +110,16 @@ public class QuadTreeBranch<T extends IPosition> {
         while(iterator.hasNext() && !iterator.next().remove(position));
     }
 
-    public Long query(Circle queryArea, ArrayList<T> results, ArrayList<T> potentialResults) {
-        Long comparisons = 1L;
-
-        if (queryArea.contains(area)) getPositions(results);
+    public QueryResult<T> query(Circle queryArea) {
+        QueryResult<T> response = new  QueryResult<>();
+        if (queryArea.contains(area)) response.RESULTS.addAll(getPositions());
         else if (queryArea.intersectsWith(area)) {
-            potentialResults.addAll(positions);
-            for (QuadTreeBranch<T> child : childBranches)
-                comparisons += child.query(queryArea, results, potentialResults);
+            if(!isBranched())response.POTENTIAL_RESULTS.addAll(positions);
+            for (QuadTreeBranch<T> child : childBranches){
+                response.add(child.query(queryArea));
+            }
         }
-
-        return comparisons;
+        return response;
     }
 
     public void show() {
