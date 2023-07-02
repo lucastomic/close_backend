@@ -31,7 +31,7 @@ public class LocationSenderService {
         receivers.add(user);
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void sendMessages() {
         for (User user: receivers){
             currentReceiver = user;
