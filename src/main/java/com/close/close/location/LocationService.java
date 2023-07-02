@@ -44,11 +44,16 @@ public class LocationService {
                 )
         );
     }
+    @Scheduled(fixedRate = 1000)
+    synchronized public void updateUserQuadTree() {
+        USER_QUADTREE.reset();
+        dumpBufferIntoQuadTree();
+    }
 
-    public List<User> closeUsers(User user) {
+    synchronized public List<User> closeUsers(User user) {
         validateUserIsInBuffer(user);
         UserLocation userLocation = USER_LOCATION_BUFFER.get(user.getId());
-        QueryResult<UserLocation> locationQueryResult =  USER_QUADTREE.search(userLocation.getPosition(), queryRadius);
+        QueryResult<UserLocation> locationQueryResult = makeQueryInQuadTree(userLocation);
         List<User> result= filterCloseUsers(locationQueryResult.POTENTIAL_RESULTS, userLocation.getLocation());
         result.addAll(filterCloseUsers(locationQueryResult.RESULTS,userLocation.getLocation()));
         result.remove(user);
@@ -59,11 +64,6 @@ public class LocationService {
         USER_LOCATION_BUFFER.put(user.getId(), new UserLocation(user, location));
     }
 
-    @Scheduled(fixedRate = 1000)
-    public void updateUserQuadTree() {
-        USER_QUADTREE.reset();
-        dumpBufferIntoQuadTree();
-    }
 
     private void validateUserIsInBuffer(User user){
         if (!USER_LOCATION_BUFFER.containsKey(user.getId()))
@@ -78,6 +78,10 @@ public class LocationService {
             }
         }
         return response;
+    }
+
+    synchronized QueryResult<UserLocation> makeQueryInQuadTree(UserLocation location){
+        return USER_QUADTREE.search(location.getPosition(), queryRadius);
     }
 
     private void dumpBufferIntoQuadTree(){
