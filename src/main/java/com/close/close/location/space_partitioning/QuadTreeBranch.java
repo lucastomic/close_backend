@@ -1,5 +1,7 @@
 package com.close.close.location.space_partitioning;
 
+import com.close.close.location.space_partitioning.geometry.Circle;
+import com.close.close.location.space_partitioning.geometry.Rectangle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -104,11 +106,11 @@ public class QuadTreeBranch<T extends IPosition> {
         while(iterator.hasNext() && !iterator.next().remove(position));
     }
 
-    public Long query(Rectangle queryArea, ArrayList<T> results, ArrayList<T> potentialResults) {
+    public Long query(Circle queryArea, ArrayList<T> results, ArrayList<T> potentialResults) {
         Long comparisons = 1L;
 
-        if (area.isContainedBy(queryArea)) getPositions(results);
-        else if (area.intersectsWith(queryArea)) {
+        if (queryArea.contains(area)) getPositions(results);
+        else if (queryArea.intersectsWith(area)) {
             potentialResults.addAll(positions);
             for (QuadTreeBranch<T> child : childBranches)
                 comparisons += child.query(queryArea, results, potentialResults);

@@ -1,7 +1,7 @@
 package com.close.close.location;
 
 import com.close.close.location.space_partitioning.QuadTree;
-import com.close.close.location.space_partitioning.Rectangle;
+import com.close.close.location.space_partitioning.geometry.Rectangle;
 import com.close.close.location.space_partitioning.Vector2D;
 
 import java.util.HashMap;

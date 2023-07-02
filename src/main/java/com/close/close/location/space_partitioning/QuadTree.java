@@ -1,5 +1,9 @@
 package com.close.close.location.space_partitioning;
 
+import com.close.close.location.space_partitioning.geometry.Circle;
+import com.close.close.location.space_partitioning.geometry.Point;
+import com.close.close.location.space_partitioning.geometry.Rectangle;
+
 import java.util.ArrayList;
 
 /**
@@ -86,13 +90,11 @@ public class QuadTree<T extends IPosition> {
     }
 
     public QueryResult<T> search(Vector2D origin, double queryRadius) {
-        float SQRT_2 = 1.41421356237f;
-        double innerSquareRadius = queryRadius * SQRT_2 / 2;
-        Rectangle queryArea = new Rectangle(origin, new Vector2D(innerSquareRadius, innerSquareRadius));
+        Circle queryArea = new Circle(queryRadius, new Point(origin));
         return search(queryArea);
     }
 
-    public QueryResult<T> search(Rectangle queryArea) {
+    public QueryResult<T> search(Circle queryArea) {
         ArrayList<T> results = new ArrayList<>();
         ArrayList<T> potentialResults = new ArrayList<>();
         Long comparisons = root.query(queryArea, results, potentialResults);
