@@ -1,6 +1,7 @@
 package com.close.close.socialnetwork;
 
 import com.close.close.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +12,7 @@ public class SocialNetwork {
     @Column(nullable = false)
     ESocialNetwork socialNetwork;
 
+    @JsonIgnore
     @Id
     @ManyToOne()
     @JoinColumn(name = "user_id")

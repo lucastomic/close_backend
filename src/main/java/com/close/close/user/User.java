@@ -42,8 +42,8 @@ public class User implements UserDetails {
     @Column(name = "role")
     private Role role;
 
-    @OneToMany(mappedBy = "user")
-    private List<SocialNetwork> socialNetworks;
+    @OneToMany(mappedBy = "user", orphanRemoval = true,fetch = FetchType.EAGER)
+    private Set<SocialNetwork> socialNetworks;
 
     @OneToMany(mappedBy = "sender")
     private Set<Duck> ducksSent;
@@ -163,6 +163,14 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Set<SocialNetwork> getSocialNetworks() {
+        return socialNetworks;
+    }
+
+    public void setSocialNetworks(Set<SocialNetwork> socialNetworks) {
+        this.socialNetworks = socialNetworks;
     }
 
     /**
