@@ -30,7 +30,9 @@ public class LocationSenderService {
     public void addReceiver(User user){
         receivers.add(user);
     }
-
+    public void removeReceiver(User user){
+        receivers.remove(user);
+    }
     @Scheduled(fixedRate = 1000)
     public void sendMessages() {
         for (User user: receivers){
