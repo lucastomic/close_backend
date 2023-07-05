@@ -28,9 +28,21 @@ public class SocialNetworkController {
      * @return Response entity with the modified user
      */
     @PostMapping("/add")
-    public ResponseEntity addSocialNetwork(@RequestParam ESocialNetwork socialNetwork, @RequestParam String username){
+    public ResponseEntity addSocialNetwork(@RequestParam SocialNetwork socialNetwork, @RequestParam String username){
         User user = AUTH_SERVICE.getAuthenticated();
-        SOCIAL_NETWORK_SERVICE.addSocialNetwork(user, new SocialNetwork(socialNetwork, username));
+        SOCIAL_NETWORK_SERVICE.addSocialNetwork(user, socialNetwork, username);
+        return ResponseEntity.ok(USER_MODEL_ASSEMBLER.toModel(user));
+    }
+
+    /**
+     * Removes a social network from the authenticated user.
+     * @param socialNetwork social network to remove
+     * @return Response entity with the modified user
+     */
+    @PostMapping("/remove")
+    public ResponseEntity removeSocialNetwork(@RequestParam SocialNetwork socialNetwork){
+        User user = AUTH_SERVICE.getAuthenticated();
+        SOCIAL_NETWORK_SERVICE.removeSocialNetwork(user, socialNetwork);
         return ResponseEntity.ok(USER_MODEL_ASSEMBLER.toModel(user));
     }
 }

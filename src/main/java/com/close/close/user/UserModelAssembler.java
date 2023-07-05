@@ -3,7 +3,7 @@ package com.close.close.user;
 import com.close.close.duck.DuckController;
 import com.close.close.location.Location;
 import com.close.close.location.LocationController;
-import com.close.close.socialnetwork.ESocialNetwork;
+import com.close.close.socialnetwork.SocialNetwork;
 import com.close.close.socialnetwork.SocialNetworkController;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.EntityModel;
@@ -69,7 +69,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
                 ).withRel(SENDLOCATIONREL),
 
                 linkTo(methodOn(SocialNetworkController.class)
-                        .addSocialNetwork(ESocialNetwork.INSTAGRAM,"myinstagrmausername")
+                        .addSocialNetwork(SocialNetwork.INSTAGRAM,"myinstagrmausername")
                 ).withRel(ADDSOCIALNETWORKREL),
                 linkTo(methodOn(UserController.class).getUserInformation()).withRel(GETUSERINFO)
 

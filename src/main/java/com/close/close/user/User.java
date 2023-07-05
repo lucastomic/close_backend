@@ -13,10 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User is the application user model.
@@ -42,8 +39,12 @@ public class User implements UserDetails {
     @Column(name = "role")
     private Role role;
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true,fetch = FetchType.EAGER)
-    private Set<SocialNetwork> socialNetworks;
+    @ElementCollection( fetch = FetchType.EAGER)
+    @CollectionTable(name="socialNetworks")
+    @MapKeyColumn(name="socialNetowrk")
+    @MapKeyEnumerated(EnumType.STRING)
+    @Column(name = "username")
+    private Map<SocialNetwork, String> socialNetworks;
 
     @OneToMany(mappedBy = "sender")
     private Set<Duck> ducksSent;
@@ -104,8 +105,11 @@ public class User implements UserDetails {
     public String getPassword() {
         return password;
     }
-    public void addSocialNetwork(SocialNetwork socialNetwork){
-        this.socialNetworks.add(socialNetwork);
+    public void addSocialNetwork(SocialNetwork socialNetwork, String username){
+        this.socialNetworks.put(socialNetwork,username);
+    }
+    public void removeSocialNetowrk(SocialNetwork socialNetwork){
+        this.socialNetworks.remove(socialNetwork);
     }
 
     /**
@@ -165,11 +169,11 @@ public class User implements UserDetails {
         return true;
     }
 
-    public Set<SocialNetwork> getSocialNetworks() {
+    public Map<SocialNetwork,String> getSocialNetworks() {
         return socialNetworks;
     }
 
-    public void setSocialNetworks(Set<SocialNetwork> socialNetworks) {
+    public void setSocialNetworks(Map<SocialNetwork,String> socialNetworks) {
         this.socialNetworks = socialNetworks;
     }
 
