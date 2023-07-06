@@ -3,6 +3,7 @@ package com.close.close.socialnetwork;
 import com.close.close.security.AuthenticationService;
 import com.close.close.user.User;
 import com.close.close.user.UserModelAssembler;
+import com.close.close.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class SocialNetworkController {
     public ResponseEntity addSocialNetwork(@RequestParam SocialNetwork socialNetwork, @RequestParam String username){
         User user = AUTH_SERVICE.getAuthenticated();
         SOCIAL_NETWORK_SERVICE.addSocialNetwork(user, socialNetwork, username);
-        return ResponseEntity.ok(USER_MODEL_ASSEMBLER.toModel(user.toUserDTO()));
+        return ResponseEntity.ok(USER_MODEL_ASSEMBLER.toModel(new UserDTO(user)));
     }
 
     /**
@@ -43,6 +44,6 @@ public class SocialNetworkController {
     public ResponseEntity removeSocialNetwork(@RequestParam SocialNetwork socialNetwork){
         User user = AUTH_SERVICE.getAuthenticated();
         SOCIAL_NETWORK_SERVICE.removeSocialNetwork(user, socialNetwork);
-        return ResponseEntity.ok(USER_MODEL_ASSEMBLER.toModel(user.toUserDTO()));
+        return ResponseEntity.ok(USER_MODEL_ASSEMBLER.toModel(new UserDTO(user)));
     }
 }

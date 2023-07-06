@@ -72,18 +72,44 @@ public class User implements UserDetails {
         this.role=role;
     }
 
-    public UserDTO toUserDTO(){
-        return new UserDTO(
-                this.id,
-                this.username,
-                this.profileName,
-                this.socialNetworks,
-                this.photo,
-                this.interests
-        );
-    }
 
     public User() {
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public Map<SocialNetwork, String> getSocialNetworks() {
+        return socialNetworks;
+    }
+
+    public Set<Duck> getDucksSent() {
+        return ducksSent;
+    }
+
+    public Set<Duck> getDucksReceived() {
+        return ducksReceived;
+    }
+
+    public Set<Message> getMessagesSent() {
+        return messagesSent;
+    }
+
+    public Set<Message> getMessageReceived() {
+        return messageReceived;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public Set<Interest> getInterests() {
+        return interests;
     }
 
     public Long getId() {

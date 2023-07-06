@@ -1,17 +1,13 @@
 package com.close.close.user.dto;
-import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
-import com.close.close.message.Message;
 import com.close.close.socialnetwork.SocialNetwork;
-import com.close.close.user.Role;
 import com.close.close.user.User;
-import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class UserDTO implements Serializable {
+    private User user;
     private Long id;
     private String username;
     private String profileName;
@@ -19,13 +15,9 @@ public class UserDTO implements Serializable {
     private String photo;
     private Set<Interest> interests;
 
-    public UserDTO(Long id, String username, String profileName, Map<SocialNetwork, String> socialNetworks, String photo, Set<Interest> interests) {
-        this.id = id;
-        this.username = username;
-        this.profileName = profileName;
-        this.socialNetworks = socialNetworks;
-        this.photo = photo;
-        this.interests = interests;
+    public UserDTO(User user) {
+        this.user = user;
+        initializeFields();
     }
 
     public Long getId() {
@@ -63,5 +55,25 @@ public class UserDTO implements Serializable {
     }
     public void setProfileName(String profileName) {
         this.profileName = profileName;
+    }
+
+
+    private void initializeFields(){
+            this.id = (Long)getPrivateField("id");
+            this.username = (String)getPrivateField("username");
+            this.profileName = (String)getPrivateField("profileName");
+            this.photo = (String)getPrivateField("photo");
+            this.interests = (Set<Interest>)getPrivateField("interests");
+            this.socialNetworks = (Map<SocialNetwork, String>)getPrivateField("socialNetworks");
+    }
+
+    protected Object getPrivateField(String fieldName)  {
+        try{
+            Field field = User.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(user);
+        }catch (NoSuchFieldException | IllegalAccessException e){
+            throw new DTOParsingException();
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.close.close.interest.InterestNotFoundException;
 import com.close.close.security.InvalidPasswordException;
 import com.close.close.user.UserNotFoundException;
 import com.close.close.user.UsernameDuplicatedException;
+import com.close.close.user.dto.DTOParsingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +31,7 @@ public class StatusExAdviceController {
             DuckNotFoundException.class,
             UsernameDuplicatedException.class,
             InvalidPasswordException.class,
+            DTOParsingException.class,
     })
     ResponseEntity<String> handleFunction(StatusException ex){
         return new ResponseEntity<String>(ex.getMessage(),ex.getStatus());
