@@ -5,6 +5,7 @@ import com.close.close.location.Location;
 import com.close.close.location.LocationController;
 import com.close.close.socialnetwork.SocialNetwork;
 import com.close.close.socialnetwork.SocialNetworkController;
+import com.close.close.user.dto.UserDTO;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -18,7 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * UserModelAssembler is in charge of modeling the User entity for APIRest responses.
  */
 @Component
-public class UserModelAssembler  implements RepresentationModelAssembler<User, EntityModel<User>> {
+public class UserModelAssembler  implements RepresentationModelAssembler<UserDTO, EntityModel<UserDTO>> {
     private final String SENDDUCKREL = "sendDuck";
     private final String DELETEUSER = "deleteUser";
     private final String DUCKSRECEIVEDREL = "ducksReceived";
@@ -33,7 +34,7 @@ public class UserModelAssembler  implements RepresentationModelAssembler<User, E
 
 
     @Override
-    public @NotNull EntityModel<User> toModel(@NotNull User user) {
+    public @NotNull EntityModel<UserDTO> toModel(@NotNull UserDTO user) {
         return EntityModel.of(
                 user,
                 //User Controller Links

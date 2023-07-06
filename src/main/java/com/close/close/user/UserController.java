@@ -4,6 +4,7 @@ import com.close.close.interest.Interest;
 import com.close.close.interest.InterestNotFoundException;
 import com.close.close.interest.InterestService;
 import com.close.close.security.AuthenticationService;
+import com.close.close.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -67,11 +68,11 @@ public class UserController {
      * @return EntityModel of the user updated
      */
     @PutMapping(ADD_INTEREST)
-    public EntityModel<User> addInterest(@PathVariable String interestName){
+    public EntityModel<UserDTO> addInterest(@PathVariable String interestName){
         Interest interest = INTEREST_SERVICE.findOrCreate(interestName);
         User user = AUTH_SERVICE.getAuthenticated();
         USER_SERVICE.addInterest(user, interest);
-        return USER_MODEL_ASSEMBLER.toModel(user);
+        return USER_MODEL_ASSEMBLER.toModel(user.toUserDTO());
     }
 
     /**
@@ -80,11 +81,11 @@ public class UserController {
      * @return EntityModel of the user updated
      */
     @DeleteMapping(REMOVE_INTEREST)
-    public EntityModel<User> removeInterest(@PathVariable String interestName){
+    public EntityModel<UserDTO> removeInterest(@PathVariable String interestName){
         Interest interest = INTEREST_SERVICE.findById(interestName).orElseThrow(InterestNotFoundException::new);
         User user = AUTH_SERVICE.getAuthenticated();
         USER_SERVICE.removeInterest(user, interest);
-        return USER_MODEL_ASSEMBLER.toModel(user);
+        return USER_MODEL_ASSEMBLER.toModel(user.toUserDTO());
     }
 
     /**
@@ -92,10 +93,10 @@ public class UserController {
      * @return Response entity with status code 200, and the current authenticated user in the body
      */
     @GetMapping(GET_USER_INFO)
-    public ResponseEntity<EntityModel<User>> getUserInformation(){
+    public ResponseEntity<UserDTO> getUserInformation(){
         User user= AUTH_SERVICE.getAuthenticated();
-        EntityModel<User> response = USER_MODEL_ASSEMBLER.toModel(user);
-        return ResponseEntity.ok(response);
+        UserDTO body = user.toUserDTO();
+        return ResponseEntity.ok(body);
     }
 
 }
