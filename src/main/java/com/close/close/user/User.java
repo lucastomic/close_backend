@@ -108,7 +108,7 @@ public class User implements UserDetails {
     public void addSocialNetwork(SocialNetwork socialNetwork, String username){
         this.socialNetworks.put(socialNetwork,username);
     }
-    public void removeSocialNetowrk(SocialNetwork socialNetwork){
+    public void removeSocialNetwork(SocialNetwork socialNetwork){
         this.socialNetworks.remove(socialNetwork);
     }
 
