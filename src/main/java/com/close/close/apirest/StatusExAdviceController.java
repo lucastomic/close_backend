@@ -6,7 +6,7 @@ import com.close.close.interest.InterestNotFoundException;
 import com.close.close.security.InvalidPasswordException;
 import com.close.close.user.UserNotFoundException;
 import com.close.close.user.UsernameDuplicatedException;
-import com.close.close.user.dto.DTOParsingException;
+import com.close.close.apirest.dto.DTOParsingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

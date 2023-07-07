@@ -13,31 +13,16 @@ import jakarta.persistence.*;
  */
 @Entity
 public class Duck {
-    /**
-     * id is a composite key, stored in an embedded DuckId object.
-     */
     @EmbeddedId
     private DuckId id;
-    /**
-     * sender is the relation to the user who has sent the duck
-     */
+
     @ManyToOne
     @MapsId("senderId")
     private User sender;
-    /**
-     * receiver is the relation to the user who has received the duck
-     */
     @ManyToOne
     @MapsId("receiverId")
     private User receiver;
 
-    /**
-     * Class constructor. Expects the sender and receiver and stores them in the proper relations
-     * and converts them in a composite key.
-     *
-     * @param sender   user who has sent the duck
-     * @param receiver user who has received the duck
-     */
     public Duck(User sender, User receiver) {
         if (sender.equals(receiver)) {
             throw new DuckToItselfException(sender.getId());
@@ -47,32 +32,9 @@ public class Duck {
         this.id = new DuckId(sender.getId(), receiver.getId());
     }
 
-    /**
-     * Default constructor needed for JPA operations
-     */
     public Duck() {
 
     }
 
-    //Getters and setters
-    public void setId(DuckId id) {
-        this.id = id;
-    }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
 }
 

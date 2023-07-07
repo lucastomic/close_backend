@@ -1,4 +1,5 @@
 package com.close.close.user.dto;
+import com.close.close.apirest.dto.DTO;
 import com.close.close.interest.Interest;
 import com.close.close.socialnetwork.SocialNetwork;
 import com.close.close.user.User;
@@ -6,8 +7,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class UserDTO implements Serializable {
-    private User user;
+public class UserDTO extends DTO<User> implements Serializable {
     private Long id;
     private String username;
     private String profileName;
@@ -16,7 +16,7 @@ public class UserDTO implements Serializable {
     private Set<Interest> interests;
 
     public UserDTO(User user) {
-        this.user = user;
+        super(user);
         initializeFields();
     }
 
@@ -67,13 +67,4 @@ public class UserDTO implements Serializable {
             this.socialNetworks = (Map<SocialNetwork, String>)getPrivateField("socialNetworks");
     }
 
-    protected Object getPrivateField(String fieldName)  {
-        try{
-            Field field = User.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(user);
-        }catch (NoSuchFieldException | IllegalAccessException e){
-            throw new DTOParsingException();
-        }
-    }
 }

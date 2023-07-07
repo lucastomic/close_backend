@@ -1,4 +1,4 @@
-package com.close.close.user.dto;
+package com.close.close.apirest.dto;
 
 import com.close.close.apirest.StatusException;
 import org.springframework.http.HttpStatus;
