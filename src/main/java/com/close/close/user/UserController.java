@@ -78,7 +78,7 @@ public class UserController {
 
     /**
      * Adds an interest given its name to the user currently authenticated
-     * @param interestName interest's name to add to the user
+     * @param interestName inter est's name to add to the user
      * @return EntityModel of the user updated
      */
     @DeleteMapping(REMOVE_INTEREST)
@@ -94,10 +94,10 @@ public class UserController {
      * @return Response entity with status code 200, and the current authenticated user in the body
      */
     @GetMapping(GET_USER_INFO)
-    public ResponseEntity<UserDTO> getUserInformation(){
+    public ResponseEntity<EntityModel<UserDTO>> getUserInformation(){
         User user= AUTH_SERVICE.getAuthenticated();
-        UserDTO body = new AuthenticatedUserDTO(user);
-        return ResponseEntity.ok(body);
+        AuthenticatedUserDTO userDTO = new AuthenticatedUserDTO(user);
+        return ResponseEntity.ok(USER_MODEL_ASSEMBLER.toModel(userDTO));
     }
 
 }
