@@ -25,35 +25,7 @@ public class Message {
         this.value = value;
     }
 
-    public Long getId() {
+    public Long getId(){
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 }

@@ -9,15 +9,18 @@ import java.util.List;
 @Service
 public class MessageService {
     private final MessageRepository MESSAGE_REPOSITORY;
+    private final WebsocketMessageService WEBSOCKET_MESSAGE_SERVICE;
 
     @Autowired
-    MessageService(MessageRepository messageRepository){
-        this.MESSAGE_REPOSITORY = messageRepository;
+    public MessageService(MessageRepository MESSAGE_REPOSITORY, WebsocketMessageService WEBSOCKETMESSAGESERVICE) {
+        this.MESSAGE_REPOSITORY = MESSAGE_REPOSITORY;
+        this.WEBSOCKET_MESSAGE_SERVICE = WEBSOCKETMESSAGESERVICE;
     }
 
     public Message sendMessage(User receiver, User sender, String value){
         Message message = new Message(receiver, sender, value);
         MESSAGE_REPOSITORY.save(message);
+        WEBSOCKET_MESSAGE_SERVICE.sendMessage(receiver,message);
         return message;
     }
 
