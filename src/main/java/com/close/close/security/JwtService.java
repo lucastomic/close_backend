@@ -25,7 +25,7 @@ public class JwtService {
     /**
      * The expiration time for JWTs, in milliseconds.
      */
-    private final int TOKEN_EXPIRATION =  1000*60*60*24;
+    private final int TOKEN_EXPIRATION =  365*1000*60*60*24;
     /**
      * Extracts a claim from a JWT using a function that takes a Claims object and returns a type T.
      *

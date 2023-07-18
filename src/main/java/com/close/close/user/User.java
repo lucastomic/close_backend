@@ -1,5 +1,6 @@
 package com.close.close.user;
 
+import com.close.close.chat.Chat;
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
 import com.close.close.message.Message;
@@ -46,11 +47,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "receiver",fetch = FetchType.EAGER)
     private Set<Duck> ducksReceived;
 
-    @OneToMany(mappedBy = "sender",fetch = FetchType.EAGER)
-    private Set<Message> messagesSent;
-    @OneToMany(mappedBy = "receiver",fetch = FetchType.EAGER)
-    private Set<Message> messageReceived;
-
     @Column()
     private String photo;
 
@@ -63,6 +59,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "interest_id")
     )
     private Set<Interest> interests;
+
+    @ManyToMany(mappedBy = "users")
+    private Set<Chat> chats = new HashSet<>();
 
     public User (Long id, String username, String profileName, String password, Role role){
         this.id=id;
@@ -94,14 +93,6 @@ public class User implements UserDetails {
 
     public Set<Duck> getDucksReceived() {
         return ducksReceived;
-    }
-
-    public Set<Message> getMessagesSent() {
-        return messagesSent;
-    }
-
-    public Set<Message> getMessageReceived() {
-        return messageReceived;
     }
 
     public String getPhoto() {

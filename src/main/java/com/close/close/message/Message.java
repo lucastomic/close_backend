@@ -1,5 +1,6 @@
 package com.close.close.message;
 
+import com.close.close.chat.Chat;
 import com.close.close.user.User;
 import jakarta.persistence.*;
 
@@ -9,20 +10,19 @@ public class Message {
     @ManyToOne
     @JoinColumn(name="senderId", nullable=false)
     private User sender;
-    @ManyToOne()
-    @JoinColumn(name="receiverId", nullable=false)
-    private User receiver;
-
     @Column(name="value")
     private String value;
+    @ManyToOne
+    @JoinColumn(name = "chat")
+    private Chat chat;
 
     public Message() {
     }
 
-    public Message(User receiver, User sender, String value) {
+    public Message(User sender, Chat chat, String value) {
         this.sender = sender;
-        this.receiver = receiver;
         this.value = value;
+        this.chat = chat;
     }
 
     public Long getId(){
