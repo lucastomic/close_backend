@@ -1,5 +1,6 @@
 package com.close.close.chat.controller;
 import com.close.close.chat.Chat;
+import com.close.close.chat.dto.ChatDTO;
 import com.close.close.chat.service.IChatService;
 import com.close.close.security.AuthenticationService;
 import com.close.close.user.User;
@@ -35,8 +36,8 @@ public class ChatController {
     public ResponseEntity<?> sendMessage(@RequestParam Long receiverID, @RequestParam String value){
         User sender = AUTH_SERVICE.getAuthenticated();
         User receiver = USER_SERVICE.findById(receiverID);
-        Chat chat = CHAT_SERVICE.sendMessage(receiver,sender,value);
-        return ResponseEntity.ok(chat);
+        Chat chat = CHAT_SERVICE.sendMessage(sender,receiver,value);
+        return ResponseEntity.ok(new ChatDTO(chat));
     }
 
     /**
@@ -49,6 +50,6 @@ public class ChatController {
         User sender = AUTH_SERVICE.getAuthenticated();
         User receiver = USER_SERVICE.findById(receiverId);
         Chat chat = CHAT_SERVICE.getChat(receiver,sender);
-        return ResponseEntity.ok(chat);
+        return ResponseEntity.ok(new ChatDTO(chat));
     }
 }

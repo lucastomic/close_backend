@@ -4,7 +4,9 @@ import com.close.close.message.Message;
 import com.close.close.user.User;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,7 +24,7 @@ public class Chat {
     private Set<User> users = new HashSet<>();
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
-    private Set<Message> messages = new HashSet<>();
+    private List<Message> messages = new ArrayList<>();
 
     public Chat() {
     }

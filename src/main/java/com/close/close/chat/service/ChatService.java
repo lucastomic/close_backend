@@ -30,12 +30,12 @@ public class ChatService implements IChatService{
     public Chat getChat(User sender, User receiver){
         List<Long> ids = getIDsList(sender,receiver);
         Chat emptyChat = getEmptyChat(sender,receiver);
-        return CHAT_REPOSITORY.getChat(ids).orElse(emptyChat);
+        return CHAT_REPOSITORY.getChat(ids, ids.size()).orElse(emptyChat);
     }
     private List<Long> getIDsList(User sender, User receiver){
         return List.of(sender.getId(),receiver.getId());
     }
     private Chat getEmptyChat(User sender, User receiver){
-        return new Chat(Set.of(sender,receiver));
+        return new Chat(Set.copyOf(Set.of(sender,receiver)));
     }
 }

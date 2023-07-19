@@ -24,8 +24,4 @@ public class Message {
         this.value = value;
         this.chat = chat;
     }
-
-    public Long getId(){
-        return id;
-    }
 }
