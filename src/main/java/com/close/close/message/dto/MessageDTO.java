@@ -7,16 +7,16 @@ import com.close.close.user.User;
 import java.io.Serializable;
 
 public class MessageDTO extends DTO<Message> implements Serializable {
-    Long senderId;
-    String value;
-    Long id;
+    private User sender;
+    private String value;
+    private Long id;
 
     public MessageDTO(Message object) {
         super(object);
     }
 
-    public Long getSenderId() {
-        return senderId;
+    public User getSender() {
+        return sender;
     }
 
     public String getValue() {
@@ -29,8 +29,7 @@ public class MessageDTO extends DTO<Message> implements Serializable {
 
     protected void initializeFields(){
         value = (String) getPrivateField("value");
-        User sender = (User)getPrivateField("sender");
-        senderId = sender.getId();
+        sender = (User)getPrivateField("sender");
         id = (Long) getPrivateField("id");
     }
 
