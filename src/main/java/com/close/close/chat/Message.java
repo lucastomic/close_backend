@@ -1,4 +1,4 @@
-package com.close.close.message;
+package com.close.close.chat;
 
 import com.close.close.chat.Chat;
 import com.close.close.user.User;

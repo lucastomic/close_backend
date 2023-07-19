@@ -1,6 +1,5 @@
 package com.close.close.chat;
 
-import com.close.close.message.Message;
 import com.close.close.user.User;
 import jakarta.persistence.*;
 
@@ -8,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 @Entity
 public class Chat {
@@ -35,5 +35,11 @@ public class Chat {
 
     public void addMessage(Message message){
         this.messages.add(message);
+    }
+
+    public void forEachMember(Function<User, Void> func){
+        for (User user: this.users) {
+            func.apply(user);
+        }
     }
 }

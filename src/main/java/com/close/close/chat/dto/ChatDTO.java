@@ -2,13 +2,11 @@ package com.close.close.chat.dto;
 
 import com.close.close.apirest.dto.DTO;
 import com.close.close.chat.Chat;
-import com.close.close.message.Message;
-import com.close.close.message.dto.MessageDTO;
+import com.close.close.chat.Message;
 import com.close.close.user.User;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

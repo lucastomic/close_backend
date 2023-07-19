@@ -2,7 +2,9 @@ package com.close.close.chat.service;
 
 import com.close.close.chat.Chat;
 import com.close.close.chat.ChatRepository;
-import com.close.close.message.Message;
+import com.close.close.chat.Message;
+import com.close.close.chat.websockets.ChatWebSocketService;
+import com.close.close.chat.websockets.IChatWebSocketService;
 import com.close.close.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,12 @@ import java.util.Set;
 @Service
 public class ChatService implements IChatService{
     private final ChatRepository CHAT_REPOSITORY;
+    private final IChatWebSocketService CHAT_WEBSOCKET_SERVICE;
 
     @Autowired
-    public ChatService(ChatRepository CHAT_REPOSITORY) {
+    public ChatService(ChatRepository CHAT_REPOSITORY, ChatWebSocketService CHAT_WEBSOCKET_SERVICE) {
         this.CHAT_REPOSITORY = CHAT_REPOSITORY;
+        this.CHAT_WEBSOCKET_SERVICE = CHAT_WEBSOCKET_SERVICE;
     }
 
     public Chat sendMessage(User sender, User receiver, String messageValue){
@@ -24,6 +28,7 @@ public class ChatService implements IChatService{
         Message message = new Message(sender,chat,messageValue);
         chat.addMessage(message);
         CHAT_REPOSITORY.save(chat);
+        CHAT_WEBSOCKET_SERVICE.notifyChatMembers(chat);
         return chat;
     }
 

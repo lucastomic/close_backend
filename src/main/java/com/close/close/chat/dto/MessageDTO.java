@@ -1,7 +1,7 @@
-package com.close.close.message.dto;
+package com.close.close.chat.dto;
 
 import com.close.close.apirest.dto.DTO;
-import com.close.close.message.Message;
+import com.close.close.chat.Message;
 import com.close.close.user.User;
 
 import java.io.Serializable;
