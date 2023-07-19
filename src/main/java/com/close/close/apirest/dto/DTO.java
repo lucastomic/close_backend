@@ -8,7 +8,9 @@ abstract public class DTO<T> {
     T object;
     protected DTO(T object){
         this.object = object;
+        initializeFields();
     }
+    abstract protected void initializeFields();
     protected Object getPrivateField(String fieldName)  {
         try{
             Field field = object.getClass().getDeclaredField(fieldName);

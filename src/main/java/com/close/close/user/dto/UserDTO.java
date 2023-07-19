@@ -17,7 +17,6 @@ public class UserDTO extends DTO<User> implements Serializable {
 
     public UserDTO(User user) {
         super(user);
-        initializeFields();
     }
 
     public Long getId() {
@@ -58,7 +57,7 @@ public class UserDTO extends DTO<User> implements Serializable {
     }
 
 
-    private void initializeFields(){
+    protected void initializeFields(){
             this.id = (Long)getPrivateField("id");
             this.username = (String)getPrivateField("username");
             this.profileName = (String)getPrivateField("profileName");

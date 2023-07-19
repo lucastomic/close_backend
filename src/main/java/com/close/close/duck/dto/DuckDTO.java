@@ -12,9 +12,9 @@ public class DuckDTO extends DTO<Duck> implements Serializable {
 
     public DuckDTO(Duck duck) {
         super(duck);
-        this.receiver = getUserIdFromField("receiver");
-        this.sender = getUserIdFromField("sender");
+
     }
+
 
     public Long getSender() {
         return sender;
@@ -36,4 +36,11 @@ public class DuckDTO extends DTO<Duck> implements Serializable {
         User user =  (User) getPrivateField(field);
         return user.getId();
     }
+
+    @Override
+    protected void initializeFields() {
+        this.receiver = getUserIdFromField("receiver");
+        this.sender = getUserIdFromField("sender");
+    }
+
 }
