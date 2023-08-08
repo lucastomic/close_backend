@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
     private IChatService CHAT_SERVICE;
     private AuthenticationService AUTH_SERVICE;
-    private UserService USER_SERVICE;
+    private final UserService USER_SERVICE;
 
     @Autowired
     public ChatController(

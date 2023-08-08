@@ -1,6 +1,7 @@
 package com.close.close.user;
 
 import com.close.close.chat.Chat;
+import com.close.close.chat.Message;
 import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
 import com.close.close.socialnetwork.SocialNetwork;
@@ -31,6 +32,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    private List<Message> messagesSent;
 
     @ElementCollection( fetch = FetchType.EAGER)
     @CollectionTable(name="socialNetworks")
