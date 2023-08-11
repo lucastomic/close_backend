@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -23,6 +24,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/interests")
 public class InterestController {
     public static final String POST_INTEREST      = "";
+    public static final String GET_MOST_POPULAR      = "/getMostPopulars/{amountOfInterests}";
+    public static final String GET_NOT_SELECTED      = "/getNotSelected/{amountOfInterests}";
     public static final String DELETE_INTEREST      = "/{interestName}";
 
     private final InterestService INTEREST_SERVICE;
@@ -34,6 +37,17 @@ public class InterestController {
                        AuthenticationService authenticationService){
         this.INTEREST_SERVICE = interestService;
     };
+
+    @GetMapping(GET_MOST_POPULAR)
+    public ResponseEntity<?> getMostPopular(@PathVariable Long amountOfInterests){
+        Set<Interest> body =  INTEREST_SERVICE.getMostPopular(amountOfInterests);
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    }
+    @GetMapping(GET_NOT_SELECTED)
+    public ResponseEntity<?> getNotSelectedInterests(@PathVariable int amountOfInterests){
+        List<Interest> body =  INTEREST_SERVICE.getNotSelectedInterests(amountOfInterests);
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    }
 
 
     /**
