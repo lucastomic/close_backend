@@ -38,11 +38,9 @@ public class InterestService {
     public Set<Interest> getMostPopular(Long amountOfInterests){
         return INTEREST_REPOSITORY.getMostPopular(amountOfInterests);
     }
-
-    public List<Interest> getNotSelectedInterests(int amountOfInterests){
-        Long userId = AUTH_SERVICE.getIdAuthenticated();
-        Pageable pageable = PageRequest.of(0, amountOfInterests);
-        return INTEREST_REPOSITORY.getNotSelectedInterests(userId, pageable);
+    public List<Interest> getExcluding(Set<String> exclude, int amount){
+        Pageable pageable = PageRequest.of(0, amount);
+        return INTEREST_REPOSITORY.getExcluding(exclude, pageable);
     }
 
     public Interest findOrCreate(String interestName){
