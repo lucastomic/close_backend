@@ -17,7 +17,7 @@ public class LocationSenderService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final LocationService LOCATION_SERVICE;
     public static final String WS_MESSAGE_TRANSFER_DESTINATION = "/queue/closeusers";
-    private final ArrayList<User> receivers ;
+    private final ArrayList<User> receivers ; //TODO: When a user hasn't send it's location for X time, should be deleted from receivers
     private User currentReceiver;
 
     @Autowired
