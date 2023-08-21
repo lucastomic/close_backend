@@ -13,7 +13,7 @@ public class UserLocation implements IPosition {
     private final User user;
     private Location location;
     private final Date expirationTime;
-    private final int EXPIRATION_TIME_SECONDS = 60;//TODO: cambiar
+    private final int EXPIRATION_TIME_SECONDS = 5;
 
     public UserLocation(@NotNull User user, @NotNull Location location) {
         this.user = user;
