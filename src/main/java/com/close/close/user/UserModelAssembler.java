@@ -64,11 +64,6 @@ public class UserModelAssembler  implements RepresentationModelAssembler<UserDTO
                         .getDucksSent()
                 ).withRel(REMOVE_DUCK),
 
-                //Location Controller Links
-                linkTo(methodOn(LocationController.class)
-                        .sendLocation( new Location(0, 0))
-                ).withRel(SENDLOCATIONREL),
-
                 linkTo(methodOn(SocialNetworkController.class)
                         .addSocialNetwork(SocialNetwork.INSTAGRAM,"myinstagrmausername")
                 ).withRel(ADDSOCIALNETWORKREL),
