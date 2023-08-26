@@ -30,7 +30,7 @@ public class LocationService {
     //Quadtree from Space Partitioning algorithm
     private final QuadTree<UserLocation> USER_QUADTREE;
     private final double queryRadius = 1;
-    private final double MAX_DISTANCE_METERS = 20;
+    private final double MAX_DISTANCE_METERS = 50;
 
 
     public LocationService() {

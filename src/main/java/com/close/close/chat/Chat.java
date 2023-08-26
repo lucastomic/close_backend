@@ -2,11 +2,6 @@ package com.close.close.chat;
 
 import com.close.close.user.User;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import java.util.*;
 import java.util.function.Function;
 
@@ -34,26 +29,21 @@ public class Chat {
         this.users = users;
     }
 
-    public void addMessage(Message message){
+    public void addMessage(Message message) {
         this.messages.add(message);
     }
 
-    public void forEachMember(Function<User, Void> func){
-        for (User user: this.users) {
+    public void forEachMember(Function<User, Void> func) {
+        for (User user : this.users) {
             func.apply(user);
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Chat chat = (Chat) o;
-        return Objects.equals(id, chat.id);
+    public Long getId() {
+        return id;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 }
