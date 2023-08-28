@@ -33,9 +33,19 @@ public class ChatService implements IChatService{
     }
 
     public Chat getChat(User sender, User receiver){
+        Chat chat = getChatWithDuplicatedMessages(sender,receiver);
+        return overrideMessagesWithoutDuplicity(chat);
+    }
+
+    private Chat getChatWithDuplicatedMessages(User sender, User receiver){
         List<Long> ids = getIDsList(sender,receiver);
         Chat emptyChat = getEmptyChat(sender,receiver);
-        return CHAT_REPOSITORY.getChat(ids, ids.size()).orElse(emptyChat);
+        return CHAT_REPOSITORY.getChatWithDuplicatedMessages(ids, ids.size()).orElse(emptyChat);
+    }
+    private Chat overrideMessagesWithoutDuplicity(Chat chat){
+        List<Message> messages = CHAT_REPOSITORY.getMessagesByChat(chat.getId());
+        chat.setMessages(messages);
+        return chat;
     }
 
     private List<Long> getIDsList(User sender, User receiver){
