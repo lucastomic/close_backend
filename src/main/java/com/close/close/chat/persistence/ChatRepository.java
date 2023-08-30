@@ -1,7 +1,6 @@
 package com.close.close.chat.persistence;
 
 import com.close.close.chat.Chat;
-import com.close.close.chat.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,9 +16,5 @@ public interface ChatRepository extends JpaRepository<Chat,Long> {
     // these duplicated messages. This is the link with the StackOverflow post which explains the porblem:
     // https://stackoverflow.com/questions/76731778/jparepository-returns-duplicated-child-entities
     @Query("SELECT c FROM Chat c JOIN c.users u WHERE u.id IN :usersIDs GROUP BY c HAVING COUNT(DISTINCT u) = :numberOfUsers")
-    Optional<Chat> getChatWithDuplicatedMessages(@Param("usersIDs") List<Long> usersIDs, int numberOfUsers);
-
-    @Query("SELECT DISTINCT m FROM Chat c JOIN c.messages m WHERE c.id = :chatId")
-    List<Message> getMessagesByChat(Long chatId);
-
+    Optional<Chat> getChat(@Param("usersIDs") List<Long> usersIDs, int numberOfUsers);
 }

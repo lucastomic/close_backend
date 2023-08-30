@@ -6,6 +6,8 @@ import com.close.close.duck.Duck;
 import com.close.close.interest.Interest;
 import com.close.close.socialnetwork.SocialNetwork;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,6 +42,7 @@ public class User implements UserDetails {
     @MapKeyColumn(name="socialNetwork")
     @MapKeyEnumerated(EnumType.STRING)
     @Column(name = "username")
+    @Fetch(FetchMode.SELECT)
     private Map<SocialNetwork, String> socialNetworks;
 
     @OneToMany(mappedBy = "sender",fetch = FetchType.EAGER)
@@ -59,6 +62,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "interest_id")
     )
+    @Fetch(FetchMode.SELECT)
     private Set<Interest> interests;
 
     @ManyToMany(mappedBy = "users")
