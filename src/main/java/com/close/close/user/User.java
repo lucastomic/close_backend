@@ -80,32 +80,8 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public String getProfileName() {
-        return profileName;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public Map<SocialNetwork, String> getSocialNetworks() {
-        return socialNetworks;
-    }
-
-    public Set<Duck> getDucksSent() {
-        return ducksSent;
-    }
-
-    public Set<Duck> getDucksReceived() {
-        return ducksReceived;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public Set<Interest> getInterests() {
-        return interests;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public Long getId() {

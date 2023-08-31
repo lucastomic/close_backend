@@ -21,6 +21,7 @@ public class UserController {
     public static final String ADD_INTEREST = "/addInterest/{interestName}";
     public static final String REMOVE_INTEREST = "/deleteInterest/{interestName}";
     public static final String GET_USER_INFO = "/getUserInfo";
+    public static final String EDIT_PROFILE_PHOTO = "/editPhoto";
 
     /**
      * repository is the user's repository for DB interaction
@@ -48,6 +49,13 @@ public class UserController {
         USER_MODEL_ASSEMBLER = userModelAssembler;
         INTEREST_SERVICE = interestService;
         AUTH_SERVICE = authenticationService;
+    }
+
+    @PutMapping(EDIT_PROFILE_PHOTO)
+    public ResponseEntity editPhoto(@RequestBody String photoURL){
+        User user = AUTH_SERVICE.getAuthenticated();
+        USER_SERVICE.editProfilePhoto(user,photoURL);
+        return ResponseEntity.ok().build();
     }
 
 
