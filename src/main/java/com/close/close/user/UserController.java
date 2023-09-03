@@ -52,9 +52,9 @@ public class UserController {
     }
 
     @PutMapping(EDIT_PROFILE_PHOTO)
-    public ResponseEntity editPhoto(@RequestBody String photoURL){
+    public ResponseEntity editPhoto(@RequestBody ImageURL imageURL){
         User user = AUTH_SERVICE.getAuthenticated();
-        USER_SERVICE.editProfilePhoto(user,photoURL);
+        USER_SERVICE.editProfilePhoto(user,imageURL.getImageURL());
         return ResponseEntity.ok().build();
     }
 
@@ -108,4 +108,16 @@ public class UserController {
         return ResponseEntity.ok(USER_MODEL_ASSEMBLER.toModel(userDTO));
     }
 
+}
+
+class ImageURL{
+    String imageURL;
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
 }
