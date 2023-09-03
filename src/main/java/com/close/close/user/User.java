@@ -91,8 +91,6 @@ public class User implements UserDetails {
     public void setId(Long id) {
         this.id = id;
     }
-    public int getNumberOfDucksReceived(){return this.ducksReceived.size();}
-
     public void addSocialNetwork(SocialNetwork socialNetwork, String username){
         this.socialNetworks.put(socialNetwork,username);
     }
