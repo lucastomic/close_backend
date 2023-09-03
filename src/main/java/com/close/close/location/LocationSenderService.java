@@ -47,7 +47,11 @@ public class LocationSenderService {
     private void sendLocationToCurrentReceiver() {
         List<User> responseBody = getResponseBody();
         String username = currentReceiver.getUsername();
-        simpMessagingTemplate.convertAndSendToUser(username, WS_MESSAGE_TRANSFER_DESTINATION, parseToDTOList(responseBody));
+        simpMessagingTemplate.convertAndSendToUser(
+                username,
+                WS_MESSAGE_TRANSFER_DESTINATION,
+                parseToDTOList(responseBody)
+        );
     }
 
     private List<User> getResponseBody() {
