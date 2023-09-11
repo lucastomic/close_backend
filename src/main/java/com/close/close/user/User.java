@@ -80,6 +80,14 @@ public class User implements UserDetails {
     public User() {
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
     public void setPhoto(String photo) {
         this.photo = photo;
     }
