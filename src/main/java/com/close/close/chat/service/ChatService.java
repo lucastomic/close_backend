@@ -1,6 +1,7 @@
 package com.close.close.chat.service;
 
 import com.close.close.chat.Chat;
+import com.close.close.chat.notifications.IChatNotificationsService;
 import com.close.close.chat.persistence.ChatRepository;
 import com.close.close.chat.Message;
 import com.close.close.chat.websockets.ChatWebSocketService;
@@ -16,11 +17,13 @@ public class ChatService implements IChatService{
     private final ChatRepository CHAT_REPOSITORY;
 
     private final IChatWebSocketService CHAT_WEBSOCKET_SERVICE;
+    private final IChatNotificationsService notificationsService;
 
     @Autowired
-    public ChatService(ChatRepository CHAT_REPOSITORY, ChatWebSocketService CHAT_WEBSOCKET_SERVICE) {
+    public ChatService(ChatRepository CHAT_REPOSITORY, ChatWebSocketService CHAT_WEBSOCKET_SERVICE, IChatNotificationsService notificationsService) {
         this.CHAT_REPOSITORY = CHAT_REPOSITORY;
         this.CHAT_WEBSOCKET_SERVICE = CHAT_WEBSOCKET_SERVICE;
+        this.notificationsService = notificationsService;
     }
 
     public Chat sendMessage(User sender, User receiver, String messageValue){
@@ -29,6 +32,7 @@ public class ChatService implements IChatService{
         chat.addMessage(message);
         CHAT_WEBSOCKET_SERVICE.notifyChatMembers(chat);
         CHAT_REPOSITORY.save(chat);
+        notificationsService.notify(sender,receiver);
         return chat;
     }
 
