@@ -1,5 +1,6 @@
 package com.close.close.duck;
 
+import com.close.close.duck.websockets.IDuckWebsocketService;
 import com.close.close.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,13 @@ public class DuckService {
      */
     private final DuckRepository DUCK_REPOSITORY;
 
+    private final IDuckWebsocketService WEBSOCKET_SERVICE;
+
 
     @Autowired
-    public DuckService (DuckRepository duckRepository) {
+    public DuckService (DuckRepository duckRepository, IDuckWebsocketService websocketService) {
         this.DUCK_REPOSITORY = duckRepository;
+        this.WEBSOCKET_SERVICE = websocketService;
     }
 
 
@@ -53,6 +57,9 @@ public class DuckService {
     public Duck sendDuck(User sender, User receiver) {
         Duck duckSent = new Duck(sender, receiver);
         DUCK_REPOSITORY.save(duckSent);
+        sender.addDuckSent(duckSent);
+        receiver.addDuckReceived(duckSent);
+        WEBSOCKET_SERVICE.notify(receiver);
         return duckSent;
     }
 
@@ -67,6 +74,9 @@ public class DuckService {
         Duck duck = DUCK_REPOSITORY.findBySenderReceiver(sender.getId(), receiver.getId())
                 .orElseThrow( () -> new DuckNotFoundException(sender.getId(), receiver.getId()));
         DUCK_REPOSITORY.delete(duck);
+        sender.removeDuckSent(duck);
+        receiver.removeDuckReceived(duck);
+        WEBSOCKET_SERVICE.notify(receiver);
         return duck;
     }
 }
