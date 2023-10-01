@@ -74,18 +74,28 @@ public class User implements UserDetails {
         this.profileName=profileName;
         this.password=password;
         this.role=role;
+        this.interests = new HashSet<>();
     }
 
 
     public User() {
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void addDuckSent(Duck duck){
+        this.ducksSent.add(duck);
+    }
+    public void removeDuckSent(Duck duck){
+        this.ducksSent.remove(duck);
+    }
+    public void addDuckReceived(Duck duck){
+        this.ducksReceived.add(duck);
+    }
+    public void removeDuckReceived(Duck duck){
+        this.ducksReceived.remove(duck);
     }
 
-    public void setProfileName(String profileName) {
-        this.profileName = profileName;
+    public int getDucksReceived() {
+        return ducksReceived.size();
     }
 
     public void setPhoto(String photo) {
@@ -96,9 +106,6 @@ public class User implements UserDetails {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
     public void addSocialNetwork(SocialNetwork socialNetwork, String username){
         this.socialNetworks.put(socialNetwork,username);
     }
@@ -109,7 +116,6 @@ public class User implements UserDetails {
     public void addInterest(Interest interest){
         this.interests.add(interest);
     }
-
     public void removeInterest(Interest interest){
         this.interests.remove(interest);
     }
@@ -150,18 +156,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
