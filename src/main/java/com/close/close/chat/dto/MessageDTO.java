@@ -3,11 +3,12 @@ package com.close.close.chat.dto;
 import com.close.close.apirest.dto.DTO;
 import com.close.close.chat.Message;
 import com.close.close.user.User;
+import com.close.close.user.dto.UserDTO;
 
 import java.io.Serializable;
 
 public class MessageDTO extends DTO<Message> implements Serializable {
-    private User sender;
+    private UserDTO sender;
     private String value;
     private Long id;
 
@@ -15,7 +16,7 @@ public class MessageDTO extends DTO<Message> implements Serializable {
         super(object);
     }
 
-    public User getSender() {
+    public UserDTO getSender() {
         return sender;
     }
 
@@ -29,8 +30,13 @@ public class MessageDTO extends DTO<Message> implements Serializable {
 
     protected void initializeFields(){
         value = (String) getPrivateField("value");
-        sender = (User)getPrivateField("sender");
+        sender = getSenderParsed();
         id = (Long) getPrivateField("id");
+    }
+
+    private UserDTO getSenderParsed(){
+        User sender = (User)getPrivateField("sender");
+        return new UserDTO(sender);
     }
 
 }
