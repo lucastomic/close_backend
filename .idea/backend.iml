@@ -47,8 +47,6 @@
     <orderEntry type="library" name="Maven: org.springframework.plugin:spring-plugin-core:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:3.0.4" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:3.0.4" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-logging:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.4.5" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.4.5" level="project" />
@@ -131,5 +129,9 @@
     <orderEntry type="library" name="Maven: org.webjars:stomp-websocket:2.3.3" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:bootstrap:3.3.7" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:jquery:3.1.1-1" level="project" />
+    <orderEntry type="library" name="Maven: org.json:json:20230227" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-devtools:3.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:3.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:3.0.4" level="project" />
   </component>
 </module>

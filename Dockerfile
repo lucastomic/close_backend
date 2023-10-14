@@ -6,7 +6,13 @@ COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 RUN ./mvnw dependency:resolve
 COPY src ./src
-CMD ["./mvnw", "spring-boot:run"]
+
+
+COPY ./entrypoint.sh ./entrypoint.sh 
+
+
+ENTRYPOINT ["./entrypoint.sh"]
+
 
 FROM base as build
 RUN ./mvnw package
