@@ -7,10 +7,12 @@ package com.close.close.security;
 public class AuthenticationRequest {
     private String username;
     private String password;
+    private String deviceID;
 
-    public AuthenticationRequest(String username, String password) {
+    public AuthenticationRequest(String username, String password, String deviceID) {
         this.username = username;
         this.password = password;
+        this.deviceID = deviceID;
     }
 
     /**
@@ -44,5 +46,13 @@ public class AuthenticationRequest {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getDeviceID() {
+        return deviceID;
+    }
+
+    public void setDeviceID(String deviceID) {
+        this.deviceID = deviceID;
     }
 }

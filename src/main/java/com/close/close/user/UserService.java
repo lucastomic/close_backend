@@ -123,4 +123,11 @@ public class UserService {
         user.setPhoto(photoURL);
         USER_REPOSITORY.save(user);
     }
+
+    public void modifyDeviceID(String username, String deviceID){
+        User user = USER_REPOSITORY.findByUsername(username).orElseThrow(()->new UserNotFoundException(username));
+        user.setNotificationDeviceID(deviceID);
+        USER_REPOSITORY.save(user);
+    }
 }
+

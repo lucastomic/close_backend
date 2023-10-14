@@ -31,6 +31,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String notificationDeviceID;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
@@ -129,6 +132,82 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
+    public String getNotificationDeviceID() {
+        return notificationDeviceID;
+    }
+
+    public void setNotificationDeviceID(String notificationDeviceID) {
+        this.notificationDeviceID = notificationDeviceID;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public List<Message> getMessagesSent() {
+        return messagesSent;
+    }
+
+    public void setMessagesSent(List<Message> messagesSent) {
+        this.messagesSent = messagesSent;
+    }
+
+    public Map<SocialNetwork, String> getSocialNetworks() {
+        return socialNetworks;
+    }
+
+    public void setSocialNetworks(Map<SocialNetwork, String> socialNetworks) {
+        this.socialNetworks = socialNetworks;
+    }
+
+    public Set<Duck> getDucksSent() {
+        return ducksSent;
+    }
+
+    public void setDucksSent(Set<Duck> ducksSent) {
+        this.ducksSent = ducksSent;
+    }
+
+    public void setDucksReceived(Set<Duck> ducksReceived) {
+        this.ducksReceived = ducksReceived;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public Set<Interest> getInterests() {
+        return interests;
+    }
+
+    public void setInterests(Set<Interest> interests) {
+        this.interests = interests;
+    }
+
+    public Set<Chat> getChats() {
+        return chats;
+    }
+
+    public void setChats(Set<Chat> chats) {
+        this.chats = chats;
+    }
+
     @Override
     public String getPassword() {
         return this.password;
@@ -156,5 +235,17 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

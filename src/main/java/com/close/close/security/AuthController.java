@@ -3,7 +3,6 @@ package com.close.close.security;
 import com.close.close.user.Role;
 import com.close.close.user.User;
 import com.close.close.user.UserService;
-import com.close.close.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +45,7 @@ public class AuthController {
     @PostMapping(AUTHENTICATE)
     public ResponseEntity authenticate(@RequestBody AuthenticationRequest request){
         AuthenticationResponse response = service.authenticate(request);
+        userService.modifyDeviceID(request.getUsername(), request.getDeviceID());
         return ResponseEntity.ok(response);
     }
 
