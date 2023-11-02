@@ -19,7 +19,7 @@ class NotificationRequestService {
     @Value("${firebase.token}")
     private String accessToken;
     private HttpURLConnection connection;
-    private JsonNotificationFormatter jsonNotificationFormatter;
+    private final JsonNotificationFormatter jsonNotificationFormatter;
 
     public NotificationRequestService(JsonNotificationFormatter jsonNotificationFormatter) {
         this.jsonNotificationFormatter = jsonNotificationFormatter;

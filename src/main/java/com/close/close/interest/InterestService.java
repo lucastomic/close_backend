@@ -14,12 +14,10 @@ import java.util.Set;
 public class InterestService {
 
     private final InterestRepository INTEREST_REPOSITORY;
-    private final AuthenticationService AUTH_SERVICE;
 
     @Autowired
-    public InterestService(InterestRepository repository, AuthenticationService AUTH_SERVICE) {
+    public InterestService(InterestRepository repository ) {
         this.INTEREST_REPOSITORY = repository;
-        this.AUTH_SERVICE = AUTH_SERVICE;
     }
 
 

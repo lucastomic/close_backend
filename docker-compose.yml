@@ -1,5 +1,6 @@
 services:
   close:
+    image: lucastomic/close
     build:
       context: .
     ports:
@@ -15,6 +16,7 @@ services:
 
   mysqlserver:
     image: mysql:8.0
+    container_name: mysqlcontainer
     ports:
       - "33306:3306"
     environment:
