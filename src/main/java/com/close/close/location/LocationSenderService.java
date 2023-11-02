@@ -63,10 +63,7 @@ public class LocationSenderService {
     }
 
     private List<UserDTO> parseToDTOList(List<User> users){
-        List<UserDTO> response = users.stream().map(user -> {
-           return new UserDTO(user);
-        }).toList();
-        return response;
+        return users.stream().map(UserDTO::new).toList();
     }
 
     private List<User> getResponseBodyWhenLocationWasSentFirst() {
